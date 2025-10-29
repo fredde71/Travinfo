@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "vite --strictPort --port 5173",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+"update-data": "node update-data.js",
+"deploy": "./deploy.sh"
   },
   "dependencies": {
     "react": "^18.2.0",
