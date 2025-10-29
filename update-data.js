@@ -1,87 +1,176 @@
 // update-data.js
-// Steg B: Försök hämta riktig info från öppna källor och skriva till public/data.json
-// Du kör: npm run update-data
+// Version B+: Försök hämta riktiga tips (spik / skräll / varning) från öppna källor.
+// Du kör som vanligt: npm run update-data
+//
+// Flöde:
+// 1. Hämta HTML från Travstugan (spik / skräll).
+// 2. Hämta HTML från Trav365 (spik / miljonrensare).
+// 3. Hämta HTML från ATG "Vass eller Kass" (överspelad favorit).
+// 4. Plocka ut hästnamn med enkla mönster (regex).
+// 5. Skriv public/data.json med det vi hittade (eller fallback).
 
 import { writeFileSync } from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
-// __dirname-hack för ES-moduler (Node i "type": "module")
+// __dirname-hack för ES-moduler
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// -----------------------------------------------------
-// 1. Hjälpfunktioner för att hämta och tolka källor
-// -----------------------------------------------------
-
-// Enkel fetch-wrapper (Node 18+ har fetch inbyggt)
+// -----------------------------
+// Hjälpfunktion: hämta HTML
+// -----------------------------
 async function fetchText(url) {
-  const res = await fetch(url);
-  if (!res.ok) {
-    throw new Error(`Kunde inte hämta ${url}: ${res.status}`);
+  try {
+    const res = await fetch(url, {
+      headers: {
+        // Vi fejkar lite "vanlig webbläsare"-header för att vissa sidor inte ska säga nej direkt
+        "User-Agent":
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15",
+        Accept: "text/html,application/xhtml+xml",
+      },
+    });
+    if (!res.ok) {
+      console.warn(`⚠ ${url} svarade med status ${res.status}`);
+      return "";
+    }
+    return await res.text();
+  } catch (err) {
+    console.warn(`⚠ Kunde inte hämta ${url}:`, err.message);
+    return "";
   }
-  return await res.text();
 }
 
-/*
-Vi tänker så här:
-- Travstugan har ofta rubriker som "Spiken:" och "Luringen:" inför V85.
-- Sportbladet Trav365 skriver ofta om "Vår spik", "Miljonrensaren".
-- ATG:s "Vass eller Kass" och "Björnkollen" brukar peka ut en överspelad favorit (varning).
-Vi försöker plocka ut de bitarna med enkla regex.
+// ------------------------------------------------
+// Extraktion: hitta spik / skräll i Travstugan
+// ------------------------------------------------
+//
+// Vi letar efter rubriker eller textblock som liknar
+// "Spiken:" / "🔒 Spiken" / "Spikförslag" osv
+// samt "Skrällen", "Luringen", "Miljonrensaren".
+//
+// Vi försöker vara ganska tillåtande i regexen.
 
-OBS: Detta är första versionen. Om regexen inte matchar en vecka är det lugnt – vi fyller fallback.
-*/
+function extractFromTravstugan(html) {
+  let spik = null;
+  let skrall = null;
 
-function extractSpikFromTravstugan(html) {
-  // försök hitta något i stil med "Spiken:" följt av hästnamn
-  const match =
-    html.match(/Spiken[^:]{0,10}:\s*<\/?(strong|b|span)?[^>]*>\s*([A-Za-zÅÄÖåäö0-9\s'-]+)/) ||
-    html.match(/Spik(?:en)?\s*<\/?(strong|b|span)?[^>]*>\s*([A-Za-zÅÄÖåäö0-9\s'-]+)/);
+  // Spik: fångar t.ex. "Spiken: Hästnamn" eller "Spikförslag: Hästnamn"
+  const spikMatch =
+    html.match(
+      /Spik(?:en|förslag)?\s*[:\-]\s*<\/?(?:strong|b|span)?[^>]*>\s*([A-Za-zÅÄÖåäöÉéèÈÉ0-9\s'".\-]+)/i
+    ) ||
+    html.match(
+      /Spik(?:en)?\s*<\/?(?:strong|b|span)[^>]*>\s*([A-Za-zÅÄÖåäöÉéèÈÉ0-9\s'".\-]+)/i
+    );
 
-  if (match && match[2]) {
-    return match[2].trim();
+  if (spikMatch && spikMatch[1]) {
+    spik = spikMatch[1].trim();
   }
-  return null;
+
+  // Skräll: fångar "Skrällen: Hästnamn", "Luringen: Hästnamn", "Miljonrensaren: Hästnamn"
+  const skrallMatch =
+    html.match(
+      /(Skräll(?:en)?|Luring(?:en)?|Miljonrensare(?:n)?)\s*[:\-]\s*<\/?(?:strong|b|span)?[^>]*>\s*([A-Za-zÅÄÖåäöÉéèÈÉ0-9\s'".\-]+)/i
+    ) ||
+    html.match(
+      /(Skräll(?:en)?|Luring(?:en)?|Miljonrensare(?:n)?)\s*<\/?(?:strong|b|span)[^>]*>\s*([A-Za-zÅÄÖåäöÉéèÈÉ0-9\s'".\-]+)/i
+    );
+
+  if (skrallMatch && skrallMatch[2]) {
+    skrall = skrallMatch[2].trim();
+  }
+
+  return { spik, skrall };
 }
 
-function extractSkrallFromTravstugan(html) {
-  // försök hitta "Skrällen:" eller "Luringen:" etc
-  const match =
-    html.match(/Skräll(?:en)?[^:]{0,10}:\s*<\/?(strong|b|span)?[^>]*>\s*([A-Za-zÅÄÖåäö0-9\s'-]+)/) ||
-    html.match(/Luring(?:en)?[^:]{0,10}:\s*<\/?(strong|b|span)?[^>]*>\s*([A-Za-zÅÄÖåäö0-9\s'-]+)/);
+// ------------------------------------------------
+// Extraktion: Trav365 (Sportbladet)
+// ------------------------------------------------
+//
+// De brukar skriva "Vår spik: HÄSTNAMN" och "Miljonrensaren: HÄSTNAMN".
+// Vi försöker hitta det.
 
-  if (match && match[2]) {
-    return match[2].trim();
+function extractFromTrav365(html) {
+  let spik = null;
+  let skrall = null;
+
+  // "Vår spik: Hästnamn"
+  const spik365 =
+    html.match(
+      /(Vår|Vårt)\s+spik\w*\s*[:\-]\s*<\/?(?:strong|b|span)?[^>]*>\s*([A-Za-zÅÄÖåäö0-9\s'".\-]+)/i
+    ) ||
+    html.match(
+      /Spiken\s*[:\-]\s*<\/?(?:strong|b|span)?[^>]*>\s*([A-Za-zÅÄÖåäö0-9\s'".\-]+)/i
+    );
+
+  if (spik365 && spik365[2]) {
+    spik = spik365[2].trim();
+  } else if (spik365 && spik365[1]) {
+    // fallback om första gruppen fångade namnet
+    spik = spik365[1].trim();
   }
-  return null;
+
+  // "Miljonrensaren: Hästnamn"
+  const skrall365 =
+    html.match(
+      /(Miljonrensare(?:n)?|Skräll(?:en)?)\s*[:\-]\s*<\/?(?:strong|b|span)?[^>]*>\s*([A-Za-zÅÄÖåäö0-9\s'".\-]+)/i
+    );
+
+  if (skrall365 && skrall365[2]) {
+    skrall = skrall365[2].trim();
+  }
+
+  return { spik, skrall };
 }
 
-function extractVarningFromVassEllerKass(html) {
-  // försök hitta något som liknar "överspelad" / "inte spelvärd" / "pass"
-  // vi tar bara ut en häst som nämns i samma mening som "överspelad"
-  const block = html.match(/([A-Za-zÅÄÖåäö0-9\s'-]+)\s+(?:är|va[r]|blir)[^.!?]{0,80}överspelad/i);
-  if (block && block[1]) {
-    return block[1].trim();
+// ------------------------------------------------
+// Extraktion: Vass eller Kass (ATG)
+// ------------------------------------------------
+//
+// De pratar om att vissa favoriter är "överspelade", "ingen spik".
+// Vi tar första hästen som nämns nära "överspelad" eller "för stor favorit" och använder det som varning.
+
+function extractWarningFromVass(html) {
+  let varning = null;
+
+  const warningMatch = html.match(
+    /([A-Za-zÅÄÖåäö0-9\s'".\-]+?)\s+(?:är|blir|känns)[^.!?]{0,60}(överspelad|för stor favorit|inte spelvärd)/i
+  );
+
+  if (warningMatch && warningMatch[1]) {
+    varning = warningMatch[1].trim();
   }
-  return null;
+
+  return { varning };
 }
 
-// Vi kan också försöka plocka bana/datum/jackpot
-// I början kör vi manuellt här, men här är platsen där vi senare ska få in baninfo från en ATG-startlistsida
-function buildOmgInfoFallback() {
+// ------------------------------------------------
+// Fallbackbyggare om vi inte hittar allt
+// ------------------------------------------------
+
+function fallbackSpik() {
+  return "Hickovelocissimo";
+}
+function fallbackSkrall() {
+  return "Lion Mearas";
+}
+function fallbackVarning() {
+  return "Francesco Zet";
+}
+
+function buildOmgInfo() {
+  // På sikt ska vi plocka detta från en ATG-startlist-URL.
   return {
     bana: "Romme",
     datum: "Lördag 1 november 2025",
     spelstopp: "16:20",
     jackpot: "≈42 miljoner kr i potten",
     beskrivning:
-      "Tuff omgång på Romme. Flera öppna lopp och inte lika tung favoritdominans som senast. 8 lopp, utdelning ända ner till 5 rätt. Du kan spela sänkt insats (30%, 50%, 70%) så systemet inte blir för dyrt."
+      "Tuff omgång på Romme. Flera öppna lopp och inte lika tung favoritdominans som senast. 8 lopp, utdelning ända ner till 5 rätt. Du kan spela sänkt insats (30%, 50%, 70%) så systemet inte blir för dyrt.",
   };
 }
 
-// Formbarometer kan vi inte automatiskt bedöma utan mer avancerad logik (t.ex. läsa senaste startlistor/hästens formrad).
-// Vi behåller fallback tills vi automatiserar detta separat.
 function buildFormFallback() {
   return [
     {
@@ -90,7 +179,7 @@ function buildFormFallback() {
       form: "1-1-2",
       streck: "28%",
       signal: "Stabil toppform",
-      color: "green"
+      color: "green",
     },
     {
       name: "Lion Mearas",
@@ -98,7 +187,7 @@ function buildFormFallback() {
       form: "4-3-5",
       streck: "5%",
       signal: "Undervärderad skräll",
-      color: "yellow"
+      color: "yellow",
     },
     {
       name: "Francesco Zet",
@@ -106,13 +195,11 @@ function buildFormFallback() {
       form: "–",
       streck: "68%",
       signal: "Högprocentare med frågetecken",
-      color: "red"
-    }
+      color: "red",
+    },
   ];
 }
 
-// StallSnack (citat) är svårt att skrapa snyggt utan att vi vet exakt struktur på sidan som har intervjuer.
-// Vi behåller fallback så länge.
 function buildStallSnackFallback() {
   return [
     {
@@ -120,26 +207,25 @@ function buildStallSnackFallback() {
       avd: "1",
       quote: "Behöver lopp i kroppen efter vila.",
       signal: "Risk för ringrost",
-      color: "yellow"
+      color: "yellow",
     },
     {
       name: "Lion Mearas",
       avd: "6",
       quote: "Känns bättre än raden. Kan överraska.",
       signal: "Möjlig skräll",
-      color: "green"
+      color: "green",
     },
     {
       name: "Hickovelocissimo",
       avd: "4",
       quote: "Allt känns bra. Inga ändringar. Kör för vinst.",
       signal: "Spikläge",
-      color: "green"
-    }
+      color: "green",
+    },
   ];
 }
 
-// Banförutsättningar lägger vi också in fallback tills vi börjar läsa specifikt om banan.
 function buildBanaFallback() {
   return {
     underlag:
@@ -147,81 +233,83 @@ function buildBanaFallback() {
     spelvarde:
       "Jackpot ≈42 Mkr. Flera lopp öppna och favorittrycket är lägre än normalt.",
     snabbcheck:
-      "8 lopp • Spelstopp 16:20 • Utdelning ända ner till 5 rätt."
+      "8 lopp • Spelstopp 16:20 • Utdelning ända ner till 5 rätt.",
   };
 }
 
-// -----------------------------------------------------
-// 2. Huvudfunktionen som körs när du gör `npm run update-data`
-// -----------------------------------------------------
+// ------------------------------------------------
+// Huvudflöde
+// ------------------------------------------------
 
 async function main() {
-  // Hämta HTML från källor vi gillar
-  // (just nu exempeladresser – du kan uppdatera till korrekta, veckans V85-sida)
-  // Travstugan: spik / skräll
-  let travstuganHtml = "";
-  try {
-    travstuganHtml = await fetchText("https://travstugan.se/v85");
-  } catch (err) {
-    console.warn("⚠ Kunde inte hämta Travstugan. Använder fallback.");
-  }
+  console.log("📡 Hämtar källor...");
 
-  // Vass eller Kass (ATG): varningar på favoriter
-  let vassHtml = "";
-  try {
-    vassHtml = await fetchText("https://www.atg.se/V85/tips/vass-eller-kass-v85-lordag");
-  } catch (err) {
-    console.warn("⚠ Kunde inte hämta Vass eller Kass. Använder fallback.");
-  }
+  // 1. hämta källor
+  const travstuganHtml = await fetchText("https://travstugan.se/v85");
+  const trav365Html = await fetchText(
+    "https://www.aftonbladet.se/sportbladet/trav365/"
+  );
+  const vassHtml = await fetchText(
+    "https://www.atg.se/V85/tips/vass-eller-kass-v85-lordag"
+  );
 
-  // extrahera spik / skräll från Travstugan
-  const spikNamn = extractSpikFromTravstugan(travstuganHtml) || "Hickovelocissimo";
-  const skrallNamn = extractSkrallFromTravstugan(travstuganHtml) || "Lion Mearas";
+  // 2. extrahera tips från källorna
+  const { spik: stuganSpik, skrall: stuganSkrall } =
+    extractFromTravstugan(travstuganHtml);
 
-  // extrahera varning från Vass eller Kass
-  const varningNamn =
-    extractVarningFromVassEllerKass(vassHtml) || "Francesco Zet";
+  const { spik: t365Spik, skrall: t365Skrall } =
+    extractFromTrav365(trav365Html);
 
-  // Bygg ihop dataobjektet som appen behöver
+  const { varning: vassVarning } = extractWarningFromVass(vassHtml);
+
+  // 3. välj bästa hittade spik / skräll / varning (priosystem)
+  const spikName = stuganSpik || t365Spik || fallbackSpik();
+  const skrallName = stuganSkrall || t365Skrall || fallbackSkrall();
+  const varningName = vassVarning || fallbackVarning();
+
+  console.log("🔑 Spik vald:", spikName);
+  console.log("💣 Skräll vald:", skrallName);
+  console.log("⚠️  Varning vald:", varningName);
+
+  // 4. Bygg nya dataobjektet
   const newData = {
-    omgang: buildOmgInfoFallback(),
+    omgang: buildOmgInfo(),
     snabbfakta: {
       antalLopp: "8",
       radpris: "0,50 kr / rad",
       utdelning: "8 / 7 / 6 / 5 rätt",
       spelstopp: "16:20",
-      aterbetalning: "65%"
+      aterbetalning: "65%",
     },
     nycklar: {
       spik: {
-        titel: spikNamn,
+        titel: spikName,
         text: "Spikförslag enligt senaste analyser.",
-        tone: "green"
+        tone: "green",
       },
       skrall: {
-        titel: skrallNamn,
+        titel: skrallName,
         text: "Lågprocentare med chans att skrälla.",
-        tone: "yellow"
+        tone: "yellow",
       },
       varning: {
-        titel: varningNamn,
+        titel: varningName,
         text: "Stor favorit med frågetecken.",
-        tone: "red"
-      }
+        tone: "red",
+      },
     },
     formbarometer: buildFormFallback(),
     stallSnack: buildStallSnackFallback(),
-    bana: buildBanaFallback()
+    bana: buildBanaFallback(),
   };
 
-  // Skriv till /public/data.json
+  // 5. skriv ner public/data.json
   const outPath = path.join(__dirname, "public", "data.json");
   writeFileSync(outPath, JSON.stringify(newData, null, 2), "utf8");
 
-  console.log("✅ Ny data.json skapad i public/ med hämtade tips (där det gick).");
+  console.log("✅ Ny data.json skapad i public/ (med automatisk spik/skräll/varning där det gick)");
 }
 
-// Kör!
 main().catch((err) => {
   console.error("❌ Något gick fel i update-data:", err);
 });
