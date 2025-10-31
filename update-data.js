@@ -1,8 +1,3 @@
-// update-data.js
-// Version med OVERRIDE-stöd.
-// Användning: ändra hästnamnen i OVERRIDE nedan, kör `npm run deploy`.
-// Scriptet försöker fortfarande hämta automatiskt från källor, men din override vinner.
-
 import { writeFileSync } from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -10,20 +5,12 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// =============================
-// 1. MANUELL OVERRIDE ZON 💚
-// =============================
-// Byt dessa tre värden inför aktuell omgång om du vill styra vad som visas på sajten.
-// Lämna som "" (tom sträng) om du vill låta scriptet försöka plocka det automatiskt.
 const OVERRIDE = {
   spik: "",
   skrall: "",
   varning: ""
 };
 
-// =============================
-// 2. Hjälpfunktion att hämta HTML
-// =============================
 async function fetchText(url) {
   try {
     const res = await fetch(url, {
@@ -34,26 +21,21 @@ async function fetchText(url) {
       }
     });
     if (!res.ok) {
-      console.warn(`⚠ ${url} svarade ${res.status}`);
       return "";
     }
     return await res.text();
-  } catch (err) {
-    console.warn(`⚠ Kunde inte hämta ${url}:`, err.message);
+  } catch {
     return "";
   }
 }
 
-// =============================
-// 3. Regex för att försöka hitta spik / skräll / varning i källor
-// =============================
 function extractFromTravstugan(html) {
   let spik = null;
   let skrall = null;
 
   const spikMatch =
     html.match(
-      /Spik(?:en|förslag)?\s*[:\-]\s*<\/?(?:strong|b|span)?[^>]*>\s*([A-Za-zÅÄÖåäöÉé0-9\s'".\-]+)/i
+      /Spik(?:en|förslag)?\s*[:\-]\\s*<\/?(?:strong|b|span)?[^>]*>\s*([A-Za-zÅÄÖåäöÉé0-9\s'".\-]+)/i
     ) ||
     html.match(
       /Spik(?:en)?\s*<\/?(?:strong|b|span)[^>]*>\s*([A-Za-zÅÄÖåäöÉé0-9\s'".\-]+)/i
@@ -121,9 +103,6 @@ function extractWarningFromVass(html) {
   return { varning };
 }
 
-// =============================
-// 4. Fallback-block (så sidan alltid funkar)
-// =============================
 function fallbackSpik() {
   return "Hickovelocissimo";
 }
@@ -211,12 +190,7 @@ function buildBanaFallback() {
   };
 }
 
-// =============================
-// 5. Huvudflödet
-// =============================
 async function main() {
-  console.log("📡 Hämtar källor...");
-
   const travstuganHtml = await fetchText("https://travstugan.se/v85");
   const trav365Html = await fetchText(
     "https://www.aftonbladet.se/sportbladet/trav365/"
@@ -225,17 +199,12 @@ async function main() {
     "https://www.atg.se/V85/tips/vass-eller-kass-v85-lordag"
   );
 
-  // extrahera automatiska värden
   const { spik: stuganSpik, skrall: stuganSkrall } =
     extractFromTravstugan(travstuganHtml);
   const { spik: t365Spik, skrall: t365Skrall } =
     extractFromTrav365(trav365Html);
   const { varning: vassVarning } = extractWarningFromVass(vassHtml);
 
-  // välj spik / skräll / varning med prioritet:
-  // 1. OVERRIDE
-  // 2. automatisk hämtning
-  // 3. fallback
   const spikName =
     (OVERRIDE.spik && OVERRIDE.spik.trim()) ||
     stuganSpik ||
@@ -252,10 +221,6 @@ async function main() {
     (OVERRIDE.varning && OVERRIDE.varning.trim()) ||
     vassVarning ||
     fallbackVarning();
-
-  console.log("🔑 Spik vald:", spikName);
-  console.log("💣 Skräll vald:", skrallName);
-  console.log("⚠️  Varning vald:", varningName);
 
   const newData = {
     omgang: buildOmgInfo(),
@@ -290,11 +255,9 @@ async function main() {
 
   const outPath = path.join(__dirname, "public", "data.json");
   writeFileSync(outPath, JSON.stringify(newData, null, 2), "utf8");
-
-  console.log("✅ Ny data.json skapad i public/ (override/auto/fallback mix klar)");
+  console.log("✅ Ny data.json skapad i public/");
 }
 
 main().catch((err) => {
   console.error("❌ Något gick fel i update-data:", err);
 });
-
