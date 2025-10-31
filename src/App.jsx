@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./index.css";
 
-/* --- Källor för länkkorten --- */
 const TIP_SOURCES = [
   { name: "ATG V85 Tips", url: "https://www.atg.se/V85/tips", type: "gratis", logo: "./logos/atg.svg", note: "Officiella tips från ATG" },
   { name: "Travstugan", url: "https://travstugan.se/v85", type: "gratis", logo: "./logos/travstugan.svg", note: "Gratis analyser & spelförslag" },
@@ -59,7 +58,7 @@ export default function App() {
 
       {/* INNEHÅLL */}
       <main id="top" className="max-w-6xl mx-auto px-4 py-10 space-y-12">
-        {/* Hero-header för logga + tagline */}
+        {/* Hero */}
         <header className="flex flex-col items-center text-center gap-2">
           <img src="./omgangskollen-dark.png" alt="Omgångskollen" className="h-24 w-auto mb-2" />
           <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">Omgångskollen</h1>
@@ -155,4 +154,3 @@ export default function App() {
     </div>
   );
 }
-
