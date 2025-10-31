@@ -73,7 +73,7 @@ export default function App() {
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    fetch("/data.json")
+    fetch("./data.json")
       .then((res) => res.json())
       .then((json) => setData(json))
       .catch(() => setData(null));
