@@ -1,8 +1,6 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-
-// Viktigt: repo heter Travinfo -> Pages-url /Travinfo/
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 export default defineConfig({
-  base: '/Travinfo/',
   plugins: [react()],
-})
+  base: "./"
+});
