@@ -1,634 +1,215 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import "./index.css";
+
+const TIP_SOURCES = [
+  {
+    name: "ATG V85 Tips",
+    url: "https://www.atg.se/V85/tips",
+    type: "gratis",
+    logo: "/logos/atg.svg",
+    note: "Officiella tips från ATG"
+  },
+  {
+    name: "Travstugan",
+    url: "https://travstugan.se/v85",
+    type: "gratis",
+    logo: "/logos/travstugan.svg",
+    note: "Gratis analyser & spelförslag"
+  },
+  {
+    name: "Trav365 (Sportbladet)",
+    url: "https://www.aftonbladet.se/sportbladet/trav365/",
+    type: "gratis",
+    logo: "/logos/trav365.svg",
+    note: "Spik & miljonrensare"
+  },
+  {
+    name: "Thomas Uhrberg",
+    url: "https://www.facebook.com/thomasuhrberg",
+    type: "gratis",
+    logo: "/logos/uhrberg.svg",
+    note: "Tränar-/kusktankar inför omgången"
+  },
+  {
+    name: "Fem Tippar V85 (ATG)",
+    url: "https://www.atg.se/femtippar",
+    type: "gratis",
+    logo: "/logos/femtippar.svg",
+    note: "Paneltipset inför V85"
+  },
+  {
+    name: "Andelstorget",
+    url: "https://andelstorget.se/",
+    type: "premium",
+    logo: "/logos/andelstorget.svg",
+    note: "Andelar & premiumtips"
+  },
+  {
+    name: "Travronden",
+    url: "https://www.travronden.se/",
+    type: "premium",
+    logo: "/logos/travronden.svg",
+    note: "Premiumanalyser & system"
+  }
+];
+
+function InitialBadge({ name }) {
+  const letters = (name || "")
+    .split(" ")
+    .map((part) => part[0])
+    .filter(Boolean)
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+
+  return (
+    <div className="h-10 w-10 rounded-md bg-zinc-900/5 ring-1 ring-zinc-200 flex items-center justify-center font-semibold text-zinc-700">
+      {letters}
+    </div>
+  );
+}
 
 export default function App() {
-  // state där vi lagrar data.json-innehållet
   const [data, setData] = useState(null);
-  const [loadingRound, setLoadingRound] = useState(false);
 
-  // hämta data.json vid sidstart
   useEffect(() => {
-    fetch("./data.json")
+    fetch("/data.json")
       .then((res) => res.json())
-      .then((json) => {
-        setData(json);
-      })
-      .catch((err) => {
-        console.error("Kunde inte ladda data.json:", err);
-      });
+      .then((json) => setData(json))
+      .catch(() => setData(null));
   }, []);
 
-  // Om data inte hunnit laddas ännu.
   if (!data) {
     return (
-      <div className="min-h-screen bg-white text-gray-900 antialiased flex items-center justify-center">
-        <div className="text-center text-sm text-gray-600">
-          Laddar omgång...
-        </div>
+      <div className="min-h-screen flex items-center justify-center text-gray-700">
+        ⏳ Laddar omgång...
       </div>
     );
   }
 
-  // plocka ut delar ur data.json så koden blir snyggare
-  const { omgang, snabbfakta, nycklar, formbarometer, stallSnack, bana } = data;
-
   return (
-    <div className="min-h-screen bg-white text-gray-900 antialiased">
+    <main className="max-w-5xl mx-auto px-4 py-10 bg-white text-gray-900">
       {/* HEADER */}
-      <header className="border-b border-gray-200 bg-white sticky top-0 z-50 shadow-sm">
-        <div className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-green-200 via-green-50 to-white opacity-80 pointer-events-none" />
-
-          <div className="relative mx-auto max-w-7xl px-6 py-8 flex flex-col sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-start gap-5">
-              <div className="flex-shrink-0">
-                <img
-                  src="omgangskollen-dark.png?v=brand"
-                  alt="Omgångskollen"
-                  className="h-20 w-20 rounded-2xl border-2 border-green-600 object-contain bg-white shadow-md"
-                />
-              </div>
-
-              <div className="flex flex-col">
-                <span className="text-2xl font-extrabold text-gray-900 tracking-tight leading-tight">
-                  Omgångskollen
-                </span>
-                <span className="text-base text-gray-700 leading-tight">
-                  Allt inför veckans travomgång
-                </span>
-
-                <div className="mt-3 text-xs text-gray-700 bg-white/70 border border-green-600/30 rounded-lg px-3 py-2 shadow-sm flex flex-col sm:flex-row sm:items-center sm:gap-3">
-                  <div className="font-semibold text-gray-900">
-                    {omgang.bana}
-                  </div>
-                  <div className="text-gray-600">{omgang.datum}</div>
-                  <div className="text-gray-600">
-                    Spelstopp {omgang.spelstopp}
-                  </div>
-                  <div className="text-green-700 font-semibold">
-                    {omgang.jackpot} 💰
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-6 sm:mt-0 flex flex-col items-end gap-4">
-              <nav className="flex flex-wrap justify-end gap-4 text-sm font-medium text-gray-700">
-                <a href="#omgangen" className="hover:text-green-700 transition">
-                  🏇 Omgång
-                </a>
-                <a href="#nycklar" className="hover:text-green-700 transition">
-                  🧠 Spik/Skräll
-                </a>
-                <a href="#lankar" className="hover:text-green-700 transition">
-                  🔗 Tips
-                </a>
-                <a href="#fakta" className="hover:text-green-700 transition">
-                  📘 Fakta
-                </a>
-                <a href="#form" className="hover:text-green-700 transition">
-                  📈 Form
-                </a>
-                <a href="#stall" className="hover:text-green-700 transition">
-                  🎙️ Stall
-                </a>
-                <a href="#lage" className="hover:text-green-700 transition">
-                  🌦️ Bana
-                </a>
-                <a href="#live" className="hover:text-green-700 transition">
-                  📺 Live
-                </a>
-              </nav>
-
-              <a
-                href="https://www.atg.se/v85"
-                className="inline-flex items-center rounded-lg bg-green-600 text-white font-semibold text-xs px-3 py-2 shadow hover:bg-green-500 transition"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Spela V85 på ATG →
-              </a>
-            </div>
-          </div>
-        </div>
+      <header className="flex flex-col items-center mb-10">
+        <img
+          src="/omgangskollen-dark.png"
+          alt="Omgångskollen"
+          className="h-20 w-auto mb-4"
+        />
+        <h1 className="text-3xl font-bold tracking-tight">Omgångskollen</h1>
+        <p className="text-gray-600 text-sm">
+          Samlar all info och alla tips inför veckans V85
+        </p>
       </header>
 
-      {/* MAIN */}
-      <main className="flex flex-col">
+      {/* OMGÅNGSINFO */}
+      <section id="omgang" className="space-y-4 mb-10">
+        <h2 className="text-xl font-semibold">Veckans omgång</h2>
+        <p>
+          <strong>{data.omgang.bana}</strong> – {data.omgang.datum}
+        </p>
+        <p>{data.omgang.beskrivning}</p>
+        <p className="text-sm text-gray-600">{data.omgang.jackpot}</p>
+      </section>
 
-        {/* SEKTION 1: FUNKTIONSTEST + OMGÅNG */}
-        <section className="bg-white scroll-mt-32">
-          <div className="mx-auto max-w-7xl px-4 py-12 flex flex-col gap-12">
-            {/* test-knappen */}
-            <div className="border border-gray-200 rounded-xl p-4 bg-white shadow-sm max-w-md">
-              <div className="text-xs text-gray-500 font-mono uppercase tracking-wide mb-2">
-                🔍 Funktionstest
-              </div>
-              <p className="text-sm text-gray-700 leading-relaxed mb-4">
-                Tryck på knappen för att se att React är igång:
-              </p>
-              <TestButton
-                loadingRound={loadingRound}
-                setLoadingRound={setLoadingRound}
-              />
-            </div>
-
-            <section
-              id="omgangen"
-              className="grid gap-8 lg:grid-cols-[1fr,360px] lg:items-start scroll-mt-32"
+      {/* NYCKLAR */}
+      <section id="nycklar" className="space-y-4 mb-10">
+        <h2 className="text-xl font-semibold">Spikar & skrällar</h2>
+        <ul className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {Object.entries(data.nycklar).map(([key, val]) => (
+            <li
+              key={key}
+              className={`p-4 rounded-lg border ${
+                val.tone === "green"
+                  ? "bg-emerald-50 border-emerald-200"
+                  : val.tone === "yellow"
+                  ? "bg-amber-50 border-amber-200"
+                  : "bg-rose-50 border-rose-200"
+              }`}
             >
-              <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-                <div className="text-xs text-gray-500 font-mono uppercase tracking-wide mb-2 flex items-center gap-2">
-                  <span>🏇 Aktuell omgång</span>
-                  <span className="inline-flex items-center rounded-full bg-green-100 text-green-700 border border-green-300 px-2 py-0.5 text-[10px] font-semibold leading-none">
-                    Jackpot
-                  </span>
-                </div>
+              <h3 className="font-semibold text-lg">{val.titel}</h3>
+              <p className="text-sm">{val.text}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
 
-                <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900 leading-tight">
-                  V85 {omgang.bana} – {omgang.datum}
-                </h1>
+      {/* TIPS & ANALYSER */}
+      <section id="kallor" className="space-y-6 mb-10">
+        <header className="flex flex-col gap-2">
+          <div className="text-xs text-gray-500 font-mono uppercase tracking-wide">
+            Tips & analyser
+          </div>
+          <h2 className="text-xl font-semibold text-gray-900">
+            Källor – gratis & premium
+          </h2>
+          <p className="text-sm text-gray-600">
+            Samlingsplatsen för V85: officiella ATG-tips, gratiskällor och
+            utvalda premiumanalyser. Klicka för att läsa mer.
+          </p>
+        </header>
 
-                <div className="mt-4 flex flex-wrap items-center gap-4 text-sm">
-                  <span className="bg-gray-100 border border-gray-300 text-gray-800 rounded-md px-2 py-1 text-xs font-medium">
-                    Spelstopp {omgang.spelstopp}
-                  </span>
-                  <span className="text-green-600 font-semibold">
-                    {omgang.jackpot}
-                  </span>
-                </div>
-
-                <p className="mt-6 text-gray-700 leading-relaxed text-base max-w-xl">
-                  {omgang.beskrivning}
-                </p>
-              </div>
-
-              <aside className="space-y-4">
-                <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-4">
-                  <div className="text-xs text-gray-500 uppercase font-mono tracking-wide mb-2">
-                    Snabbfakta V85
-                  </div>
-                  <dl className="text-sm text-gray-800 space-y-2">
-                    <Row label="Antal lopp" value={snabbfakta.antalLopp} />
-                    <Row label="Radpris" value={snabbfakta.radpris} />
-                    <Row label="Utdelning" value={snabbfakta.utdelning} />
-                    <Row label="Spelstopp" value={snabbfakta.spelstopp} />
-                    <Row
-                      label="Återbetalning"
-                      value={snabbfakta.aterbetalning}
+        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {TIP_SOURCES.map((src) => (
+            <li key={src.name}>
+              <a
+                href={src.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group block rounded-xl border border-zinc-200 hover:border-zinc-300 bg-white p-4 shadow-sm hover:shadow transition"
+              >
+                <div className="flex items-center gap-3">
+                  {src.logo ? (
+                    <img
+                      src={src.logo}
+                      alt={src.name}
+                      className="h-10 w-10 rounded-md object-contain ring-1 ring-zinc-200 bg-white"
                     />
-                  </dl>
+                  ) : (
+                    <InitialBadge name={src.name} />
+                  )}
+
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <h3 className="truncate font-medium text-gray-900">
+                        {src.name}
+                      </h3>
+                      <span
+                        className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] ring-1 ${
+                          src.type === "gratis"
+                            ? "bg-emerald-50 text-emerald-700 ring-emerald-200"
+                            : "bg-indigo-50 text-indigo-700 ring-indigo-200"
+                        }`}
+                      >
+                        {src.type === "gratis" ? "Gratis" : "Premium"}
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-600 mt-0.5 line-clamp-1">
+                      {src.note}
+                    </p>
+                  </div>
                 </div>
-              </aside>
-            </section>
-          </div>
-        </section>
+                <div className="mt-3 flex items-center justify-between text-xs text-gray-500">
+                  <span>Öppnas i ny flik</span>
+                  <span className="opacity-0 group-hover:opacity-100 transition">
+                    ⟶
+                  </span>
+                </div>
+              </a>
+            </li>
+          ))}
+        </ul>
 
-        {/* SEKTION 2: SPIK / SKRÄLL / VARNINGAR */}
-        <section
-          className="bg-gray-50 border-y border-gray-200 scroll-mt-32"
-          id="nycklar"
-        >
-          <div className="mx-auto max-w-7xl px-4 py-12 space-y-6">
-            <header className="space-y-2">
-              <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
-                <span>🧠 Spik / Skräll / Varningar</span>
-              </h2>
-              <p className="text-sm text-gray-600 max-w-2xl">
-                Snabbt bordssnack innan du bygger kupongen. Dessa är
-                sammanfattningar – läs alltid källan innan du spikar tungt.
-              </p>
-            </header>
-
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              <HighlightCard
-                badge="Spik-idé"
-                title={nycklar.spik.titel}
-                desc={nycklar.spik.text}
-                tone={nycklar.spik.tone}
-              />
-              <HighlightCard
-                badge="Skrällvarning"
-                title={nycklar.skrall.titel}
-                desc={nycklar.skrall.text}
-                tone={nycklar.skrall.tone}
-              />
-              <HighlightCard
-                badge="Varning på favorit"
-                title={nycklar.varning.titel}
-                desc={nycklar.varning.text}
-                tone={nycklar.varning.tone}
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* SEKTION 3: TIPS & LÄNKAR */}
-        <section className="bg-white scroll-mt-32" id="lankar">
-          <div className="mx-auto max-w-7xl px-4 py-12 space-y-10">
-            <header className="space-y-2">
-              <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
-                <span>🔗 Tips & länkar</span>
-              </h2>
-              <p className="text-sm text-gray-600 max-w-2xl">
-                Startlistor, rank, systemförslag och andelar. Allt gratis.
-              </p>
-            </header>
-
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
-              <LinkCard
-                title="ATG V85"
-                desc="Officiella startlistor, streckfördelning och speltyper."
-                href="https://www.atg.se/v85"
-              />
-              <LinkCard
-                title="Travstugan"
-                desc="Gratis system och andelar inför V85."
-                href="https://travstugan.se/v85"
-              />
-              <LinkCard
-                title="Rekatochklart"
-                desc="Rank och värdehästar inför omgången."
-                href="https://www.rekatochklart.com/trav/v85-tips/"
-              />
-              <LinkCard
-                title="Trav365"
-                desc="Spikar, skrällar och kuskintervjuer."
-                href="https://www.aftonbladet.se/sportbladet/trav365/"
-              />
-            </div>
-
-            <div className="border-t border-gray-200 pt-8">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <span>🎥 Gratis analyser & experter</span>
-              </h3>
-
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                <LinkCard
-                  title="🎥 Björnkollen – Björn Goop"
-                  desc="Björn Goops genomgång av veckans V85-omgång, direkt från stallet."
-                  href="https://www.atg.se/play/video/2367948869449/2025-10-23_bjornkollenv85lordagjagersro"
-                />
-                <LinkCard
-                  title="🎙️ Vass eller Kass"
-                  desc="ATG-experternas video: vilka favoriter är spelbara och vilka är överspelade?"
-                  href="https://www.atg.se/V85/tips/vass-eller-kass-v85-lordag"
-                />
-                <LinkCard
-                  title="📊 Rekatochklart"
-                  desc="Gratis analyser, rank och värdebedömning inför V85."
-                  href="https://www.rekatochklart.com/trav/v85-tips/"
-                />
-                <LinkCard
-                  title="📝 Travstugan"
-                  desc="System, andelar och expertkommentarer inför V85."
-                  href="https://travstugan.se/v85"
-                />
-                <LinkCard
-                  title="💡 GratisTravtips.se"
-                  desc="Ranking, statistik och systemförslag – helt gratis."
-                  href="https://www.gratistravtips.se/v85"
-                />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* SEKTION 4: SÅ FUNKAR V85 */}
-        <section
-          className="bg-gray-50 border-y border-gray-200 scroll-mt-32"
-          id="fakta"
-        >
-          <div className="mx-auto max-w-7xl px-4 py-12 space-y-6">
-            <header className="space-y-2">
-              <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
-                <span>📘 Så funkar V85</span>
-              </h2>
-              <p className="text-sm text-gray-600 max-w-2xl">
-                Ny spelform med åtta lopp, fler vinstchanser och möjlighet att
-                sänka din insats men ändå vara med och tävla om hela potten.
-              </p>
-            </header>
-
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              <FactCard
-                title="Radpris"
-                text="0,50 kr per rad som standard."
-              />
-              <FactCard
-                title="Utdelning"
-                text="Vinster delas ut på 8, 7, 6 och 5 rätt. Alltså fler sätt att få betalt."
-              />
-              <FactCard
-                title="Jackpot"
-                text="Om ingen får alla rätt – eller om en vinstnivå hamnar under 5 kr – kan pengarna gå vidare som jackpot."
-              />
-              <FactCard
-                title="Sänkt insats (30% / 50% / 70%)"
-                text="Du kan välja lägre insats på ett matematiskt system med upp till 2 000 rader. Du betalar mindre – och din utdelning blir samma procent av ordinarie utdelning. Exempel: om ordinarie utdelning är 1 000 000 kr och du spelat 50%, då får du 500 000 kr."
-              />
-              <FactCard
-                title="Spelstopp"
-                text={`Lördagar kring ${omgang.spelstopp}. Efter spelstopp är kupongen låst.`}
-              />
-              <FactCard
-                title="Antal lopp"
-                text="Det är 8 avdelningar istället för 7 som i V75. Du måste hitta vinnaren i varje avdelning."
-              />
-            </div>
-
-            <div className="rounded-lg border border-gray-300 bg-white shadow-sm p-4 text-[11px] text-gray-600 leading-relaxed max-w-2xl">
-              Spela ansvarsfullt. Sätt en budget innan du spelar. 18+.
-              Stödlinjen: 020-81 91 00.
-            </div>
-          </div>
-        </section>
-
-        {/* SEKTION 5: FORMBAROMETER */}
-        <section className="bg-white scroll-mt-32" id="form">
-          <div className="mx-auto max-w-7xl px-4 py-12 space-y-6">
-            <header className="space-y-2">
-              <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
-                <span>📈 Formbarometer</span>
-              </h2>
-              <p className="text-sm text-gray-600 max-w-2xl">
-                Hetaste hästarna inför omgången. Formraden = senaste tre lopp.
-                Lågt streck + bra form = spelvärde.
-              </p>
-            </header>
-
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {formbarometer.map((horse, idx) => (
-                <FormCard
-                  key={idx}
-                  name={horse.name}
-                  avd={horse.avd}
-                  form={horse.form}
-                  streck={horse.streck}
-                  signal={horse.signal}
-                  color={horse.color}
-                />
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* SEKTION 6: STALL / KUSKSNACK */}
-        <section
-          className="bg-gray-50 border-y border-gray-200 scroll-mt-32"
-          id="stall"
-        >
-          <div className="mx-auto max-w-7xl px-4 py-12 space-y-6">
-            <header className="space-y-2">
-              <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
-                <span>🎙️ Stall / kusksnack</span>
-              </h2>
-              <p className="text-sm text-gray-600 max-w-2xl">
-                Signal om läget: toppad för seger, eller mest ett genomkörare?
-              </p>
-            </header>
-
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {stallSnack.map((item, idx) => (
-                <StallCard
-                  key={idx}
-                  name={item.name}
-                  avd={item.avd}
-                  quote={item.quote}
-                  signal={item.signal}
-                  color={item.color}
-                />
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* SEKTION 7: BANFÖRUTSÄTTNINGAR */}
-        <section className="bg-white scroll-mt-32" id="lage">
-          <div className="mx-auto max-w-7xl px-4 py-12 space-y-6">
-            <header className="space-y-2">
-              <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
-                <span>🌦️ Banförutsättningar & värdeläge</span>
-              </h2>
-              <p className="text-sm text-gray-600 max-w-2xl">
-                Underlag, tempo och jackpotläge påverkar hur du ska spela.
-              </p>
-            </header>
-
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              <FactCard
-                title="Bana / Underlag"
-                text={bana.underlag}
-              />
-              <FactCard
-                title="Spelvärde"
-                text={bana.spelvarde}
-              />
-              <FactCard
-                title="Snabbcheck"
-                text={bana.snabbcheck}
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* SEKTION 8: LIVE */}
-        <section
-          className="bg-gray-50 border-y border-gray-200 scroll-mt-32"
-          id="live"
-        >
-          <div className="mx-auto max-w-7xl px-4 py-12 space-y-6">
-            <header className="space-y-2">
-              <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
-                <span>📺 Följ omgången live</span>
-              </h2>
-              <p className="text-sm text-gray-600 max-w-2xl">
-                Värmningar, strykningar, balansändringar och chockskrällar.
-              </p>
-            </header>
-
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              <LinkCard
-                title="ATG Live"
-                desc="Liverace och intervjuer direkt från banan."
-                href="https://www.atg.se/play"
-              />
-              <LinkCard
-                title="Travstugan Live"
-                desc="Uppdateringar om spikar och skrällar under eftermiddagen."
-                href="https://travstugan.se/v85"
-              />
-              <LinkCard
-                title="Trav365 Live"
-                desc="Minut-för-minut och citat från stall och kuskar."
-                href="https://www.aftonbladet.se/sportbladet/trav365/"
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* FOOTER */}
-        <footer className="bg-white text-xs text-gray-500 leading-relaxed">
-          <div className="mx-auto max-w-7xl px-4 py-12 border-t border-gray-200 flex flex-col gap-6 sm:flex-row sm:justify-between">
-            <div className="max-w-sm">
-              <div className="font-semibold text-gray-900">
-                Omgångskollen
-              </div>
-              <div className="text-gray-500">
-                Ett samlat läge för travspelare. Alla tips och källor på ett
-                ställe.
-              </div>
-              <div className="mt-3 text-[10px] text-gray-400">
-                Nu även på omgångskollen.se
-              </div>
-            </div>
-
-            <div className="max-w-md text-[11px] text-gray-500">
-              Omgångskollen äger inte eller driver inte ATG® eller deras
-              produkter. All extern analys, rank och spelinformation tillhör
-              respektive källa (ATG, Travstugan, Rekatochklart, Trav365,
-              Björnkollen m.fl.). Spela ansvarsfullt. 18+ Stödlinjen:
-              020-81 91 00.
-            </div>
-          </div>
-        </footer>
-      </main>
-    </div>
-  );
-}
-
-/* --------- små komponenter --------- */
-
-function Row({ label, value }) {
-  return (
-    <div className="flex justify-between gap-4 text-sm">
-      <dt className="text-gray-500">{label}</dt>
-      <dd className="font-medium text-gray-900">{value}</dd>
-    </div>
-  );
-}
-
-function TestButton({ loadingRound, setLoadingRound }) {
-  return (
-    <button
-      className="rounded-lg bg-green-600 text-white font-semibold text-sm px-4 py-2 hover:bg-green-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
-      disabled={loadingRound}
-      onClick={() => {
-        setLoadingRound(true);
-        setTimeout(() => {
-          setLoadingRound(false);
-          alert("Ny omgång laddas… (demo)");
-        }, 800);
-      }}
-    >
-      {loadingRound ? "Jobbar..." : "Ladda nästa omgång"}
-    </button>
-  );
-}
-
-function HighlightCard({ badge, title, desc, tone }) {
-  const toneMap = {
-    green: "text-green-700 bg-green-50 border-green-300",
-    yellow: "text-yellow-700 bg-yellow-50 border-yellow-300",
-    red: "text-red-700 bg-red-50 border-red-300",
-  };
-
-  return (
-    <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-5 flex flex-col hover:shadow-md hover:border-green-400 transition">
-      <span
-        className={`inline-flex w-fit items-center rounded-md px-2 py-1 text-[10px] font-semibold uppercase tracking-wide border ${toneMap[tone]}`}
-      >
-        {badge}
-      </span>
-      <div className="mt-3 text-lg font-semibold text-gray-900">{title}</div>
-      <p className="mt-2 text-sm text-gray-700 flex-1">{desc}</p>
-    </div>
-  );
-}
-
-function LinkCard({ title, desc, href }) {
-  return (
-    <a
-      className="group rounded-xl border border-gray-200 bg-white shadow-sm p-5 flex flex-col hover:shadow-md hover:border-green-400 transition"
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      <div className="text-base font-semibold text-gray-900 group-hover:text-green-700 transition">
-        {title}
-      </div>
-      <p className="mt-2 text-sm text-gray-700 flex-1">{desc}</p>
-      <div className="mt-4 inline-flex items-center text-xs font-semibold text-gray-800 group-hover:text-green-700 transition">
-        Gå till sida →
-      </div>
-    </a>
-  );
-}
-
-function FactCard({ title, text }) {
-  return (
-    <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-5 flex flex-col hover:shadow-md hover:border-green-400 transition">
-      <div className="text-sm font-semibold text-gray-900">{title}</div>
-      <p className="mt-2 text-sm text-gray-700 leading-relaxed flex-1">
-        {text}
-      </p>
-    </div>
-  );
-}
-
-function FormCard({ name, avd, form, streck, signal, color }) {
-  const colorMap = {
-    green: "text-green-600",
-    yellow: "text-yellow-600",
-    red: "text-red-600",
-  };
-
-  return (
-    <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-5 flex flex-col hover:shadow-md hover:border-green-400 transition">
-      <div className="text-sm font-semibold text-gray-900">{name}</div>
-      <div className="text-xs text-gray-500">Avd {avd}</div>
-
-      <dl className="mt-3 text-sm text-gray-700 space-y-1">
-        <div className="flex justify-between">
-          <dt className="text-gray-500">Form</dt>
-          <dd className="font-medium text-gray-900">{form}</dd>
+        <div className="mt-2 text-[10px] text-gray-500">
+          Tipsinnehåll tillhör respektive källa. Omgångskollen aggregerar och
+          länkar vidare.
         </div>
-        <div className="flex justify-between">
-          <dt className="text-gray-500">Streck</dt>
-          <dd className="font-medium text-gray-900">{streck}</dd>
-        </div>
-      </dl>
+      </section>
 
-      <div
-        className={`mt-4 text-[10px] font-semibold uppercase tracking-wide ${colorMap[color]}`}
-      >
-        {signal}
-      </div>
-    </div>
+      {/* FOOTER */}
+      <footer className="border-t border-gray-200 pt-6 text-center text-xs text-gray-500">
+        Spela ansvarsfullt. 18+ Stödlinjen: 020-81 91 00.
+      </footer>
+    </main>
   );
 }
-
-function StallCard({ name, avd, quote, signal, color }) {
-  const colorMap = {
-    green: "text-green-600",
-    yellow: "text-yellow-600",
-    red: "text-red-600",
-  };
-
-  return (
-    <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-5 flex flex-col hover:shadow-md hover:border-green-400 transition">
-      <div className="flex items-baseline justify-between">
-        <div className="text-sm font-semibold text-gray-900">{name}</div>
-        <div className="text-[10px] text-gray-500">Avd {avd}</div>
-      </div>
-
-      <p className="mt-3 text-sm text-gray-700 flex-1">"{quote}"</p>
-
-      <div
-        className={`mt-4 text-[10px] font-semibold uppercase tracking-wide ${colorMap[color]}`}
-      >
-        Signal: {signal}
-      </div>
-    </div>
-  );
-}
-
