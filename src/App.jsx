@@ -6,49 +6,49 @@ const TIP_SOURCES = [
     name: "ATG V85 Tips",
     url: "https://www.atg.se/V85/tips",
     type: "gratis",
-    logo: "/logos/atg.svg",
+    logo: "./logos/atg.svg",
     note: "Officiella tips från ATG"
   },
   {
     name: "Travstugan",
     url: "https://travstugan.se/v85",
     type: "gratis",
-    logo: "/logos/travstugan.svg",
+    logo: "./logos/travstugan.svg",
     note: "Gratis analyser & spelförslag"
   },
   {
     name: "Trav365 (Sportbladet)",
     url: "https://www.aftonbladet.se/sportbladet/trav365/",
     type: "gratis",
-    logo: "/logos/trav365.svg",
+    logo: "./logos/trav365.svg",
     note: "Spik & miljonrensare"
   },
   {
     name: "Thomas Uhrberg",
     url: "https://www.facebook.com/thomasuhrberg",
     type: "gratis",
-    logo: "/logos/uhrberg.svg",
+    logo: "./logos/uhrberg.svg",
     note: "Tränar-/kusktankar inför omgången"
   },
   {
     name: "Fem Tippar V85 (ATG)",
     url: "https://www.atg.se/femtippar",
     type: "gratis",
-    logo: "/logos/femtippar.svg",
+    logo: "./logos/femtippar.svg",
     note: "Paneltipset inför V85"
   },
   {
     name: "Andelstorget",
     url: "https://andelstorget.se/",
     type: "premium",
-    logo: "/logos/andelstorget.svg",
+    logo: "./logos/andelstorget.svg",
     note: "Andelar & premiumtips"
   },
   {
     name: "Travronden",
     url: "https://www.travronden.se/",
     type: "premium",
-    logo: "/logos/travronden.svg",
+    logo: "./logos/travronden.svg",
     note: "Premiumanalyser & system"
   }
 ];
@@ -92,7 +92,7 @@ export default function App() {
       {/* HEADER */}
       <header className="flex flex-col items-center mb-10">
         <img
-          src="/omgangskollen-dark.png"
+          src="./omgangskollen-dark.png"
           alt="Omgångskollen"
           className="h-20 w-auto mb-4"
         />
