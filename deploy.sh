@@ -22,19 +22,19 @@ mkdir docs
 echo "⬇️ Steg 4: Kopierar nya builden till docs…"
 cp -R dist/* docs/
 
+
 echo "🔁 Steg 5: Lägger till ändringarna i git…"
 git add docs --force
 git add public/data.json
-git add deploy.sh
-git add update-data.js
-git add package.json
-git add src/App.jsx
+git add deploy.sh update-data.js package.json src/App.jsx
+git add index.html vite.config.js   # <-- NYTT
 
 echo "🖊 Steg 6: Commitar…"
 git commit -m "Auto: uppdaterad omgång + publicerade docs" || echo "ℹ️ Inget att committa (ingen ändring)"
 
 echo "📤 Steg 7: Pushar till GitHub…"
 git push origin main
+
 
 echo "✅ Färdigt! Nya omgången borde nu ligga live. Kolla omgångskollen.se 🐎"
 
