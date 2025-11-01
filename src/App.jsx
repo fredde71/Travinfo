@@ -12,8 +12,7 @@ const TIP_SOURCES = [
 ];
 
 function InitialBadge({ name }) {
-  const letters = (name || "")
-    .split(" ").map(p => p[0]).filter(Boolean).slice(0,2).join("").toUpperCase();
+  const letters = (name || "").split(" ").map(p => p[0]).filter(Boolean).slice(0,2).join("").toUpperCase();
   return (
     <div className="h-10 w-10 rounded-md bg-zinc-900/5 ring-1 ring-zinc-200 flex items-center justify-center font-semibold text-zinc-700">
       {letters}
@@ -41,7 +40,7 @@ export default function App() {
 
   return (
     <div className="bg-white text-gray-900">
-      {/* TOPP-NAV */}
+      {/* TOPP-NAV med ikoner */}
       <div className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-gray-200">
         <nav className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
           <a href="#top" className="flex items-center gap-2">
@@ -49,9 +48,9 @@ export default function App() {
             <span className="font-semibold tracking-tight">Omgångskollen</span>
           </a>
           <ul className="hidden sm:flex items-center gap-4 text-sm">
-            <li><a className="hover:text-gray-900 text-gray-600" href="#omgang">Omgång</a></li>
-            <li><a className="hover:text-gray-900 text-gray-600" href="#nycklar">Spikar/Skrällar</a></li>
-            <li><a className="hover:text-gray-900 text-gray-600" href="#kallor">Tips</a></li>
+            <li><a className="hover:text-gray-900 text-gray-600 flex items-center gap-1" href="#omgang">🏁 <span>Omgång</span></a></li>
+            <li><a className="hover:text-gray-900 text-gray-600 flex items-center gap-1" href="#nycklar">🎯 <span>Spikar/Skrällar</span></a></li>
+            <li><a className="hover:text-gray-900 text-gray-600 flex items-center gap-1" href="#kallor">🧩 <span>Tips</span></a></li>
           </ul>
         </nav>
       </div>
@@ -66,7 +65,7 @@ export default function App() {
         </header>
 
         {/* OMGÅNGSINFO */}
-        <section id="omgang" className="space-y-4">
+        <section id="omgang" className="space-y-4 scroll-mt-20">
           <div className="text-xs text-gray-500 font-mono uppercase tracking-wide">Veckans omgång</div>
           <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
             <h2 className="text-xl font-semibold">{data.omgang.bana} – {data.omgang.datum}</h2>
@@ -76,7 +75,7 @@ export default function App() {
         </section>
 
         {/* NYCKLAR */}
-        <section id="nycklar" className="space-y-4">
+        <section id="nycklar" className="space-y-4 scroll-mt-20">
           <div className="text-xs text-gray-500 font-mono uppercase tracking-wide">Spikar & skrällar</div>
           <ul className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {Object.entries(data.nycklar).map(([key, val]) => (
@@ -96,7 +95,7 @@ export default function App() {
         </section>
 
         {/* TIPS & ANALYSER */}
-        <section id="kallor" className="space-y-6">
+        <section id="kallor" className="space-y-6 scroll-mt-20">
           <div className="text-xs text-gray-500 font-mono uppercase tracking-wide">Tips & analyser</div>
           <h2 className="text-xl font-semibold">Källor – gratis & premium</h2>
           <p className="text-sm text-gray-600">
