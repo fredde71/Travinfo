@@ -40,14 +40,14 @@ export default function App() {
 
   return (
     <div className="bg-white text-gray-900">
-      {/* TOPP-NAV med ikoner */}
+      {/* TOPP-NAV (alltid synlig) */}
       <div className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-gray-200">
         <nav className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
           <a href="#top" className="flex items-center gap-2">
-            <img src="./omgangskollen-dark.png" alt="Omgångskollen" className="h-6 w-auto rounded-md" />
+            <img src="./omgangskollen-dark.png" alt="Omgångskollen" className="h-7 w-auto rounded-md" />
             <span className="font-semibold tracking-tight">Omgångskollen</span>
           </a>
-          <ul className="hidden sm:flex items-center gap-4 text-sm">
+          <ul className="flex items-center gap-4 text-sm">
             <li><a className="hover:text-gray-900 text-gray-600 flex items-center gap-1" href="#omgang">🏁 <span>Omgång</span></a></li>
             <li><a className="hover:text-gray-900 text-gray-600 flex items-center gap-1" href="#nycklar">🎯 <span>Spikar/Skrällar</span></a></li>
             <li><a className="hover:text-gray-900 text-gray-600 flex items-center gap-1" href="#kallor">🧩 <span>Tips</span></a></li>
@@ -128,7 +128,7 @@ export default function App() {
                           {src.type === "gratis" ? "Gratis" : "Premium"}
                         </span>
                       </div>
-                      <p className="text-xs text-gray-600 mt-0.5 line-clamp-1">{src.note}</p>
+                      <p className="text-xs text-gray-600 mt-0.5">{src.note}</p>
                     </div>
                   </div>
                   <div className="mt-3 flex items-center justify-between text-xs text-gray-500">
@@ -153,3 +153,4 @@ export default function App() {
     </div>
   );
 }
+
