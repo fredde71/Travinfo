@@ -6,10 +6,11 @@
     "dev": "vite --strictPort --port 5173",
     "build": "vite build",
     "preview": "vite preview",
-"update-data": "node update-data.js",
-"deploy": "./deploy.sh"
+    "update-data": "node update-data.js",
+    "deploy": "./deploy.sh"
   },
   "dependencies": {
+    "node-fetch": "^3.3.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
