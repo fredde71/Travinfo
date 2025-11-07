@@ -421,7 +421,6 @@ function App() {
               <p>
                 V85 är ATG:s lördagsflaggskepp. Spelet går ut på att du ska
                 hitta vinnarna i <span className="font-semibold">åtta lopp</span>.
-                Du vinner på 8, 7, 6 eller 5 rätt.
               </p>
               <p>
                 V85 är ett poolspel – alla insatser hamnar i en gemensam pott
@@ -440,8 +439,7 @@ function App() {
                 <li>Vinstnivåer: 8, 7, 6 och 5 rätt.</li>
                 <li>Radpris: oftast 0,50 kr per rad.</li>
                 <li>
-                  Reducerad insats: du kan spela för t.ex. 30–70 % av radpriset,
-                  med motsvarande andel av utdelningen.
+                  Reducerad insats: du kan spela för t.ex. 30–70 % av radpriset.
                 </li>
                 <li>
                   Kupongen lämnas in via ATG.se, appen eller ATG Tillsammans.
