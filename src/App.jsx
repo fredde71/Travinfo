@@ -106,6 +106,7 @@ function App() {
 
 
 
+
       <main id="top" className="max-w-6xl mx-auto px-4 py-8 space-y-10">
         <section id="hero" className="scroll-mt-24 grid md:grid-cols-[1.6fr,1fr] gap-6 items-center">
           <div className="space-y-3">
