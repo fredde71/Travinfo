@@ -1,33 +1,71 @@
 {
   "omgang": {
-    "bana": "Jägersro / Solvalla",
-    "datum": "onsdag 5 november 2025",
-    "spelstopp": "16:20",
-    "jackpot": "Ingen jackpotinfo",
-    "beskrivning": "Automatisk uppdatering via script."
-  },
-  "snabbfakta": {
-    "antalLopp": "8",
-    "radpris": "0,50 kr / rad",
-    "utdelning": "8 / 7 / 6 / 5 rätt",
-    "spelstopp": "16:20",
-    "aterbetalning": "65%"
+    "spel": "V85",
+    "datum": "2025-11-08",
+    "datumText": "Lördag 8 november",
+    "bana": "Bergsåker",
+    "jackpot": "Jackpott – 50 miljoner",
+    "startTid": "2025-11-08T18:30:00+01:00",
+    "banprofil": "Medelstor bana på 1000 meter med kort upplopp (184 meter). Ofta vinterbana där underlaget kan bli utslagsgivande och ge skrällar.",
+    "vader": "Kyligt novemberväder, risk för minusgrader på kvällen. Håll koll på värmningar, balans och broddinfo."
   },
   "nycklar": {
     "spik": {
-      "titel": "Ej uppdaterad",
-      "text": "Väntar på analys.",
-      "tone": "gray"
+      "titel": "Veckans bästa spik",
+      "text": "Spiken uppdateras under veckan när värmningar, balansändringar och streckfördelning klarnat.",
+      "tone": "green",
+      "race": "V85-?"
     },
     "skrall": {
-      "titel": "Ej uppdaterad",
-      "text": "Väntar på analys.",
-      "tone": "gray"
+      "titel": "Skräll att bygga systemet runt",
+      "text": "Vi jagar en häst under 10% som kan spräcka kupongerna. Uppdateras när vi ser hur strecken sätter sig.",
+      "tone": "yellow",
+      "race": "V85-?"
     },
     "varning": {
-      "titel": "Ej uppdaterad",
-      "text": "Väntar på analys.",
-      "tone": "gray"
+      "titel": "Varning för överstreckad favorit",
+      "text": "Här varnar vi för hästar som är för hårt spelade jämfört med vinstchansen.",
+      "tone": "red",
+      "race": "V85-?"
     }
+  },
+  "veckansKupong": {
+    "titel": "Veckans kupong – 100 kr",
+    "beskrivning": "Ett slimmat system för 100 kr där vi kombinerar trygga spikar med smarta skrällås. Perfekt att spela själv eller ihop med vänner.",
+    "atgUrl": "https://www.atg.se/V85"
+  },
+  "lankar": {
+    "gratisTips": [
+      {
+        "namn": "Fem tippar V85",
+        "url": "https://www.atg.se/V85/tips/fem-tippar-v85"
+      },
+      {
+        "namn": "V85 med Fernlund",
+        "url": "https://www.atg.se/V85/tips/v85-med-fernlund-lordag"
+      },
+      {
+        "namn": "ATG:s V85-analys Bergsåker",
+        "url": "https://www.atg.se/V85/tips/251104-lordag-811-tips-till-v85-pa-bergsaker"
+      },
+      {
+        "namn": "Korsdragaren – Vi Tippa V85",
+        "url": "https://www.atg.se/V85/tips/korsdragaren-fran-vi-tippa-v85"
+      }
+    ],
+    "programPdf": {
+      "namn": "Gratis program till Bergsåker V85",
+      "url": "https://assets.ctfassets.net/hkip2osr81id/39uvrIW4wvyccGJij4j7X7/e48d16ad41ce42b912807ef8195f21db/251108_BERGSAKER_GP_V85_1.pdf"
+    },
+    "tillsammans": {
+      "namn": "Spela med Omgångskollen – Team Wästman",
+      "url": "https://www.atg.se/tillsammans"
+    },
+    "profiler": [
+      {
+        "namn": "Thomas Uhrberg",
+        "url": "https://thomasuhrberg.se/"
+      }
+    ]
   }
 }
