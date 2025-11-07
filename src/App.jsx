@@ -1,588 +1,563 @@
 import { useEffect, useState } from "react";
 
+function formatDate(dateStr) {
+  if (!dateStr) return "";
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("sv-SE", {
+    weekday: "short",
+    day: "numeric",
+    month: "short"
+  });
+}
+
+function useCountdown(targetIso) {
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    if (!targetIso) return;
+    const id = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(id);
+  }, [targetIso]);
+  if (!targetIso) return null;
+  const target = new Date(targetIso);
+  const diff = target.getTime() - now.getTime();
+  if (diff <= 0) {
+    return {
+      finished: true,
+      days: 0,
+      hours: 0,
+      minutes: 0,
+      seconds: 0
+    };
+  }
+  const totalSeconds = Math.floor(diff / 1000);
+  const days = Math.floor(totalSeconds / (24 * 3600));
+  const hours = Math.floor((totalSeconds % (24 * 3600)) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  return {
+    finished: false,
+    days,
+    hours,
+    minutes,
+    seconds
+  };
+}
+
 function App() {
   const [data, setData] = useState(null);
-  const [error, setError] = useState("");
-  const [weather, setWeather] = useState(null);
-  const [weatherLoading, setWeatherLoading] = useState(true);
+  const [status, setStatus] = useState("loading");
 
   useEffect(() => {
     fetch("./data.json")
-      .then((res) => {
-        if (!res.ok) throw new Error("Kunde inte läsa data.json");
-        return res.json();
-      })
+      .then((res) => res.json())
       .then((json) => {
         setData(json);
-        setError("");
-        
-        // Hämta väder för banan
-        const banaNamn = json.omgang?.bana || json.bana || json?.track;
-        if (banaNamn) {
-          fetchWeather(banaNamn);
-        } else {
-          setWeatherLoading(false);
-        }
+        setStatus("ready");
       })
-      .catch((err) => {
-        console.error(err);
-        setError("Kunde inte ladda veckans omgång. Testa att köra update-scriptet igen.");
-        setWeatherLoading(false);
+      .catch(() => {
+        setStatus("error");
       });
   }, []);
 
-  const fetchWeather = async (bana) => {
-    try {
-      // Mapping av travbanor till städer
-      const banaToCity = {
-        "Solvalla": "Stockholm",
-        "Åby": "Mölndal",
-        "Jägersro": "Malmö",
-        "Mantorp": "Mjölby",
-        "Bergsåker": "Sundsvall",
-        "Boden": "Boden",
-        "Färjestad": "Karlstad",
-        "Hagmyren": "Bollnäs",
-        "Halmstad": "Halmstad",
-        "Kalmar": "Kalmar",
-        "Karlshamn": "Karlshamn",
-        "Axevalla": "Skara",
-        "Dannero": "Kristianstad",
-        "Gävle": "Gävle",
-        "Romme": "Borlänge",
-        "Östersund": "Östersund",
-        "Eskilstuna": "Eskilstuna",
-        "Örebro": "Örebro",
-        "Rättvik": "Rättvik",
-        "Umåker": "Umeå"
-      };
+  const countdown = useCountdown(data?.omgang?.startTid);
 
-      const stad = banaToCity[bana] || bana;
-      
-      // Open-Meteo API (gratis, ingen API-nyckel krävs)
-      const geoResponse = await fetch(
-        `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(stad)}&count=1&language=sv&format=json`
-      );
-      const geoData = await geoResponse.json();
-      
-      if (geoData.results && geoData.results.length > 0) {
-        const { latitude, longitude, name } = geoData.results[0];
-        
-        const weatherResponse = await fetch(
-          `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,precipitation,weather_code,wind_speed_10m,wind_direction_10m&timezone=Europe/Stockholm`
-        );
-        const weatherData = await weatherResponse.json();
-        
-        setWeather({
-          city: name,
-          temperature: Math.round(weatherData.current.temperature_2m),
-          humidity: weatherData.current.relative_humidity_2m,
-          precipitation: weatherData.current.precipitation,
-          windSpeed: Math.round(weatherData.current.wind_speed_10m),
-          windDirection: weatherData.current.wind_direction_10m,
-          weatherCode: weatherData.current.weather_code
-        });
-      }
-      setWeatherLoading(false);
-    } catch (err) {
-      console.error("Kunde inte hämta väder:", err);
-      setWeatherLoading(false);
-    }
-  };
+  function scrollToSection(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const headerOffset = 80;
+    const rect = el.getBoundingClientRect();
+    const y = rect.top + window.scrollY - headerOffset;
+    window.scrollTo({
+      top: y,
+      behavior: "smooth"
+    });
+  }
 
-  const getWeatherEmoji = (code) => {
-    if (code === 0) return "☀️";
-    if (code <= 3) return "⛅";
-    if (code <= 48) return "🌫️";
-    if (code <= 67) return "🌧️";
-    if (code <= 77) return "🌨️";
-    if (code <= 82) return "🌧️";
-    if (code <= 86) return "🌨️";
-    return "🌦️";
-  };
-
-  const getWeatherDescription = (code) => {
-    if (code === 0) return "Klart";
-    if (code <= 3) return "Delvis molnigt";
-    if (code <= 48) return "Dimma";
-    if (code <= 67) return "Regn";
-    if (code <= 77) return "Snö";
-    if (code <= 82) return "Regnskurar";
-    if (code <= 86) return "Snöbyar";
-    return "Blandad väderlek";
-  };
-
-  const getWindDirection = (degrees) => {
-    const directions = ['N', 'NÖ', 'Ö', 'SÖ', 'S', 'SV', 'V', 'NV'];
-    return directions[Math.round(degrees / 45) % 8];
-  };
-
-  const omg = data?.omgang || data || {};
-  const bana = omg.bana || omg.track || "Okänd bana";
-  const datum = omg.datum || omg.date || "";
-  const spelstopp = omg.spelstopp || omg.spelstoppTid || "";
-  const beskrivning =
-    omg.beskrivning ||
-    omg.description ||
-    "Beskrivning kommer snart. Men all info uppdateras automatiskt så fort ATG släpper nästa V85-omgång.";
-
-  const nycklar = data?.nycklar || {
-    spik: {
-      titel: "Veckans spik",
-      text: "När datan är på plats kan du lägga in din bästa idé här, eller låta ett script föreslå spik.",
-      tone: "green",
-    },
-    skrall: {
-      titel: "Rolig skräll",
-      text: "En rolig procentare som kan lyfta systemet rejält.",
-      tone: "yellow",
-    },
-    varning: {
-      titel: "Varning",
-      text: "Hästar/streck du tycker är överstreckade – perfekt att gardera.",
-      tone: "red",
-    },
-  };
-
-  const tipsLinks = [
-    {
-      name: "ATG",
-      href: "https://www.atg.se/",
-      desc: "Officiell info, startlistor och spel på V85.",
-      logo: "./logos/atg.svg",
-      tag: "Officiellt",
-    },
-    {
-      name: "Travstugan",
-      href: "https://travstugan.se/",
-      desc: "Skribenter med både spikar och skrällar till V-loppen.",
-      logo: "./logos/travstugan.svg",
-      tag: "Blogg & tips",
-    },
-    {
-      name: "Trav365 (Aftonbladet)",
-      href: "https://www.aftonbladet.se/sportbladet/trav365/",
-      desc: "Genomgångar, drag och spelkrönikor.",
-      logo: "./logos/trav365.svg",
-      tag: "Nyheter",
-    },
-    {
-      name: "Travronden",
-      href: "https://www.travronden.se/",
-      desc: "Analys, intervjuer och pdf-tips (mycket V75/V86 men bra info).",
-      logo: "./logos/travronden.svg",
-      tag: "Premium/nyheter",
-    },
-    {
-      name: "Fem Tippar",
-      href: "https://www.travronden.se/trav/fem-tippar",
-      desc: "Fem olika systemförslag – inspirerande även till V85.",
-      logo: "./logos/femtippar.svg",
-      tag: "Systemidéer",
-    },
-    {
-      name: "Thomas Uhrberg",
-      href: "https://thomasuhrberg.se/",
-      desc: "Uhrbergs syn på loppen, hästarna och form.",
-      logo: "./logos/uhrberg.svg",
-      tag: "Profiler",
-    },
-    {
-      name: "Andelstorget",
-      href: "https://andelstorget.se/",
-      desc: "Köp andelar om du inte vill spela själv.",
-      logo: "./logos/andelstorget.svg",
-      tag: "Andelsspel",
-    },
-  ];
-
-  const toneClasses = {
-    green: "bg-emerald-50 border-emerald-200",
-    yellow: "bg-amber-50 border-amber-200",
-    red: "bg-rose-50 border-rose-200",
-  };
-
-  // Smooth scroll funktion
-  const scrollToSection = (e, id) => {
-    e.preventDefault();
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
-
-  if (!data && !error) {
+  if (status === "loading") {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 text-slate-700">
-        <img
-          src="./omgangskollen-dark.png"
-          alt="Omgångskollen"
-          className="h-16 w-auto mb-4 opacity-80"
-        />
-        <p className="text-sm">⏳ Hämtar veckans V85-omgång…</p>
+      <div className="min-h-screen flex items-center justify-center bg-sky-50 text-slate-700">
+        <div className="text-center">
+          <div className="text-3xl mb-2">⏳</div>
+          <p>Laddar omgång...</p>
+        </div>
       </div>
     );
   }
 
+  if (status === "error" || !data) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-sky-50 text-slate-700">
+        <div className="text-center space-y-2">
+          <div className="text-3xl">⚠️</div>
+          <p>Kunde inte läsa in data.json.</p>
+          <p className="text-sm text-slate-500">
+            Kontrollera att filen finns i public/data.json och bygg om sidan.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const omgang = data.omgang;
+  const nycklar = data.nycklar;
+  const veckansKupong = data.veckansKupong;
+  const länkar = data.lankar;
+
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
-      {/* HEADER */}
+    <div className="min-h-screen bg-sky-50 text-slate-900">
       <header className="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-slate-200">
-        <nav className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
+        <nav className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <img
               src="./omgangskollen-dark.png"
               alt="Omgångskollen"
-              className="h-6 w-auto"
+              className="h-7 w-auto"
             />
-            <span className="font-semibold tracking-tight text-slate-900">
-              Omgångskollen
-            </span>
+            <div className="flex flex-col leading-tight">
+              <span className="font-semibold tracking-tight">
+                Omgångskollen
+              </span>
+              <span className="text-[10px] uppercase tracking-[0.16em] text-sky-700">
+                V85 Bergsåker
+              </span>
+            </div>
           </div>
-          <ul className="hidden sm:flex gap-4 text-xs sm:text-sm text-slate-600">
-            <li>
-              <a href="#omgang" onClick={(e) => scrollToSection(e, 'omgang')} className="hover:text-slate-900">
-                🏁 Omgång
-              </a>
-            </li>
-            <li>
-              <a href="#nycklar" onClick={(e) => scrollToSection(e, 'nycklar')} className="hover:text-slate-900">
-                🎯 Spikar & drag
-              </a>
-            </li>
-            <li>
-              <a href="#verktyg" onClick={(e) => scrollToSection(e, 'verktyg')} className="hover:text-slate-900">
-                🧮 Verktyg
-              </a>
-            </li>
-            <li>
-              <a href="#gratis-tips" onClick={(e) => scrollToSection(e, 'gratis-tips')} className="hover:text-slate-900">
-                📚 Gratis tips
-              </a>
-            </li>
-          </ul>
+          <div className="hidden md:flex items-center gap-4 text-xs font-medium text-slate-600">
+            <button
+              onClick={() => scrollToSection("omgang")}
+              className="hover:text-sky-700"
+            >
+              🏁 Omgång
+            </button>
+            <button
+              onClick={() => scrollToSection("nycklar")}
+              className="hover:text-sky-700"
+            >
+              🎯 Spikar
+            </button>
+            <button
+              onClick={() => scrollToSection("kupong")}
+              className="hover:text-sky-700"
+            >
+              💯 Veckans kupong
+            </button>
+            <button
+              onClick={() => scrollToSection("v85-guide")}
+              className="hover:text-sky-700"
+            >
+              📘 V85-guide
+            </button>
+            <button
+              onClick={() => scrollToSection("gratis")}
+              className="hover:text-sky-700"
+            >
+              🎁 Gratistips
+            </button>
+            <button
+              onClick={() => scrollToSection("om")}
+              className="hover:text-sky-700"
+            >
+              ℹ️ Om sidan
+            </button>
+          </div>
         </nav>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 py-8 space-y-10">
-        {/* HERO */}
+      <main className="max-w-5xl mx-auto px-4 pb-16">
         <section
-          id="omgang"
-          className="grid gap-6 md:grid-cols-[minmax(0,2fr)_minmax(0,1.4fr)] items-center scroll-mt-20"
+          id="hero"
+          className="pt-6 pb-6 md:pt-10 md:pb-10 flex flex-col gap-6 md:flex-row md:items-center"
         >
-          <div className="space-y-4">
-            <p className="inline-flex items-center gap-2 text-xs font-medium px-2.5 py-1 rounded-full bg-sky-50 text-sky-700 border border-sky-100">
-              <span className="text-lg">💡</span> Din genväg till V85-känslan
-            </p>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-slate-900">
-              Allt inför <span className="text-sky-700">veckans V85</span> på
-              ett ställe.
+          <div className="flex-1 space-y-4">
+            <div className="inline-flex items-center gap-2 rounded-full bg-sky-100 px-3 py-1 text-[11px] font-medium text-sky-800">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              <span>Nästa omgång</span>
+              <span className="text-slate-500">•</span>
+              <span>{omgang.spel}</span>
+              <span className="text-slate-500">•</span>
+              <span>{omgang.bana}</span>
+              <span className="text-slate-500">•</span>
+              <span>{omgang.datumText}</span>
+            </div>
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
+              Håll koll på veckans V85-omgång
             </h1>
-            <p className="text-sm sm:text-base text-slate-600 max-w-xl">
-              Omgångskollen samlar omgångens info, spikar, skrällar och
-              genvägar till de bästa gratis-tipsen. Perfekt att ha öppet bredvid
-              ATG när du bygger system.
+            <p className="text-sm md:text-base text-slate-600 max-w-xl">
+              Omgångskollen samlar den viktigaste infon inför lördagens V85 på{" "}
+              <span className="font-semibold">{omgang.bana}</span>. Här hittar
+              du omgångsöversikt, nyckelhästar, gratis analyser och snabb
+              genväg till veckans kupong.
             </p>
-
             <div className="flex flex-wrap gap-3 text-xs">
-              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white border border-slate-200 shadow-sm">
-                <span className="text-lg">🏟️</span>
+              <div className="rounded-xl bg-white shadow-sm border border-sky-100 px-3 py-2 flex items-center gap-2">
+                <span className="text-lg">💰</span>
                 <div>
-                  <div className="font-semibold">{bana}</div>
+                  <div className="font-semibold">{omgang.jackpot}</div>
                   <div className="text-[11px] text-slate-500">
-                    Bana för veckans V85
+                    Extra pengar i potten på lördag
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white border border-slate-200 shadow-sm">
-                <span className="text-lg">🕒</span>
+              <div className="rounded-xl bg-slate-900 text-slate-50 px-3 py-2 flex items-center gap-2">
+                <span className="text-lg">⏱️</span>
                 <div>
-                  <div className="font-semibold">
-                    {spelstopp || "Spelstopp senare i veckan"}
-                  </div>
-                  <div className="text-[11px] text-slate-500">
-                    {datum || "Datum uppdateras automatiskt"}
-                  </div>
+                  {countdown && !countdown.finished ? (
+                    <>
+                      <div className="font-semibold text-xs">
+                        Start om{" "}
+                        {countdown.days > 0 && `${countdown.days} d `}
+                        {String(countdown.hours).padStart(2, "0")}:
+                        {String(countdown.minutes).padStart(2, "0")}:
+                        {String(countdown.seconds).padStart(2, "0")}
+                      </div>
+                      <div className="text-[11px] text-slate-300">
+                        Tills spelstopp enligt data.json
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="font-semibold text-xs">
+                        Omgången är igång eller färdig
+                      </div>
+                      <div className="text-[11px] text-slate-300">
+                        Uppdatera datum i data.json inför nästa vecka
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
           </div>
-
-          {/* Snabbkoll-kort */}
-          <div className="space-y-3">
-            <div className="rounded-2xl bg-gradient-to-br from-sky-600 to-sky-800 text-white p-4 shadow-lg">
-              <div className="flex justify-between items-start gap-4">
-                <div>
-                  <p className="text-xs uppercase tracking-wide text-sky-100 mb-1">
-                    Veckans omgång
-                  </p>
-                  <p className="text-sm font-semibold">
-                    {bana} {datum && `• ${datum}`}
-                  </p>
-                  <p className="mt-2 text-xs text-sky-100/90 leading-relaxed">
-                    {beskrivning}
-                  </p>
-                </div>
+          <div className="mt-4 md:mt-0 md:w-56">
+            <div className="rounded-2xl border border-sky-100 bg-white shadow-sm p-4 space-y-3 text-xs">
+              <div className="font-semibold text-slate-800">
+                Dagens bana: {omgang.bana}
               </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              <div className="rounded-xl bg-white border border-slate-200 p-3 shadow-sm">
-                <div className="text-[11px] font-medium text-slate-500 uppercase">
-                  Spelstopp
-                </div>
-                <div className="mt-1 text-sm font-semibold text-slate-900">
-                  {spelstopp || "Inte klart än"}
-                </div>
-                <p className="mt-1 text-[11px] text-slate-500">
-                  Dubbelkolla alltid på ATG innan du lämnar in systemet.
-                </p>
+              <div className="text-slate-600">{omgang.banprofil}</div>
+              <div className="h-px bg-slate-200" />
+              <div className="text-[11px] font-semibold text-slate-700">
+                Väder och underlag
               </div>
-              <div className="rounded-xl bg-white border border-slate-200 p-3 shadow-sm">
-                <div className="text-[11px] font-medium text-slate-500 uppercase">
-                  Nästa steg
-                </div>
-                <ul className="mt-1 space-y-1 text-[11px] text-slate-600">
-                  <li>• Skumma spikar & skrällar</li>
-                  <li>• Kolla gratis-tips</li>
-                  <li>• Bygg din grundkupong</li>
-                </ul>
-              </div>
+              <div className="text-slate-600">{omgang.vader}</div>
             </div>
           </div>
         </section>
 
-        {/* FELMEDDELANDE OM DATA */}
-        {error && (
-          <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-800">
-            ⚠️ {error}
+        <section
+          id="omgang"
+          className="scroll-mt-24 mt-4 mb-6 space-y-3"
+        >
+          <h2 className="text-xl font-semibold">Veckans omgång</h2>
+          <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4 md:p-5 flex flex-col md:flex-row gap-4 text-sm">
+            <div className="flex-1 space-y-2">
+              <div className="inline-flex items-center gap-2 text-xs text-slate-500">
+                <span className="font-mono uppercase tracking-[0.18em] text-sky-700">
+                  {omgang.spel}
+                </span>
+                <span>•</span>
+                <span>{formatDate(omgang.datum)}</span>
+                <span>•</span>
+                <span>{omgang.bana}</span>
+              </div>
+              <p className="text-slate-700">
+                Fokus på kvälls-V85 från {omgang.bana}. Här följer vi
+                spelvärdet, streckfördelningen och de viktigaste förändringarna
+                under veckan.
+              </p>
+              <p className="text-xs text-slate-500">
+                Uppdatera data.json varje vecka med ny bana, datum, jackpott och
+                kort banbeskrivning.
+              </p>
+            </div>
+            <div className="w-full md:w-60 flex flex-col gap-2 text-xs">
+              <a
+                href={länkar.programPdf.url}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white px-3 py-2 font-semibold"
+              >
+                <span>📄 {länkar.programPdf.namn}</span>
+              </a>
+              <a
+                href="https://www.atg.se/V85"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-sky-200 bg-sky-50 hover:bg-sky-100 text-sky-800 px-3 py-2 font-semibold"
+              >
+                <span>🎟️ Gå till V85 hos ATG</span>
+              </a>
+            </div>
           </div>
-        )}
+        </section>
 
-        {/* NYCKLAR: SPIK / SKRÄLL / VARNING */}
-        <section id="nycklar" className="space-y-4 scroll-mt-20">
-          <div className="flex items-center justify-between gap-2">
-            <h2 className="text-lg sm:text-xl font-semibold">
-              🎯 Spikar, skrällar & varningar
-            </h2>
-            <span className="text-[11px] text-slate-500">
-              En snabb känsla för omgången
-            </span>
-          </div>
-
-          <div className="grid sm:grid-cols-3 gap-4">
+        <section
+          id="nycklar"
+          className="scroll-mt-24 mt-8 space-y-3"
+        >
+          <h2 className="text-xl font-semibold">Spikar, skrällar och varningar</h2>
+          <p className="text-xs text-slate-600 mb-1">
+            Här fyller du på under veckan när du hittar rätt drag.
+          </p>
+          <div className="grid md:grid-cols-3 gap-4">
             {Object.entries(nycklar).map(([key, item]) => (
               <div
                 key={key}
-                className={`rounded-xl border p-4 shadow-sm text-sm ${
-                  toneClasses[item.tone] || "bg-slate-50 border-slate-200"
-                }`}
+                className={
+                  "rounded-2xl p-4 shadow-sm border text-sm " +
+                  (item.tone === "green"
+                    ? "bg-emerald-50 border-emerald-200"
+                    : item.tone === "yellow"
+                    ? "bg-amber-50 border-amber-200"
+                    : "bg-rose-50 border-rose-200")
+                }
               >
-                <div className="text-[11px] font-mono uppercase text-slate-500 mb-1">
+                <div className="text-[10px] font-mono uppercase tracking-[0.16em] text-slate-500 mb-1">
                   {key === "spik"
                     ? "Spik"
                     : key === "skrall"
                     ? "Skräll"
                     : "Varning"}
                 </div>
-                <h3 className="font-semibold mb-1">{item.titel}</h3>
-                <p className="text-xs text-slate-700 leading-relaxed">
-                  {item.text}
-                </p>
+                <div className="font-semibold text-slate-900">
+                  {item.titel}
+                </div>
+                <div className="text-xs text-slate-500 mt-1">
+                  {item.race}
+                </div>
+                <p className="mt-2 text-slate-700">{item.text}</p>
               </div>
             ))}
           </div>
         </section>
 
-        {/* VECKANS KUPONG (placeholder som du kan bygga vidare på) */}
-        <section id="verktyg" className="space-y-4 scroll-mt-20">
-          <div className="flex items-center justify-between gap-2">
-            <h2 className="text-lg sm:text-xl font-semibold">
-              🧮 Veckans kupong & verktyg
-            </h2>
+        <section
+          id="kupong"
+          className="scroll-mt-24 mt-10 space-y-3"
+        >
+          <div className="flex items-center gap-2">
+            <h2 className="text-xl font-semibold">Veckans kupong</h2>
             <span className="text-[11px] text-slate-500">
-              Perfekt när du bygger systemet
+              Ett färdigt 100-kronorssystem du kan spela direkt hos ATG
             </span>
           </div>
-
-          <div className="grid md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] gap-4">
-            {/* Kupong */}
-            <div className="rounded-2xl bg-white border border-slate-200 p-4 shadow-sm">
-              <div className="flex items-center justify-between gap-2 mb-3">
-                <h3 className="font-semibold text-sm sm:text-base">
-                  🎟️ Förslag: grundkupong till V85
-                </h3>
-                <span className="text-[11px] text-slate-500">
-                  Demo – fyll på med dina idéer
-                </span>
+          <div className="rounded-2xl border border-sky-200 bg-gradient-to-br from-sky-50 to-sky-100 shadow-sm p-4 md:p-6 flex flex-col md:flex-row gap-6">
+            <div className="flex-1 space-y-3 text-sm">
+              <div className="inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1 text-[11px] font-medium text-sky-800 border border-sky-100">
+                <span>💯</span>
+                <span>100 kr-system</span>
+                <span className="text-slate-400">•</span>
+                <span>Balans mellan tryggt och chansartat</span>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-                {[1, 2, 3, 4, 5, 6, 7, 8].map((avd) => (
-                  <div
-                    key={avd}
-                    className="rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-2"
-                  >
-                    <div className="text-[10px] text-slate-500 mb-1">
-                      Avd {avd}
-                    </div>
-                    <div className="font-semibold text-slate-800 mb-0.5">
-                      {
-                        {
-                          1: "Spik",
-                          2: "3–5 streck",
-                          3: "Skiktat",
-                          4: "Skrälläge",
-                          5: "Spik/2-hästarslås",
-                          6: "Gardering",
-                          7: "Öppet",
-                          8: "Breda streck",
-                        }[avd]
-                      }
-                    </div>
-                    <div className="text-[10px] text-slate-500">
-                      Lägg in hästar & procent senare.
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <p className="mt-3 text-[11px] text-slate-500">
-                Tanken: använd Omgångskollen för helheten, sedan ATG för
-                detaljer och inlämning. Här kan vi senare bygga logik som
-                föreslår system baserat på dina spikar/skällar.
+              <h3 className="text-lg font-semibold text-slate-900">
+                {veckansKupong.titel}
+              </h3>
+              <p className="text-slate-700">{veckansKupong.beskrivning}</p>
+              <ul className="text-xs text-slate-600 list-disc pl-4 space-y-1">
+                <li>Enkel att spela för både nybörjare och rutinerade</li>
+                <li>Bygger på spikar, lås och smarta reduceringar i tanken</li>
+                <li>Perfekt grund att bygga större system på</li>
+              </ul>
+              <p className="text-[11px] text-slate-500">
+                När du vill börja ta betalt kan denna sektion kopplas mot
+                Swish, Patreon eller ATG Tillsammans-system.
               </p>
             </div>
-
-            {/* Verktygskolumn */}
-            <div className="space-y-3 text-xs">
-              {/* VÄDER */}
-              <div className="rounded-xl bg-white border border-slate-200 p-3 shadow-sm">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="font-semibold text-sm">🌦 Väder & bana</h3>
-                  {weatherLoading && (
-                    <span className="text-[10px] text-slate-500">Laddar...</span>
-                  )}
+            <div className="w-full md:w-64 flex flex-col justify-between gap-3">
+              <div className="rounded-xl bg-white border border-sky-200 p-3 text-xs space-y-2">
+                <div className="font-semibold text-slate-800">
+                  Förslag på kupongflöde
                 </div>
-                
-                {weather ? (
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-2xl">{getWeatherEmoji(weather.weatherCode)}</span>
-                      <div>
-                        <div className="font-semibold text-lg">{weather.temperature}°C</div>
-                        <div className="text-[11px] text-slate-600">
-                          {getWeatherDescription(weather.weatherCode)}
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-600">
-                      <div>
-                        <span className="text-slate-500">Vind:</span> {weather.windSpeed} m/s {getWindDirection(weather.windDirection)}
-                      </div>
-                      <div>
-                        <span className="text-slate-500">Luftfuktighet:</span> {weather.humidity}%
-                      </div>
-                      {weather.precipitation > 0 && (
-                        <div className="col-span-2">
-                          <span className="text-slate-500">Nederbörd:</span> {weather.precipitation} mm
-                        </div>
-                      )}
-                    </div>
-                    
-                    <p className="text-[10px] text-slate-500 pt-1 border-t border-slate-100">
-                      Aktuellt väder för {weather.city}. Påverkar underlag och form.
-                    </p>
-                  </div>
-                ) : !weatherLoading ? (
-                  <p className="text-slate-600">
-                    Väderdata kunde inte hämtas för denna bana.
-                  </p>
-                ) : null}
+                <ol className="list-decimal pl-4 space-y-1 text-slate-600">
+                  <li>Välj system (t.ex. 100 kr)</li>
+                  <li>Läs kort motivering</li>
+                  <li>Klicka dig vidare till ATG</li>
+                  <li>Bekräfta och betala där</li>
+                </ol>
               </div>
-
-              <div className="rounded-xl bg-white border border-slate-200 p-3 shadow-sm">
-                <h3 className="font-semibold text-sm">📊 Banafakta</h3>
-                <p className="mt-1 text-slate-600">
-                  Exempel: upploppets längd, open stretch, vinklad vinge, plus
-                  små notiser som &quot;spets extra gynnad&quot; eller
-                  &quot;starka hästar går i dödens&quot;.
-                </p>
-              </div>
-
-              <div className="rounded-xl bg-white border border-slate-200 p-3 shadow-sm">
-                <h3 className="font-semibold text-sm">🧠 Checklista</h3>
-                <ul className="mt-1 space-y-1 text-slate-600">
-                  <li>• Gå igenom alla favoriter – vilka är sårbara?</li>
-                  <li>• Hitta 1–2 riktiga skrällopp.</li>
-                  <li>• Sätt en tydlig budget per omgång.</li>
-                </ul>
-              </div>
+              <a
+                href={veckansKupong.atgUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white px-4 py-2.5 text-sm font-semibold"
+              >
+                <span>🧾 Öppna veckans kupong hos ATG</span>
+              </a>
             </div>
           </div>
         </section>
 
-        {/* GRATIS TIPS & LÄNKAR */}
-        <section id="gratis-tips" className="space-y-4 scroll-mt-20">
-          <div className="flex items-center justify-between gap-2">
-            <h2 className="text-lg sm:text-xl font-semibold">
-              📚 Gratis tips & resurser
-            </h2>
-            <span className="text-[11px] text-slate-500">
-              Öppna i nya flikar medan du bygger systemet
-            </span>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
-            {tipsLinks.map((item) => (
+        <section
+          id="v85-guide"
+          className="scroll-mt-24 mt-10 space-y-3"
+        >
+          <h2 className="text-xl font-semibold">V85 – så funkar spelet</h2>
+          <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4 md:p-6 grid md:grid-cols-3 gap-6 text-sm">
+            <div className="space-y-2">
+              <div className="text-xs font-semibold text-sky-700 uppercase tracking-[0.16em]">
+                Grunderna
+              </div>
+              <p className="text-slate-700">
+                V85 är ett streckspel med 8 avdelningar. Målet är att hitta
+                vinnaren i så många lopp som möjligt. Fullträff är 8 rätt, men
+                det finns ofta utdelning på 7 och 6 rätt också.
+              </p>
+              <ul className="list-disc pl-4 text-slate-700 space-y-1">
+                <li>8 lopp på samma bana</li>
+                <li>Radpris vanligtvis 0,25 kr</li>
+                <li>Du väljer en eller flera hästar per lopp</li>
+              </ul>
+            </div>
+            <div className="space-y-2">
+              <div className="text-xs font-semibold text-sky-700 uppercase tracking-[0.16em]">
+                Bygg system
+              </div>
+              <p className="text-slate-700">
+                Systemet byggs med spikar, lås och garderingslopp. Ju fler
+                hästar du tar med, desto dyrare blir systemet.
+              </p>
+              <ul className="list-disc pl-4 text-slate-700 space-y-1">
+                <li>Spik: en häst du tror extra mycket på</li>
+                <li>Lås: två hästar som du tror ”äger” loppet</li>
+                <li>Gardering: många hästar i öppna lopp</li>
+              </ul>
+            </div>
+            <div className="space-y-2">
+              <div className="text-xs font-semibold text-sky-700 uppercase tracking-[0.16em]">
+                Spela smart
+              </div>
+              <p className="text-slate-700">
+                För att få betalt på V85 behöver du ofta kombinera favoriter med
+                någon eller några riktiga skrällar.
+              </p>
+              <ul className="list-disc pl-4 text-slate-700 space-y-1">
+                <li>Jämför streckprocent mot spelvärde</li>
+                <li>Utnyttja väder och banunderlag</li>
+                <li>Våga stå över överstreckade favoriter</li>
+              </ul>
               <a
-                key={item.name}
-                href={item.href}
+                href="https://www.atg.se/hjalp/spelinformation/v86"
                 target="_blank"
                 rel="noreferrer"
-                className="group rounded-xl bg-white border border-slate-200 p-3 flex gap-3 items-start shadow-sm hover:border-sky-300 hover:shadow-md transition"
+                className="inline-flex items-center gap-2 text-xs text-sky-700 hover:text-sky-900 mt-1"
               >
-                <div className="h-8 w-8 rounded-md bg-slate-50 flex items-center justify-center overflow-hidden border border-slate-200">
-                  {item.logo ? (
-                    <img
-                      src={item.logo}
-                      alt={item.name}
-                      className="h-6 w-6 object-contain"
-                    />
-                  ) : (
-                    <span className="text-sm font-semibold text-slate-500">
-                      {item.name[0]}
-                    </span>
-                  )}
-                </div>
-                <div className="space-y-1">
-                  <div className="flex items-center gap-1.5">
-                    <span className="font-semibold text-slate-900 text-sm">
-                      {item.name}
-                    </span>
-                    {item.tag && (
-                      <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-sky-50 text-sky-700 border border-sky-100">
-                        {item.tag}
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-slate-600 leading-snug">{item.desc}</p>
-                  <span className="inline-flex items-center gap-1 text-[10px] text-sky-700 group-hover:underline">
-                    Öppna sida
-                    <span>↗</span>
-                  </span>
-                </div>
+                <span>Läs mer hos ATG</span>
+                <span>↗</span>
               </a>
-            ))}
+            </div>
           </div>
         </section>
 
-        {/* FOOTER */}
-        <footer className="border-t border-slate-200 pt-4 pb-6 text-center text-[11px] text-slate-500">
-          <p>Spela ansvarsfullt. 18+ Stödlinjen: 020-81 91 00.</p>
-          <p className="mt-1">
-            Omgångskollen är en fristående sida och har ingen koppling till ATG.
+        <section
+          id="gratis"
+          className="scroll-mt-24 mt-10 space-y-3"
+        >
+          <h2 className="text-xl font-semibold">Gratistips och analyser</h2>
+          <p className="text-xs text-slate-600">
+            Samling av gratis material inför veckans omgång.
           </p>
-        </footer>
+          <div className="grid md:grid-cols-2 gap-4 text-sm">
+            <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4 space-y-2">
+              <div className="text-xs font-semibold text-sky-700 uppercase tracking-[0.16em]">
+                ATG:s egna tips
+              </div>
+              <ul className="space-y-1.5 text-slate-700">
+                {länkar.gratisTips.map((l) => (
+                  <li key={l.url}>
+                    <a
+                      href={l.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="hover:text-sky-700 underline underline-offset-2"
+                    >
+                      {l.namn}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4 space-y-3">
+              <div className="text-xs font-semibold text-sky-700 uppercase tracking-[0.16em]">
+                Profiler och extramaterial
+              </div>
+              <ul className="space-y-1.5 text-slate-700">
+                {länkar.profiler.map((p) => (
+                  <li key={p.url}>
+                    <a
+                      href={p.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="hover:text-sky-700 underline underline-offset-2"
+                    >
+                      {p.namn}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+              <a
+                href={länkar.programPdf.url}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 text-xs text-sky-700 hover:text-sky-900"
+              >
+                <span>📄 {länkar.programPdf.namn}</span>
+                <span>↗</span>
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <section
+          id="tillsammans"
+          className="scroll-mt-24 mt-10 space-y-3"
+        >
+          <h2 className="text-xl font-semibold">Spela tillsammans</h2>
+          <div className="rounded-2xl border border-emerald-200 bg-emerald-50 shadow-sm p-4 md:p-5 flex flex-col md:flex-row md:items-center gap-4 text-sm">
+            <div className="flex-1 space-y-2">
+              <p className="font-semibold text-emerald-900">
+                Spela med Omgångskollen via ATG Tillsammans
+              </p>
+              <p className="text-emerald-900/80">
+                Perfekt när du vill dela upp insatsen, spela större system och
+                göra omgången roligare tillsammans med andra.
+              </p>
+              <p className="text-[11px] text-emerald-900/70">
+                När du har en egen lagsida hos ATG byter du bara ut länken i
+                data.json, så pekar knappen direkt rätt.
+              </p>
+            </div>
+            <div className="w-full md:w-60">
+              <a
+                href={länkar.tillsammans.url}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 text-sm font-semibold"
+              >
+                <span>🤝 {länkar.tillsammans.namn}</span>
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <section
+          id="om"
+          className="scroll-mt-24 mt-10 mb-8 space-y-3"
+        >
+          <h2 className="text-xl font-semibold">Om Omgångskollen</h2>
+          <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4 md:p-5 text-sm space-y-2">
+            <p className="text-slate-700">
+              Omgångskollen är en enkel samlingssida inför veckans V85, byggd
+              för spelare som vill ha överblick utan att drunkna i information.
+            </p>
+            <p className="text-slate-700">
+              Du uppdaterar själv data.json med ny bana, datum, jackpott och
+              nyckelhästar varje vecka. Layouten och strukturen är gjord för att
+              vara lätt att bygga vidare på med fler idéer.
+            </p>
+            <p className="text-[11px] text-slate-500">
+              Spela ansvarsfullt. 18+ Stödlinjen: 020-81 91 00.
+            </p>
+          </div>
+        </section>
       </main>
     </div>
   );
