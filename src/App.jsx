@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-const SWISH_NUMBER = "070-000 00 00";
+const SWISH_NUMBER = "0761390199";
 const SWISH_AMOUNT = 19;
 
 function App() {
