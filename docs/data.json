@@ -1,16 +1,15 @@
 {
   "omgang": {
-    "bana": "Jägersro / Solvalla",
-    "datum": "onsdag 5 november 2025",
-    "spelstopp": "16:20",
-    "jackpot": "Ingen jackpotinfo",
-    "beskrivning": "Automatisk uppdatering via script."
-  },
+  "bana": "Bergsåker",
+  "datum": "Lördag 8 november",
+  "spelstopp": "16:10",
+  "beskrivning": "Jackpot 50 miljoner på Bergsåker – medellång 1000-metersbana i Sundsvall, ofta vinterpräglad bana med open stretch och krävande upplopp."
+}
   "snabbfakta": {
     "antalLopp": "8",
     "radpris": "0,50 kr / rad",
     "utdelning": "8 / 7 / 6 / 5 rätt",
-    "spelstopp": "16:20",
+    "spelstopp": "16:10",
     "aterbetalning": "65%"
   },
   "nycklar": {
