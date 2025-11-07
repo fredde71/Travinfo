@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 function App() {
   const [data, setData] = useState(null);
   const [error, setError] = useState("");
+  const [weather, setWeather] = useState(null);
+  const [weatherLoading, setWeatherLoading] = useState(true);
 
   useEffect(() => {
     fetch("./data.json")
@@ -13,12 +15,107 @@ function App() {
       .then((json) => {
         setData(json);
         setError("");
+        
+        // Hämta väder för banan
+        const banaNamn = json.omgang?.bana || json.bana || json?.track;
+        if (banaNamn) {
+          fetchWeather(banaNamn);
+        } else {
+          setWeatherLoading(false);
+        }
       })
       .catch((err) => {
         console.error(err);
         setError("Kunde inte ladda veckans omgång. Testa att köra update-scriptet igen.");
+        setWeatherLoading(false);
       });
   }, []);
+
+  const fetchWeather = async (bana) => {
+    try {
+      // Mapping av travbanor till städer
+      const banaToCity = {
+        "Solvalla": "Stockholm",
+        "Åby": "Mölndal",
+        "Jägersro": "Malmö",
+        "Mantorp": "Mjölby",
+        "Bergsåker": "Sundsvall",
+        "Boden": "Boden",
+        "Färjestad": "Karlstad",
+        "Hagmyren": "Bollnäs",
+        "Halmstad": "Halmstad",
+        "Kalmar": "Kalmar",
+        "Karlshamn": "Karlshamn",
+        "Axevalla": "Skara",
+        "Dannero": "Kristianstad",
+        "Gävle": "Gävle",
+        "Romme": "Borlänge",
+        "Östersund": "Östersund",
+        "Eskilstuna": "Eskilstuna",
+        "Örebro": "Örebro",
+        "Rättvik": "Rättvik",
+        "Umåker": "Umeå"
+      };
+
+      const stad = banaToCity[bana] || bana;
+      
+      // Open-Meteo API (gratis, ingen API-nyckel krävs)
+      const geoResponse = await fetch(
+        `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(stad)}&count=1&language=sv&format=json`
+      );
+      const geoData = await geoResponse.json();
+      
+      if (geoData.results && geoData.results.length > 0) {
+        const { latitude, longitude, name } = geoData.results[0];
+        
+        const weatherResponse = await fetch(
+          `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,precipitation,weather_code,wind_speed_10m,wind_direction_10m&timezone=Europe/Stockholm`
+        );
+        const weatherData = await weatherResponse.json();
+        
+        setWeather({
+          city: name,
+          temperature: Math.round(weatherData.current.temperature_2m),
+          humidity: weatherData.current.relative_humidity_2m,
+          precipitation: weatherData.current.precipitation,
+          windSpeed: Math.round(weatherData.current.wind_speed_10m),
+          windDirection: weatherData.current.wind_direction_10m,
+          weatherCode: weatherData.current.weather_code
+        });
+      }
+      setWeatherLoading(false);
+    } catch (err) {
+      console.error("Kunde inte hämta väder:", err);
+      setWeatherLoading(false);
+    }
+  };
+
+  const getWeatherEmoji = (code) => {
+    if (code === 0) return "☀️";
+    if (code <= 3) return "⛅";
+    if (code <= 48) return "🌫️";
+    if (code <= 67) return "🌧️";
+    if (code <= 77) return "🌨️";
+    if (code <= 82) return "🌧️";
+    if (code <= 86) return "🌨️";
+    return "🌦️";
+  };
+
+  const getWeatherDescription = (code) => {
+    if (code === 0) return "Klart";
+    if (code <= 3) return "Delvis molnigt";
+    if (code <= 48) return "Dimma";
+    if (code <= 67) return "Regn";
+    if (code <= 77) return "Snö";
+    if (code <= 82) return "Regnskurar";
+    if (code <= 86) return "Snöbyar";
+    return "Blandad väderlek";
+  };
+
+  const getWindDirection = (degrees) => {
+    const directions = ['N', 'NÖ', 'Ö', 'SÖ', 'S', 'SV', 'V', 'NV'];
+    return directions[Math.round(degrees / 45) % 8];
+  };
 
   const omg = data?.omgang || data || {};
   const bana = omg.bana || omg.track || "Okänd bana";
@@ -105,6 +202,15 @@ function App() {
     red: "bg-rose-50 border-rose-200",
   };
 
+  // Smooth scroll funktion
+  const scrollToSection = (e, id) => {
+    e.preventDefault();
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   if (!data && !error) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 text-slate-700">
@@ -135,22 +241,22 @@ function App() {
           </div>
           <ul className="hidden sm:flex gap-4 text-xs sm:text-sm text-slate-600">
             <li>
-              <a href="#omgang" className="hover:text-slate-900">
+              <a href="#omgang" onClick={(e) => scrollToSection(e, 'omgang')} className="hover:text-slate-900">
                 🏁 Omgång
               </a>
             </li>
             <li>
-              <a href="#nycklar" className="hover:text-slate-900">
+              <a href="#nycklar" onClick={(e) => scrollToSection(e, 'nycklar')} className="hover:text-slate-900">
                 🎯 Spikar & drag
               </a>
             </li>
             <li>
-              <a href="#verktyg" className="hover:text-slate-900">
+              <a href="#verktyg" onClick={(e) => scrollToSection(e, 'verktyg')} className="hover:text-slate-900">
                 🧮 Verktyg
               </a>
             </li>
             <li>
-              <a href="#gratis-tips" className="hover:text-slate-900">
+              <a href="#gratis-tips" onClick={(e) => scrollToSection(e, 'gratis-tips')} className="hover:text-slate-900">
                 📚 Gratis tips
               </a>
             </li>
@@ -161,8 +267,8 @@ function App() {
       <main className="max-w-6xl mx-auto px-4 py-8 space-y-10">
         {/* HERO */}
         <section
-          id="hero"
-          className="grid gap-6 md:grid-cols-[minmax(0,2fr)_minmax(0,1.4fr)] items-center"
+          id="omgang"
+          className="grid gap-6 md:grid-cols-[minmax(0,2fr)_minmax(0,1.4fr)] items-center scroll-mt-20"
         >
           <div className="space-y-4">
             <p className="inline-flex items-center gap-2 text-xs font-medium px-2.5 py-1 rounded-full bg-sky-50 text-sky-700 border border-sky-100">
@@ -254,7 +360,7 @@ function App() {
         )}
 
         {/* NYCKLAR: SPIK / SKRÄLL / VARNING */}
-        <section id="nycklar" className="space-y-4">
+        <section id="nycklar" className="space-y-4 scroll-mt-20">
           <div className="flex items-center justify-between gap-2">
             <h2 className="text-lg sm:text-xl font-semibold">
               🎯 Spikar, skrällar & varningar
@@ -289,7 +395,7 @@ function App() {
         </section>
 
         {/* VECKANS KUPONG (placeholder som du kan bygga vidare på) */}
-        <section id="verktyg" className="space-y-4">
+        <section id="verktyg" className="space-y-4 scroll-mt-20">
           <div className="flex items-center justify-between gap-2">
             <h2 className="text-lg sm:text-xl font-semibold">
               🧮 Veckans kupong & verktyg
@@ -320,7 +426,6 @@ function App() {
                       Avd {avd}
                     </div>
                     <div className="font-semibold text-slate-800 mb-0.5">
-                      {/* Här kan du senare hämta förslag från data.json */}
                       {
                         {
                           1: "Spik",
@@ -349,15 +454,50 @@ function App() {
 
             {/* Verktygskolumn */}
             <div className="space-y-3 text-xs">
+              {/* VÄDER */}
               <div className="rounded-xl bg-white border border-slate-200 p-3 shadow-sm">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between mb-2">
                   <h3 className="font-semibold text-sm">🌦 Väder & bana</h3>
-                  <span className="text-[10px] text-slate-500">Kommer snart</span>
+                  {weatherLoading && (
+                    <span className="text-[10px] text-slate-500">Laddar...</span>
+                  )}
                 </div>
-                <p className="mt-1 text-slate-600">
-                  Här kan vi koppla in automatiskt väder för banan (regn, vind,
-                  temperatur) och snabbinfo om underlag.
-                </p>
+                
+                {weather ? (
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-2xl">{getWeatherEmoji(weather.weatherCode)}</span>
+                      <div>
+                        <div className="font-semibold text-lg">{weather.temperature}°C</div>
+                        <div className="text-[11px] text-slate-600">
+                          {getWeatherDescription(weather.weatherCode)}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-600">
+                      <div>
+                        <span className="text-slate-500">Vind:</span> {weather.windSpeed} m/s {getWindDirection(weather.windDirection)}
+                      </div>
+                      <div>
+                        <span className="text-slate-500">Luftfuktighet:</span> {weather.humidity}%
+                      </div>
+                      {weather.precipitation > 0 && (
+                        <div className="col-span-2">
+                          <span className="text-slate-500">Nederbörd:</span> {weather.precipitation} mm
+                        </div>
+                      )}
+                    </div>
+                    
+                    <p className="text-[10px] text-slate-500 pt-1 border-t border-slate-100">
+                      Aktuellt väder för {weather.city}. Påverkar underlag och form.
+                    </p>
+                  </div>
+                ) : !weatherLoading ? (
+                  <p className="text-slate-600">
+                    Väderdata kunde inte hämtas för denna bana.
+                  </p>
+                ) : null}
               </div>
 
               <div className="rounded-xl bg-white border border-slate-200 p-3 shadow-sm">
@@ -382,7 +522,7 @@ function App() {
         </section>
 
         {/* GRATIS TIPS & LÄNKAR */}
-        <section id="gratis-tips" className="space-y-4">
+        <section id="gratis-tips" className="space-y-4 scroll-mt-20">
           <div className="flex items-center justify-between gap-2">
             <h2 className="text-lg sm:text-xl font-semibold">
               📚 Gratis tips & resurser
