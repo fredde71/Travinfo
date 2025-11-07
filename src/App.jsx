@@ -56,46 +56,55 @@ function App() {
 
   return (
     <div className="min-h-screen bg-sky-50 text-slate-900">
-      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-sky-100">
-        <nav className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          <a href="#top" className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-xl bg-sky-600 flex items-center justify-center text-white text-lg font-bold">
-              V
-            </div>
-            <div className="flex flex-col leading-tight">
-              <span className="font-semibold tracking-tight">Omgångskollen</span>
-              <span className="text-[11px] text-slate-500">Veckans V85 samlat på ett ställe</span>
-            </div>
-          </a>
-          <ul className="hidden sm:flex gap-4 text-sm text-slate-600">
-            <li>
-              <a href="#omgang" className="hover:text-sky-700">
-                🏁 Veckans omgång
-              </a>
-            </li>
-            <li>
-              <a href="#veckans-tips" className="hover:text-sky-700">
-                💡 Veckans tips
-              </a>
-            </li>
-            <li>
-              <a href="#nycklar" className="hover:text-sky-700">
-                🎯 Spikar & skrällar
-              </a>
-            </li>
-            <li>
-              <a href="#guide" className="hover:text-sky-700">
-                📘 V85-guide
-              </a>
-            </li>
-            <li>
-              <a href="#tips-lankar" className="hover:text-sky-700">
-                🔗 Tips & länkar
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </header>
+ <header className="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-sky-100">
+  <nav className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
+    <a href="#top" className="flex items-center gap-2">
+      <img
+        src="./omgangskollen-dark.png"
+        alt="Omgångskollen"
+        className="h-7 w-auto"
+      />
+      <span className="font-semibold tracking-tight text-sky-800">
+        Omgångskollen
+      </span>
+    </a>
+
+    <ul className="hidden sm:flex gap-4 text-sm text-slate-600">
+      <li>
+        <a href="#omgang" className="hover:text-sky-700">
+          🏁 Omgången
+        </a>
+      </li>
+      <li>
+        <a href="#nycklar" className="hover:text-sky-700">
+          🎯 Spikar & skrällar
+        </a>
+      </li>
+      <li>
+        <a href="#tips" className="hover:text-sky-700">
+          🧩 Tips & gratislänkar
+        </a>
+      </li>
+      <li>
+        <a href="#guide" className="hover:text-sky-700">
+          📘 V85-guide
+        </a>
+      </li>
+      <li>
+        <a href="#kupong" className="hover:text-sky-700">
+          💸 Veckans kupong
+        </a>
+      </li>
+      <li>
+        <a href="#swish" className="hover:text-sky-700">
+          🤝 Spela med Omgångskollen
+        </a>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+
 
       <main id="top" className="max-w-6xl mx-auto px-4 py-8 space-y-10">
         <section id="hero" className="scroll-mt-24 grid md:grid-cols-[1.6fr,1fr] gap-6 items-center">
