@@ -1,532 +1,249 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+
+function useCountdown(targetDate) {
+  const [timeLeft, setTimeLeft] = useState(() => {
+    const diff = +targetDate - +new Date();
+    return diff > 0 ? diff : 0;
+  });
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setTimeLeft(() => {
+        const diff = +targetDate - +new Date();
+        return diff > 0 ? diff : 0;
+      });
+    }, 1000);
+    return () => clearInterval(id);
+  }, [targetDate]);
+
+  const totalSeconds = Math.floor(timeLeft / 1000);
+  const days = Math.floor(totalSeconds / (60 * 60 * 24));
+  const hours = Math.floor((totalSeconds % (60 * 60 * 24)) / (60 * 60));
+  const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
+  const seconds = totalSeconds % 60;
+
+  return { days, hours, minutes, seconds };
+}
 
 function App() {
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [timeLeft, setTimeLeft] = useState(null);
 
   useEffect(() => {
-    async function load() {
-      try {
-        const res = await fetch("./data.json");
-        if (!res.ok) throw new Error("Kunde inte läsa data.json");
-        const json = await res.json();
-        setData(json);
-
-        let start = null;
-        if (json?.omgang?.startTid) {
-          start = new Date(json.omgang.startTid);
-        } else {
-          start = new Date("2025-11-08T16:20:00+01:00");
-        }
-
-        function updateCountdown() {
-          const now = new Date();
-          const diff = start.getTime() - now.getTime();
-          if (diff <= 0) {
-            setTimeLeft({
-              done: true,
-              text: "Spelstopp passerat – dags för resultat!"
-            });
-            return;
-          }
-          const totalSeconds = Math.floor(diff / 1000);
-          const days = Math.floor(totalSeconds / (60 * 60 * 24));
-          const hours = Math.floor((totalSeconds % (60 * 60 * 24)) / 3600);
-          const minutes = Math.floor((totalSeconds % 3600) / 60);
-          const seconds = totalSeconds % 60;
-
-          setTimeLeft({
-            done: false,
-            days,
-            hours,
-            minutes,
-            seconds
-          });
-        }
-
-        updateCountdown();
-        const id = setInterval(updateCountdown, 1000);
-        return () => clearInterval(id);
-      } catch (err) {
-        setError("Kunde inte läsa omgångsdata.");
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    const cleanup = load();
-    return () => {
-      if (typeof cleanup === "function") cleanup();
-    };
+    fetch("/data.json")
+      .then((res) => res.json())
+      .then((json) => setData(json))
+      .catch(() => setData(null));
   }, []);
 
-  const nycklar = {
-    spik: {
-      label: "Spik",
-      title: "2 Shogun R.R",
-      text: "Stark spik i jämnt lopp – form, läge och uppgift ser helt rätt ut.",
-      tone: "green"
-    },
-    skrall: {
-      label: "Skräll",
-      title: "12 Funny Guy, 6 Cuelebre",
-      text: "Två roliga streck som kan lyfta utdelningen ordentligt.",
-      tone: "yellow"
-    },
-    varning: {
-      label: "Varning",
-      title: "12 Freeloader",
-      text: "Glöms lätt bort på kupongerna men har fullt kunnande för att överraska.",
-      tone: "red"
-    }
+  const targetDate = new Date("2025-11-08T16:20:00+01:00");
+  const countdown = useCountdown(targetDate);
+
+  const handleNavClick = (e, id) => {
+    e.preventDefault();
+    const el = document.getElementById(id);
+    if (!el) return;
+    const y = el.getBoundingClientRect().top + window.scrollY - 80;
+    window.scrollTo({ top: y, behavior: "smooth" });
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-sky-900 text-sky-50">
-        <div className="text-center space-y-2">
-          <div className="text-3xl">⏳</div>
-          <p className="text-sm font-medium">Laddar veckans omgång…</p>
-        </div>
-      </div>
-    );
-  }
+  const omgang = data?.omgang || {
+    bana: "Bergsåker",
+    datum: "Lördag 8 november 2025",
+    beskrivning:
+      "V85 på Bergsåker med bra sport, luriga spår och jackpot på cirka 50 miljoner.",
+  };
 
-  if (error || !data) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-sky-900 text-sky-50">
-        <div className="bg-sky-800/60 border border-sky-500/40 px-6 py-4 rounded-2xl max-w-md text-center space-y-3">
-          <p className="text-lg font-semibold">Kunde inte läsa omgångsdata</p>
-          <p className="text-sm opacity-80">
-            Testa att ladda om sidan. Om felet kvarstår kan data.json behöva
-            uppdateras.
-          </p>
-        </div>
-      </div>
-    );
-  }
+  const nycklar = {
+    spik: { titel: "2 Shogun R.R", text: "Stabil form, bra läge och rätt uppgift." },
+    skrall: {
+      titel: "12 Funny Guy & 6 Cuelebre",
+      text: "Två roliga drag till låg procent.",
+    },
+    varning: {
+      titel: "12 Freeloader",
+      text: "Hårt emot favoriten om det klaffar.",
+    },
+  };
 
-  const { omgang } = data;
+  const kupong = [
+    { avd: "Avd 1", hästar: "15" },
+    { avd: "Avd 2", hästar: "4, 1" },
+    { avd: "Avd 3", hästar: "11, 6" },
+    { avd: "Avd 4", hästar: "4, 8, 7, 1" },
+    { avd: "Avd 5", hästar: "6, 9" },
+    { avd: "Avd 6", hästar: "2" },
+    { avd: "Avd 7", hästar: "2, 6, 12" },
+    { avd: "Avd 8", hästar: "4, 10" },
+  ];
 
   return (
-    <div className="min-h-screen bg-sky-950 text-sky-50">
-      <header className="sticky top-0 z-40 border-b border-sky-800 bg-sky-950/90 backdrop-blur">
-        <nav className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img
-              src="./omgangskollen-dark.png"
-              alt="Omgångskollen"
-              className="h-7 w-auto"
-            />
-            <div className="flex flex-col leading-tight">
-              <span className="font-semibold tracking-tight text-sky-50">
-                Omgångskollen
-              </span>
-              <span className="text-[11px] text-sky-300">
-                Veckans V85 på ett ställe
-              </span>
-            </div>
-          </div>
-          <ul className="hidden sm:flex gap-4 text-[13px] text-sky-100">
-            <li>
-              <a href="#omgang" className="hover:text-white">
-                🏁 Omgång
-              </a>
-            </li>
-            <li>
-              <a href="#swish" className="hover:text-white">
-                💸 Veckans kupong
-              </a>
-            </li>
-            <li>
-              <a href="#nycklar" className="hover:text-white">
-                🎯 Spik & skräll
-              </a>
-            </li>
-            <li>
-              <a href="#v85-guide" className="hover:text-white">
-                📘 V85-guide
-              </a>
-            </li>
-            <li>
-              <a href="#tips" className="hover:text-white">
-                🧩 Gratis tips
-              </a>
-            </li>
-            <li>
-              <a href="#spel" className="hover:text-white">
-                🤝 Spela ihop
-              </a>
-            </li>
+    <div className="min-h-screen bg-slate-50 text-slate-900">
+      {/* HEADER */}
+      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-slate-200">
+        <nav className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+          <a href="#top" className="flex items-center gap-2">
+            <img src="./omgangskollen-dark.png" alt="Omgångskollen" className="h-9 w-auto" />
+            <span className="font-semibold tracking-tight text-slate-900 text-sm md:text-base">
+              Omgångskollen
+            </span>
+          </a>
+          <ul className="hidden sm:flex gap-4 text-sm text-slate-600">
+            <li><a href="#omgang" onClick={(e) => handleNavClick(e, "omgang")} className="hover:text-slate-900">🏁 Omgång</a></li>
+            <li><a href="#v85-guide" onClick={(e) => handleNavClick(e, "v85-guide")} className="hover:text-slate-900">📘 V85-guide</a></li>
+            <li><a href="#tips" onClick={(e) => handleNavClick(e, "tips")} className="hover:text-slate-900">🧩 Gratis tips</a></li>
+            <li><a href="#nycklar" onClick={(e) => handleNavClick(e, "nycklar")} className="hover:text-slate-900">🎯 Spikar & skrällar</a></li>
+            <li><a href="#kupong" onClick={(e) => handleNavClick(e, "kupong")} className="hover:text-slate-900">📲 Veckans kupong</a></li>
+            <li><a href="#swish" onClick={(e) => handleNavClick(e, "swish")} className="hover:text-slate-900">💚 Swish-tipset</a></li>
           </ul>
         </nav>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 pb-12">
-        <section
-          id="hero"
-          className="pt-6 pb-6 md:pt-10 md:pb-10 grid md:grid-cols-[2fr,1.3fr] gap-6 items-center scroll-mt-24"
-        >
-          <div className="space-y-4">
-            <div className="inline-flex items-center gap-2 rounded-full bg-sky-900/70 border border-sky-700 px-3 py-1 text-[11px] text-sky-200">
-              <span className="text-xs">V85 • {omgang?.bana}</span>
-              <span className="w-1 h-1 rounded-full bg-emerald-400"></span>
-              <span>{omgang?.datum}</span>
-              {omgang?.jackpott && (
-                <span className="ml-1 px-2 py-0.5 rounded-full bg-amber-400/10 text-amber-300 border border-amber-400/30">
-                  Jackpott: {omgang.jackpott}
-                </span>
-              )}
-            </div>
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white">
-              Omgångskollen – allt inför veckans V85 på{" "}
-              <span className="text-sky-300">{omgang?.bana}</span>
-            </h1>
-            <p className="text-sm md:text-[15px] text-sky-200/90 max-w-xl">
-              Här samlar vi spikar, skrällar, gratisanalyser, länkar och en
-              exklusiv kupong som du kan köpa via Swish. En enkel överblick
-              inför lördagens omgång.
+      <main className="max-w-6xl mx-auto px-4 py-6 space-y-10">
+        {/* HERO */}
+        <section className="scroll-mt-24 grid md:grid-cols-[2fr,1.4fr] gap-6 items-center">
+          <div>
+            <h1 className="text-3xl font-bold">Inför veckans V85 på {omgang.bana}</h1>
+            <p className="text-sm text-slate-600 mt-2">
+              Samlad info, spikar, skrällar och länkar inför lördagens omgång.
             </p>
-          </div>
-
-          <div className="space-y-3">
-            <div className="rounded-2xl bg-sky-900/60 border border-sky-700/80 p-4 shadow-lg shadow-sky-900/40">
-              <p className="text-[11px] uppercase tracking-[0.18em] text-sky-300 mb-1">
-                Nedräkning till spelstopp
-              </p>
-              {timeLeft && !timeLeft.done ? (
-                <div className="flex gap-3">
-                  {[
-                    ["Dagar", timeLeft.days],
-                    ["Timmar", timeLeft.hours],
-                    ["Min", timeLeft.minutes],
-                    ["Sek", timeLeft.seconds]
-                  ].map(([label, value]) => (
-                    <div
-                      key={label}
-                      className="flex-1 rounded-xl bg-sky-950/70 border border-sky-700/80 py-2 text-center"
-                    >
-                      <div className="text-xl font-semibold text-sky-50 tabular-nums">
-                        {value.toString().padStart(2, "0")}
-                      </div>
-                      <div className="text-[10px] uppercase tracking-[0.16em] text-sky-300 mt-0.5">
-                        {label}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-emerald-300">
-                  Spelstopp passerat – nu håller vi tummarna!
-                </p>
-              )}
+            <div className="mt-3 text-xs bg-slate-100 p-2 rounded-lg w-fit">
+              ⏱️ Nedräkning: {countdown.days}d {countdown.hours}h {countdown.minutes}m
             </div>
-
-            <section
-              id="swish"
-              className="scroll-mt-24 rounded-2xl bg-emerald-900/40 border border-emerald-500/50 p-4 space-y-3"
-            >
-              <div className="flex items-center justify-between gap-2">
-                <div>
-                  <p className="text-[11px] uppercase tracking-[0.18em] text-emerald-200">
-                    Veckans kupong
-                  </p>
-                  <h2 className="text-lg font-semibold text-emerald-50">
-                    Exklusivt V85-system – 100 kr insats
-                  </h2>
-                </div>
-                <div className="text-right">
-                  <p className="text-[11px] text-emerald-200">Pris</p>
-                  <p className="text-xl font-semibold text-emerald-300">
-                    19 kr
-                  </p>
-                </div>
-              </div>
-              <p className="text-sm text-emerald-100/90">
-                Swisha så får du ett färdigt system för V85 omgången skickat via
-                SMS. Kupongen visas inte här på sidan utan går endast till dig
-                som betalat.
-              </p>
-              <div className="grid sm:grid-cols-2 gap-3 text-sm">
-                <div className="rounded-xl bg-emerald-900/80 border border-emerald-600/60 p-3">
-                  <p className="text-[11px] uppercase tracking-[0.18em] text-emerald-300 mb-1.5">
-                    Steg 1 – Swisha
-                  </p>
-                  <p className="font-semibold text-emerald-100">
-                    Swisha 19 kr till:
-                  </p>
-                  <p className="text-lg font-bold text-emerald-200 mt-0.5">
-                    0761&nbsp;39&nbsp;01&nbsp;99
-                  </p>
-                </div>
-                <div className="rounded-xl bg-emerald-900/40 border border-emerald-600/40 p-3">
-                  <p className="text-[11px] uppercase tracking-[0.18em] text-emerald-300 mb-1.5">
-                    Steg 2 – Meddelande
-                  </p>
-                  <p className="text-emerald-100">
-                    Skriv i meddelandet:
-                    <br />
-                    <span className="font-semibold">
-                      "V85-tipset" + ditt mobilnummer
-                    </span>
-                    .
-                  </p>
-                  <p className="text-[11px] text-emerald-200 mt-1.5">
-                    När betalningen syns skickas systemet manuellt som SMS till
-                    numret du angav.
-                  </p>
-                </div>
-              </div>
-              <div className="mt-1 text-[11px] text-emerald-200">
-                Inga spel genomförs åt dig – du får raden och spelar själv via
-                ATG.
-              </div>
-            </section>
+          </div>
+          <div className="bg-gradient-to-br from-sky-50 to-white border border-sky-100 rounded-2xl p-4 text-sm">
+            <p className="font-semibold text-slate-900">{omgang.bana} – V85</p>
+            <p className="text-xs text-slate-600">{omgang.datum}</p>
+            <p className="mt-1 text-xs text-slate-700">{omgang.beskrivning}</p>
+            <p className="text-amber-700 mt-2 font-medium">💰 Jackpot ca 50 Mkr</p>
           </div>
         </section>
 
-        <section
-          id="omgang"
-          className="scroll-mt-24 mb-6 grid md:grid-cols-[1.6fr,1.4fr] gap-6"
-        >
-          <div className="rounded-2xl bg-sky-900/60 border border-sky-700/80 p-4 space-y-3">
-            <h2 className="text-lg font-semibold text-sky-50 flex items-center gap-2">
-              <span>🏁 Veckans omgång</span>
-            </h2>
-            <p className="text-sm text-sky-100">
-              <span className="font-semibold">{omgang?.bana}</span> –{" "}
-              {omgang?.datum}
-            </p>
-            {omgang?.beskrivning && (
-              <p className="text-sm text-sky-200/90">{omgang.beskrivning}</p>
-            )}
-          </div>
+        {/* OMGÅNG */}
+        <section id="omgang" className="scroll-mt-24 border-t border-slate-200 pt-6">
+          <h2 className="text-xl font-semibold">🏁 Veckans omgång – {omgang.bana}</h2>
+          <p className="text-sm text-slate-700 mt-1">
+            Här samlar vi allt inför lördagens V85 på {omgang.bana}.
+          </p>
+          <a
+            href="https://assets.ctfassets.net/hkip2osr81id/39uvrIW4wvyccGJij4j7X7/e48d16ad41ce42b912807ef8195f21db/251108_BERGSAKER_GP_V85_1.pdf"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex mt-3 items-center gap-2 border border-sky-200 bg-white px-4 py-2 rounded-full text-sky-800 hover:bg-sky-50 text-xs"
+          >
+            📄 Gratis program – Bergsåker V85
+          </a>
+        </section>
 
-          <div className="rounded-2xl bg-sky-900/40 border border-sky-700/80 p-4 space-y-3">
-            <h3 className="text-sm font-semibold text-sky-100 flex items-center gap-2">
-              <span>📄 Gratisprogram</span>
-            </h3>
-            <p className="text-xs text-sky-200/90">
-              Officiellt program för hela omgången med startlistor, tider och
-              lopplaner.
-            </p>
-            <a
-              href="https://assets.ctfassets.net/hkip2osr81id/39uvrIW4wvyccGJij4j7X7/e48d16ad41ce42b912807ef8195f21db/251108_BERGSAKER_GP_V85_1.pdf"
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center justify-center rounded-xl bg-sky-500 hover:bg-sky-400 text-sky-950 text-sm font-semibold px-4 py-2 mt-1"
-            >
-              Öppna gratisprogram (PDF)
-            </a>
+        {/* V85-GUIDE (uppflyttad hit) */}
+        <section id="v85-guide" className="scroll-mt-24 border-t border-slate-200 pt-6">
+          <h2 className="text-xl font-semibold">📘 Så funkar V85</h2>
+          <div className="grid md:grid-cols-2 gap-4 text-sm mt-2">
+            <div className="rounded-2xl border border-slate-200 bg-white p-4">
+              <h3 className="font-semibold">Grunderna i V85</h3>
+              <ul className="list-disc pl-5 text-xs mt-1 space-y-1 text-slate-700">
+                <li>Du ska hitta vinnaren i 8 lopp.</li>
+                <li>Utdelning sker oftast på 8, 7 och 6 rätt.</li>
+                <li>Insatsen är 1 kr per rad.</li>
+                <li>Spela själv eller via Tillsammans-lag.</li>
+              </ul>
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-white p-4">
+              <h3 className="font-semibold">Tips inför spelet</h3>
+              <ul className="list-disc pl-5 text-xs mt-1 space-y-1 text-slate-700">
+                <li>1–2 stabila spikar ger plats för garderingar.</li>
+                <li>Kolla väder, balans och strykningar.</li>
+                <li>Jämför tips – se sektionen “Gratis tips & analyser”.</li>
+              </ul>
+            </div>
           </div>
         </section>
 
-        <section
-          id="nycklar"
-          className="scroll-mt-24 py-6 space-y-4 border-t border-sky-800/60"
-        >
-          <div className="flex items-center justify-between gap-2">
-            <h2 className="text-lg font-semibold text-sky-50">
-              🎯 Spikar, skrällar & varningar
-            </h2>
+        {/* GRATIS TIPS */}
+        <section id="tips" className="scroll-mt-24 border-t border-slate-200 pt-6">
+          <h2 className="text-xl font-semibold">🧩 Gratis tips & analyser</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3 text-sm mt-3">
+            <a href="https://www.atg.se/V85/tips/fem-tippar-v85" target="_blank" rel="noreferrer" className="p-3 border rounded-2xl bg-white hover:border-sky-300">Fem tippar V85</a>
+            <a href="https://www.atg.se/V85/tips/v85-med-fernlund-lordag" target="_blank" rel="noreferrer" className="p-3 border rounded-2xl bg-white hover:border-sky-300">V85 med Fernlund</a>
+            <a href="https://www.atg.se/V85/tips/vass-eller-kass-v85-lordag" target="_blank" rel="noreferrer" className="p-3 border rounded-2xl bg-white hover:border-sky-300">Vass eller Kass</a>
+            <a href="https://www.atg.se/V85/tips/bjornkollen-v85-lordag" target="_blank" rel="noreferrer" className="p-3 border rounded-2xl bg-white hover:border-sky-300">Björnkollen</a>
+            <a href="https://www.atg.se/V85/tips/251107-stallsnack-v85-bergsaker-multijackpot" target="_blank" rel="noreferrer" className="p-3 border rounded-2xl bg-white hover:border-sky-300">Stallsnack Bergsåker</a>
+            <a href="https://thomasuhrberg.se/" target="_blank" rel="noreferrer" className="p-3 border rounded-2xl bg-white hover:border-sky-300">Thomas Uhrberg</a>
+            <a href="https://gratistravtips.se/" target="_blank" rel="noreferrer" className="p-3 border rounded-2xl bg-white hover:border-sky-300">Gratistravtips.se</a>
+            <a href="https://travstugan.se/" target="_blank" rel="noreferrer" className="p-3 border rounded-2xl bg-white hover:border-sky-300">Travstugan</a>
+            <a href="https://www.aftonbladet.se/sportbladet/trav365/a/Gyv09Q/v85-tips-bergsaker-lordagen-8-november-basta-skrallarna-andelssystem-jackpott-50-miljoner" target="_blank" rel="noreferrer" className="p-3 border rounded-2xl bg-white hover:border-sky-300">Trav365 – Aftonbladet</a>
           </div>
-          <div className="grid md:grid-cols-3 gap-4">
-            {Object.entries(nycklar).map(([key, val]) => (
-              <div
-                key={key}
-                className={
-                  "rounded-2xl border p-4 space-y-2 " +
-                  (val.tone === "green"
-                    ? "bg-emerald-900/40 border-emerald-500/50"
-                    : val.tone === "yellow"
-                    ? "bg-amber-900/30 border-amber-400/60"
-                    : "bg-rose-900/40 border-rose-500/60")
-                }
-              >
-                <p className="text-[11px] uppercase tracking-[0.18em] text-sky-100/80">
-                  {val.label}
-                </p>
-                <h3 className="text-base font-semibold text-sky-50">
-                  {val.title}
-                </h3>
-                <p className="text-sm text-sky-100/90">{val.text}</p>
+        </section>
+
+        {/* SPIKAR */}
+        <section id="nycklar" className="scroll-mt-24 border-t border-slate-200 pt-6">
+          <h2 className="text-xl font-semibold">🎯 Spikar, skrällar & varningar</h2>
+          <div className="grid md:grid-cols-3 gap-4 mt-3 text-sm">
+            {Object.entries(nycklar).map(([key, info]) => (
+              <div key={key} className="rounded-2xl border bg-white p-4 shadow-sm">
+                <p className="text-xs uppercase text-slate-500">{key}</p>
+                <h3 className="font-semibold">{info.titel}</h3>
+                <p className="text-xs text-slate-700 mt-1">{info.text}</p>
               </div>
             ))}
           </div>
         </section>
 
-        <section
-          id="v85-guide"
-          className="scroll-mt-24 py-6 space-y-4 border-t border-sky-800/60"
-        >
-          <div className="flex items-center justify-between gap-2">
-            <h2 className="text-lg font-semibold text-sky-50">
-              📘 Så fungerar V85
-            </h2>
-          </div>
-          <div className="grid md:grid-cols-2 gap-4 text-sm text-sky-100/90">
-            <div className="space-y-2 rounded-2xl bg-sky-900/60 border border-sky-700/80 p-4">
-              <h3 className="font-semibold text-sky-50">Grunderna i spelet</h3>
-              <ul className="list-disc list-inside space-y-1">
-                <li>Du spelar på 8 lopp (avdelningar).</li>
-                <li>Målet är att hitta vinnaren i varje avdelning.</li>
-                <li>Utdelning på 8, 7 och 6 rätt.</li>
-                <li>Insatsen beräknas som antal rader × radpris.</li>
-              </ul>
+        {/* KUPONG */}
+        <section id="kupong" className="scroll-mt-24 border-t border-slate-200 pt-6">
+          <h2 className="text-xl font-semibold">📲 Veckans kupong</h2>
+          <div className="relative rounded-2xl border bg-white p-4 mt-3">
+            <div className="space-y-1 text-sm">
+              {kupong.map((r) => (
+                <div key={r.avd} className="flex justify-between border-b border-slate-100 pb-1 last:border-0">
+                  <span>{r.avd}</span>
+                  <span>{r.hästar}</span>
+                </div>
+              ))}
             </div>
-            <div className="space-y-2 rounded-2xl bg-sky-900/40 border border-sky-700/80 p-4">
-              <h3 className="font-semibold text-sky-50">
-                Speltips inför omgången
-              </h3>
-              <ul className="list-disc list-inside space-y-1">
-                <li>Våga spika där du verkligen tror på en häst.</li>
-                <li>Lägg fler streck i luriga lopp med många möjliga vinnare.</li>
-                <li>
-                  Håll koll på väder, balansändringar och sena strykningar.
-                </li>
-                <li>Kombinera egna idéer med gratis tipslänkarna nedan.</li>
-              </ul>
+            <div className="absolute inset-0 bg-slate-900/60 backdrop-blur flex items-center justify-center">
+              <div className="text-center text-white text-sm px-3">
+                🔒 Kupongen är låst – kostar 19 kr. Betala via Swish nedan.
+              </div>
             </div>
           </div>
         </section>
 
-        <section
-          id="tips"
-          className="scroll-mt-24 py-6 space-y-4 border-t border-sky-800/60"
-        >
-          <div className="flex items-center justify-between gap-2">
-            <h2 className="text-lg font-semibold text-sky-50">
-              🧩 Gratis tips & analyser
-            </h2>
-          </div>
-          <div className="grid md:grid-cols-3 gap-4 text-sm">
-            <div className="rounded-2xl bg-sky-900/60 border border-sky-700/80 p-4 space-y-2">
-              <h3 className="font-semibold text-sky-50">ATG V85-tips</h3>
-              <ul className="space-y-1">
-                <li>
-                  <a
-                    href="https://www.atg.se/V85/tips/251104-lordag-811-tips-till-v85-pa-bergsaker"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-sky-300 hover:text-sky-100 underline underline-offset-2"
-                  >
-                    ATG – Tips till V85 Bergsåker
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://www.atg.se/V85/tips/v85-med-fernlund-lordag"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-sky-300 hover:text-sky-100 underline underline-offset-2"
-                  >
-                    V85 med Fernlund
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://www.atg.se/V85/tips/korsdragaren-fran-vi-tippa-v85"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-sky-300 hover:text-sky-100 underline underline-offset-2"
-                  >
-                    Korsdragaren – Vi Tippa
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            <div className="rounded-2xl bg-sky-900/40 border border-sky-700/80 p-4 space-y-2">
-              <h3 className="font-semibold text-sky-50">Övriga gratislänkar</h3>
-              <ul className="space-y-1">
-                <li>
-                  <a
-                    href="https://travstugan.se/v85"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-sky-300 hover:text-sky-100 underline underline-offset-2"
-                  >
-                    Travstugan – analyser & drag
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://www.aftonbladet.se/sportbladet/trav365"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-sky-300 hover:text-sky-100 underline underline-offset-2"
-                  >
-                    Trav365 – Sportbladet
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            <div className="rounded-2xl bg-sky-900/20 border border-sky-700/60 p-4 space-y-2">
-              <h3 className="font-semibold text-sky-50">
-                Travronden (premium)
-              </h3>
-              <p className="text-sm text-sky-100/90">
-                Fördjupade analyser, intervjuer och material för dig som vill
-                gå ännu djupare i omgången.
-              </p>
-              <a
-                href="https://www.travronden.se/"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center justify-center rounded-xl bg-sky-500 hover:bg-sky-400 text-sky-950 text-xs font-semibold px-3 py-1.5"
-              >
-                Till Travronden
-              </a>
-            </div>
-          </div>
-        </section>
-
-        <section
-          id="spel"
-          className="scroll-mt-24 py-6 space-y-4 border-t border-sky-800/60"
-        >
-          <div className="flex items-center justify-between gap-2">
-            <h2 className="text-lg font-semibold text-sky-50">
-              🤝 Spela med Omgångskollen
-            </h2>
-          </div>
-          <div className="rounded-2xl bg-sky-900/50 border border-sky-700/80 p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3 text-sm">
-            <div>
-              <p className="font-semibold text-sky-50">
-                Team Wästman på ATG Tillsammans
-              </p>
-              <p className="text-sky-100/90">
-                Vill du spela tillsammans istället för att bygga egna system?
-                Häng på laget och var med på gemensamma kuponger.
-              </p>
-            </div>
-            <a
-              href="https://www.atg.se/tillsammans"
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center justify-center rounded-xl bg-emerald-500 hover:bg-emerald-400 text-emerald-950 text-sm font-semibold px-4 py-2"
-            >
-              Spela med Omgångskollen
-            </a>
-          </div>
-        </section>
-
-        <footer className="mt-8 border-t border-sky-900/80 pt-4 pb-8 text-[11px] text-sky-400 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-          <p>
-            Spela ansvarsfullt. 18+ | Stödlinjen: 020-81 91 00 |
-            spelpaus.se
+        {/* SWISH */}
+        <section id="swish" className="scroll-mt-24 border-t border-slate-200 pt-6 mb-10">
+          <h2 className="text-xl font-semibold">💚 Swish-tipset</h2>
+          <p className="text-sm text-slate-700 mt-1">
+            Betala 19 kr via Swish genom att scanna QR-koden nedan (eller skriv in belopp och meddelande: “V85 + ditt mobilnummer”).
           </p>
-          <p>Omgångskollen – ett fristående projekt, ej kopplat till ATG.</p>
-        </footer>
+          <div className="grid md:grid-cols-[1.2fr,1.8fr] gap-4 mt-4">
+            <div className="border border-slate-200 bg-white p-4 rounded-2xl text-sm">
+              <ol className="list-decimal pl-5 space-y-1 text-xs text-slate-700">
+                <li>Öppna Swish och scanna QR-koden.</li>
+                <li>Betala 19 kr och skriv “V85 + ditt mobilnummer”.</li>
+                <li>Raden skickas via SMS efter betalning.</li>
+              </ol>
+            </div>
+            <div className="flex flex-col items-center border border-slate-200 bg-white p-4 rounded-2xl">
+              <p className="text-xs text-slate-700 mb-2">Scanna QR-koden i Swish:</p>
+              <img src="./qrKod.png" alt="Swish QR-kod" className="w-40 h-40 object-contain" />
+            </div>
+          </div>
+        </section>
       </main>
+
+      <footer className="border-t border-slate-200 py-6 text-center text-[11px] text-slate-500">
+        Spela ansvarsfullt. 18+ | Stödlinjen: 020-81 91 00. Fristående hobbyprojekt utan koppling till ATG.
+      </footer>
     </div>
   );
 }
 
 export default App;
+
+
+
+
+
+
+
 
 
