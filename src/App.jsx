@@ -204,33 +204,74 @@ function App() {
         </section>
 
         {/* V85-GUIDE */}
-        <section
-          id="v85-guide"
-          className="scroll-mt-24 border-t border-slate-200 pt-6"
-        >
-          <h2 className="text-xl font-semibold">📘 Så funkar V85</h2>
-          <div className="grid md:grid-cols-2 gap-4 text-sm mt-2">
-            <div className="rounded-2xl border border-slate-200 bg-white p-4">
-              <h3 className="font-semibold">Grunderna i V85</h3>
-              <ul className="list-disc pl-5 text-xs mt-1 space-y-1 text-slate-700">
-                <li>Du ska hitta vinnaren i 8 lopp.</li>
-                <li>Utdelning sker oftast på 8, 7 och 6 rätt.</li>
-                <li>Insatsen är 1 kr per rad.</li>
-                <li>Spela själv eller via Tillsammans-lag.</li>
-              </ul>
-            </div>
-            <div className="rounded-2xl border border-slate-200 bg-white p-4">
-              <h3 className="font-semibold">Tips inför spelet</h3>
-              <ul className="list-disc pl-5 text-xs mt-1 space-y-1 text-slate-700">
-                <li>1–2 stabila spikar ger plats för garderingar.</li>
-                <li>Kolla väder, balans och strykningar.</li>
-                <li>
-                  Jämför tips – se sektionen “Gratis tips & analyser”.
-                </li>
-              </ul>
-            </div>
-          </div>
-        </section>
+        <section id="v85-guide" className="max-w-5xl mx-auto mb-12 scroll-mt-24">
+  <div className="bg-white/5 border border-white/10 rounded-2xl p-6 md:p-8 shadow-lg">
+    <div className="flex items-center gap-3 mb-4">
+      <span className="inline-flex items-center justify-center rounded-full bg-sky-500/10 text-sky-400 text-xs font-semibold px-3 py-1">
+        Om spelet
+      </span>
+      <h2 className="text-xl md:text-2xl font-bold text-slate-50">
+        V85 – så fungerar spelet
+      </h2>
+    </div>
+
+    <p className="text-sm md:text-base text-slate-200 mb-4">
+      V85 är ett streckspel där du ska hitta vinnarna i åtta lopp. Du spelar på
+      samma omgång som V86 men med möjlighet att sänka insatsen. Radpriset är
+      normalt <span className="font-semibold">0,50 kr per rad</span> och du kan
+      få utdelning på <span className="font-semibold">8, 7, 6 och 5 rätt</span>.
+    </p>
+
+    <div className="grid gap-4 md:grid-cols-2 mb-4">
+      <div className="bg-black/20 rounded-xl p-4 border border-white/5">
+        <h3 className="text-sm font-semibold text-slate-100 mb-2">
+          Utdelning på V85
+        </h3>
+        <ul className="text-sm text-slate-200 space-y-1">
+          <li>• 8 rätt – ca <span className="font-semibold">35 %</span> av potten</li>
+          <li>• 7 rätt – ca <span className="font-semibold">15 %</span> av potten</li>
+          <li>• 6 rätt – ca <span className="font-semibold">15 %</span> av potten</li>
+          <li>• 5 rätt – ca <span className="font-semibold">35 %</span> av potten</li>
+        </ul>
+        <p className="text-xs text-slate-400 mt-2">
+          Exakta nivåer kan variera något beroende på ATG:s regler, men
+          grundidén är att både fullträff och femrättspotten är ordentligt
+          belönade.
+        </p>
+      </div>
+
+      <div className="bg-black/20 rounded-xl p-4 border border-sky-500/30">
+        <h3 className="text-sm font-semibold text-slate-100 mb-2">
+          Nyheten – spela med 30 / 50 / 70 %
+        </h3>
+        <p className="text-sm text-slate-200 mb-2">
+          En nyhet på V85/V86 är möjligheten att spela med{" "}
+          <span className="font-semibold">sänkt insats</span>. Du kan välja att
+          spela på till exempel:
+        </p>
+        <ul className="text-sm text-slate-200 space-y-1 mb-2">
+          <li>• <span className="font-semibold">30 %</span> av ordinarie insats</li>
+          <li>• <span className="font-semibold">50 %</span> av ordinarie insats</li>
+          <li>• <span className="font-semibold">70 %</span> av ordinarie insats</li>
+        </ul>
+        <p className="text-sm text-slate-200">
+          Väljer du ett lägre procentläge sänks insatsen – men också din del av
+          eventuell utdelning. Spelar du till exempel på{" "}
+          <span className="font-semibold">50 %</span> får du{" "}
+          <span className="font-semibold">halva utdelningen</span> om systemet
+          går in. Ett sätt att komma billigare undan på stora system.
+        </p>
+      </div>
+    </div>
+
+    <p className="text-sm md:text-base text-slate-200">
+      På Omgångskollen fokuserar vi på analys, gratislänkar och idéer som hjälper
+      dig att optimera dina system – oavsett om du spelar full insats eller med
+      30, 50 eller 70 procent.
+    </p>
+  </div>
+</section>
+
 
         {/* GRATIS TIPS */}
         <section
