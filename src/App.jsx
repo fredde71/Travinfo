@@ -47,7 +47,7 @@ export default function App() {
           <nav className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
             <div className="flex items-center gap-3">
               <img
-                src="/omgangskollen-dark.png"
+                src="./omgangskollen-dark.png"
                 alt="Omgångskollen"
                 className="h-9 w-auto"
               />
@@ -86,6 +86,7 @@ export default function App() {
         </header>
 
         <main className="mx-auto max-w-6xl px-4 pb-12 pt-6">
+          {/* Hero + nedräkning */}
           <section className="mb-10 flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
             <div>
               <div className="inline-flex items-center gap-2 rounded-full border border-sky-500/40 bg-sky-500/10 px-3 py-1 text-xs font-medium text-sky-100">
@@ -115,13 +116,17 @@ export default function App() {
                   <div className="rounded-lg bg-slate-800 px-2 py-1 text-sm">
                     {String(d).padStart(2, "0")}
                   </div>
-                  <div className="mt-1 text-[0.65rem] text-slate-400">dagar</div>
+                  <div className="mt-1 text-[0.65rem] text-slate-400">
+                    dagar
+                  </div>
                 </div>
                 <div>
                   <div className="rounded-lg bg-slate-800 px-2 py-1 text-sm">
                     {String(h).padStart(2, "0")}
                   </div>
-                  <div className="mt-1 text-[0.65rem] text-slate-400">timmar</div>
+                  <div className="mt-1 text-[0.65rem] text-slate-400">
+                    timmar
+                  </div>
                 </div>
                 <div>
                   <div className="rounded-lg bg-slate-800 px-2 py-1 text-sm">
@@ -143,6 +148,7 @@ export default function App() {
             </div>
           </section>
 
+          {/* Veckans omgång */}
           <section
             id="omgang"
             className="mb-10 scroll-mt-24 grid gap-4 md:grid-cols-[minmax(0,_2fr)_minmax(0,_1.4fr)]"
@@ -224,6 +230,7 @@ export default function App() {
             </div>
           </section>
 
+          {/* V85-guide */}
           <section
             id="v85-guide"
             className="mb-10 scroll-mt-24 max-w-5xl mx-auto"
@@ -297,6 +304,7 @@ export default function App() {
             </div>
           </section>
 
+          {/* Gratis tips */}
           <section
             id="gratis-tips"
             className="mb-10 scroll-mt-24 max-w-5xl mx-auto"
@@ -354,7 +362,7 @@ export default function App() {
                     rel="noreferrer"
                     className="block rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 hover:border-sky-500/60"
                   >
-                    💣 Kördragaren – Vi Tippa
+                    💣 Korsdragaren – Vi Tippa
                   </a>
                 </div>
                 <div className="space-y-2 text-sm">
@@ -403,6 +411,7 @@ export default function App() {
             </div>
           </section>
 
+          {/* Spikar & skrällar */}
           <section
             id="nycklar"
             className="mb-10 scroll-mt-24 max-w-5xl mx-auto"
@@ -451,6 +460,7 @@ export default function App() {
             </div>
           </section>
 
+          {/* Swish-tipset */}
           <section
             id="swish"
             className="mb-12 scroll-mt-24 max-w-5xl mx-auto"
@@ -493,20 +503,14 @@ export default function App() {
                       skickas kupongen manuellt via SMS.
                     </p>
 
-                    <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-slate-300">
-                      {WEEK_TICKET.map((row) => (
-                        <div
-                          key={row.race}
-                          className="rounded-lg border border-slate-800 bg-slate-900/80 px-2 py-1"
-                        >
-                          <div className="text-[0.65rem] uppercase tracking-wide text-slate-400">
-                            Avd {row.race}
-                          </div>
-                          <div className="font-mono text-slate-100">
-                            {row.horses}
-                          </div>
-                        </div>
-                      ))}
+                    {/* Låst placeholder istället för riktiga hästar */}
+                    <div className="mt-3 rounded-xl border border-slate-800 bg-slate-900/90 p-3">
+                      <div className="text-[0.65rem] uppercase tracking-wide text-slate-500">
+                        Systemrader
+                      </div>
+                      <div className="mt-2 flex h-16 items-center justify-center rounded-lg bg-slate-800/80 text-[0.8rem] text-slate-400">
+                        Låst – visas endast efter betalning
+                      </div>
                     </div>
 
                     <div className="mt-3 flex items-center gap-2 text-[0.7rem] text-slate-400">
@@ -575,7 +579,7 @@ export default function App() {
                   </p>
                   <div className="rounded-xl bg-white p-2">
                     <img
-                      src="/qrKod.png"
+                      src="./qrKod.png"
                       alt="Swish QR-kod för veckans kupong"
                       className="h-40 w-40 object-contain"
                     />
@@ -598,7 +602,6 @@ export default function App() {
     </div>
   );
 }
-
 
 
 
