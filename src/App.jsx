@@ -1,101 +1,241 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+
+function Countdown({ targetTime }) {
+  const [timeLeft, setTimeLeft] = useState(null);
+
+  useEffect(() => {
+    if (!targetTime) return;
+
+    const target = new Date(targetTime).getTime();
+
+    function update() {
+      const now = Date.now();
+      const diff = target - now;
+
+      if (diff <= 0) {
+        setTimeLeft({
+          days: 0,
+          hours: 0,
+          minutes: 0,
+          seconds: 0,
+          finished: true,
+        });
+        return;
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+
+      setTimeLeft({
+        days,
+        hours,
+        minutes,
+        seconds,
+        finished: false,
+      });
+    }
+
+    update();
+    const id = setInterval(update, 1000);
+    return () => clearInterval(id);
+  }, [targetTime]);
+
+  if (!timeLeft) {
+    return (
+      <p className="text-sm text-slate-500">
+        Räknar ut tid till spelstopp...
+      </p>
+    );
+  }
+
+  if (timeLeft.finished) {
+    return (
+      <p className="text-sm font-medium text-rose-600">
+        Kupongen är stängd – ny omgång på gång!
+      </p>
+    );
+  }
+
+  return (
+    <div className="flex gap-3 text-center text-xs sm:text-sm">
+      <div>
+        <div className="rounded-md bg-slate-900/90 px-2 py-1 font-mono text-slate-50">
+          {timeLeft.days}
+        </div>
+        <div className="mt-1 text-[10px] uppercase tracking-wide text-slate-500">
+          dagar
+        </div>
+      </div>
+      <div>
+        <div className="rounded-md bg-slate-900/90 px-2 py-1 font-mono text-slate-50">
+          {String(timeLeft.hours).padStart(2, "0")}
+        </div>
+        <div className="mt-1 text-[10px] uppercase tracking-wide text-slate-500">
+          timmar
+        </div>
+      </div>
+      <div>
+        <div className="rounded-md bg-slate-900/90 px-2 py-1 font-mono text-slate-50">
+          {String(timeLeft.minutes).padStart(2, "0")}
+        </div>
+        <div className="mt-1 text-[10px] uppercase tracking-wide text-slate-500">
+          minuter
+        </div>
+      </div>
+      <div>
+        <div className="rounded-md bg-slate-900/90 px-2 py-1 font-mono text-slate-50">
+          {String(timeLeft.seconds).padStart(2, "0")}
+        </div>
+        <div className="mt-1 text-[10px] uppercase tracking-wide text-slate-500">
+          sekunder
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const defaultNycklar = {
+  spik: {
+    titel: "2 Shogun R.R",
+    text: "Stark och rejäl sort som tål att göra grovjobb – given spik i raden.",
+    tone: "green",
+  },
+  skrall: {
+    titel: "12 Funny Guy & 6 Cuelebre",
+    text: "Två roliga kantbollar som kan rensa ordentligt om det klaffar.",
+    tone: "yellow",
+  },
+  varning: {
+    titel: "12 Freeloader",
+    text: "Formstark typ som lätt blir bortglömd – ska med på större system.",
+    tone: "red",
+  },
+};
+
+const gratisTipsLankar = [
+  {
+    namn: "Fem Tippar V85",
+    url: "https://www.atg.se/V85/tips/fem-tippar-v85",
+    typ: "ATG",
+  },
+  {
+    namn: "Vass eller Kass – V85 lördag",
+    url: "https://www.atg.se/V85/tips/vass-eller-kass-v85-lordag",
+    typ: "ATG",
+  },
+  {
+    namn: "Björn Goop – Björnkollen V85",
+    url: "https://www.atg.se/V85/tips/bjornkollen-v85-lordag",
+    typ: "ATG",
+  },
+  {
+    namn: "V85 med Fernlund",
+    url: "https://www.atg.se/V85/tips/v85-med-fernlund-lordag",
+    typ: "ATG",
+  },
+  {
+    namn: "ATG – Tips till veckans V85",
+    url: "https://www.atg.se/V85/tips/251104-lordag-811-tips-till-v85-pa-bergsaker",
+    typ: "ATG",
+  },
+  {
+    namn: "Korsdragaren från Vi Tippa",
+    url: "https://www.atg.se/V85/tips/korsdragaren-fran-vi-tippa-v85",
+    typ: "ATG",
+  },
+  {
+    namn: "Stallsnack V85 – Bergsåker Multijackpot",
+    url: "https://www.atg.se/V85/tips/251107-stallsnack-v85-bergsaker-multijackpot",
+    typ: "ATG",
+  },
+  {
+    namn: "Gratistravtips.se",
+    url: "https://gratistravtips.se/",
+    typ: "Gratis tips",
+  },
+  {
+    namn: "Travstugan",
+    url: "https://travstugan.se/",
+    typ: "Gratis tips",
+  },
+  {
+    namn: "Trav365 – Sportbladet",
+    url: "https://www.aftonbladet.se/sportbladet/trav365/a/Gyv09Q/v85-tips-bergsaker-lordagen-8-november-basta-skrallarna-andelssystem-jackpott-50-miljoner",
+    typ: "Analys",
+  },
+  {
+    namn: "Travronden (premium)",
+    url: "https://www.travronden.se/",
+    typ: "Premium",
+  },
+];
 
 function App() {
   const [data, setData] = useState(null);
-  const [timeLeft, setTimeLeft] = useState(null);
+  const [countdownTarget, setCountdownTarget] = useState(null);
 
-  // Hämta data.json
   useEffect(() => {
     fetch("./data.json")
       .then((res) => res.json())
-      .then((json) => setData(json))
-      .catch(() => setData(null));
+      .then((json) => {
+        setData(json);
+        if (json?.omgang?.countdownTarget) {
+          setCountdownTarget(json.omgang.countdownTarget);
+        } else if (json?.omgang?.datum) {
+          const dateString = `${json.omgang.datum} 16:20`;
+          setCountdownTarget(dateString);
+        } else {
+          setCountdownTarget("2024-11-08T16:20:00+01:00");
+        }
+      })
+      .catch(() => {
+        setData(null);
+        setCountdownTarget("2024-11-08T16:20:00+01:00");
+      });
   }, []);
 
-  // Nedräkning
-  useEffect(() => {
-    if (!data?.omgang) return;
-
-    let target;
-    if (data.omgang.spelstopp) {
-      target = new Date(data.omgang.spelstopp);
-    } else {
-      // Fallback: nästa lördag 16:20
-      const now = new Date();
-      const d = new Date(now);
-      const day = d.getDay(); // 0 = sön, 6 = lör
-      const daysToSat = (6 - day + 7) % 7 || 7;
-      d.setDate(d.getDate() + daysToSat);
-      d.setHours(16, 20, 0, 0);
-      target = d;
-    }
-
-    const tick = () => {
-      const now = new Date();
-      const diff = target - now;
-      if (diff <= 0) {
-        setTimeLeft({ done: true });
-        return;
-      }
-      const totalSeconds = Math.floor(diff / 1000);
-      const days = Math.floor(totalSeconds / (60 * 60 * 24));
-      const hours = Math.floor((totalSeconds % (60 * 60 * 24)) / (60 * 60));
-      const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
-      setTimeLeft({ days, hours, minutes, done: false });
-    };
-
-    tick();
-    const id = setInterval(tick, 60 * 1000);
-    return () => clearInterval(id);
-  }, [data]);
-
-  const omgang = data?.omgang;
-  const nycklar = data?.nycklar;
+  const nycklar = data?.nycklar || defaultNycklar;
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
-      {/* HEADER */}
-      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-slate-200">
-        <nav className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
+      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur">
+        <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
           <div className="flex items-center gap-2">
             <img
               src="./omgangskollen-dark.png"
-              alt="Omgångskollen"
+              alt="Omgångskollen logotyp"
               className="h-8 w-auto"
             />
-            <span className="font-semibold tracking-tight text-slate-900">
+            <span className="text-sm font-semibold tracking-tight">
               Omgångskollen
             </span>
           </div>
-          <ul className="hidden md:flex gap-4 text-sm text-slate-600">
-            <li>
-              <a href="#swish" className="hover:text-slate-900">
-                💸 Swish-tipset
-              </a>
-            </li>
+          <ul className="flex gap-4 text-xs sm:text-sm text-slate-600">
             <li>
               <a href="#omgang" className="hover:text-slate-900">
-                🏁 Veckans omgång
+                🏁 Omgången
               </a>
             </li>
             <li>
-              <a href="#guide" className="hover:text-slate-900">
+              <a href="#swish-tipset" className="hover:text-slate-900">
+                💰 Swish-tipset
+              </a>
+            </li>
+            <li>
+              <a href="#v85-guide" className="hover:text-slate-900">
                 📘 V85-guide
               </a>
             </li>
             <li>
-              <a href="#tips" className="hover:text-slate-900">
-                🧩 Gratis tips
+              <a href="#gratis-tips" className="hover:text-slate-900">
+                🆓 Gratis tips
               </a>
             </li>
             <li>
               <a href="#nycklar" className="hover:text-slate-900">
                 🎯 Spikar & skrällar
-              </a>
-            </li>
-            <li>
-              <a href="#kupong" className="hover:text-slate-900">
-                🧾 Veckans kupong
               </a>
             </li>
             <li>
@@ -107,485 +247,379 @@ function App() {
         </nav>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 py-8 space-y-10">
-        {/* HERO + NEDRÄKNING + SWISH-KORT */}
-        <section className="grid lg:grid-cols-[1.4fr,1fr] gap-6 items-stretch">
+      <main className="mx-auto max-w-6xl px-4 pb-12 pt-6">
+        <section className="grid gap-4 md:grid-cols-[2fr,1.4fr] md:items-start">
           <div className="space-y-4">
-            <div className="text-xs uppercase tracking-[0.18em] text-sky-700 font-semibold">
-              Veckans V85
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-slate-900">
-              Omgångskollen – allt inför helgens V85
-            </h1>
-            <p className="text-sm sm:text-base text-slate-600 max-w-2xl">
-              Samlad info, gratislänkar och spelidéer inför lördagens omgång.
-              Tanken är att du ska slippa ha 15 flikar öppna – börja här.
-            </p>
-
-            {/* Nedräkning + snabbfakta */}
-            <div className="grid sm:grid-cols-3 gap-3">
-              <div className="rounded-xl border border-sky-200 bg-sky-50/60 px-4 py-3 flex flex-col justify-between">
-                <div className="text-xs font-semibold text-sky-700 uppercase">
-                  Nedräkning till spelstopp
+            <div className="rounded-2xl bg-gradient-to-br from-sky-600 via-sky-500 to-sky-700 p-[1px] shadow-md">
+              <div className="flex flex-col justify-between gap-4 rounded-2xl bg-slate-900/95 p-4 text-slate-50 sm:flex-row sm:items-center">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-200/80">
+                    Nästa V85-omgång
+                  </p>
+                  <h1 className="mt-1 text-2xl font-bold">
+                    {data?.omgang?.rubrik || "V85 Bergsåker – Multijackpot"}
+                  </h1>
+                  <p className="mt-1 text-sm text-sky-100/90">
+                    {data?.omgang?.bana || "Bergsåker"}{" "}
+                    {data?.omgang?.datum
+                      ? `· ${data.omgang.datum}`
+                      : "· Lördag 8 november"}
+                  </p>
+                  <p className="mt-1 text-xs text-sky-100/80">
+                    {data?.omgang?.jackpot ||
+                      "Jackpott ca 50 miljoner i åttarättspotten."}
+                  </p>
                 </div>
-                <div className="mt-1 text-sm font-mono text-slate-900">
-                  {timeLeft == null ? (
-                    <span>⏳ Ej uppdaterat</span>
-                  ) : timeLeft.done ? (
-                    <span>🔚 Omgången har startat</span>
-                  ) : (
-                    <span>
-                      {timeLeft.days} d {timeLeft.hours} h {timeLeft.minutes} min
-                    </span>
-                  )}
-                </div>
-                {omgang && (
-                  <div className="mt-2 text-[11px] text-slate-500">
-                    Spelstopp ca {omgang.startTid ?? "16:20"}
-                  </div>
-                )}
-              </div>
-
-              <div className="rounded-xl border border-emerald-200 bg-emerald-50/70 px-4 py-3">
-                <div className="text-xs font-semibold text-emerald-700 uppercase">
-                  Jackpott
-                </div>
-                <div className="mt-1 text-sm font-semibold text-slate-900">
-                  {omgang?.jackpot ? omgang.jackpot : "Ingen info ännu"}
-                </div>
-                <p className="mt-1 text-[11px] text-emerald-800">
-                  Extra pengar i potten – håll koll på spikarna!
-                </p>
-              </div>
-
-              <div className="rounded-xl border border-slate-200 bg-white px-4 py-3">
-                <div className="text-xs font-semibold text-slate-700 uppercase">
-                  Bana
-                </div>
-                <div className="mt-1 text-sm font-semibold text-slate-900">
-                  {omgang?.bana ?? "Ej uppdaterad"}
-                </div>
-                <div className="mt-1 text-[11px] text-slate-500">
-                  {omgang?.datum ?? "Datum kommer inom kort"}
+                <div className="rounded-xl border border-sky-300/40 bg-slate-900/80 px-3 py-2">
+                  <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-sky-200">
+                    Tid kvar till spelstopp
+                  </p>
+                  <Countdown targetTime={countdownTarget} />
                 </div>
               </div>
             </div>
+
+            <section
+              id="omgang"
+              className="scroll-mt-28 space-y-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+            >
+              <h2 className="text-base font-semibold">Veckans omgång</h2>
+              <p className="text-sm text-slate-700">
+                {data?.omgang?.beskrivning ||
+                  "Bergsåker bjuder på en lurig V85-omgång med flera öppna lopp, högklassiga hästar och multijackpot. Spelvärdet är högt – både för spikletare och skrälljägare."}
+              </p>
+              <div className="mt-2 grid gap-3 text-xs text-slate-600 sm:grid-cols-3">
+                <div className="rounded-xl bg-slate-50 p-3">
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                    Bana
+                  </p>
+                  <p className="mt-1 text-sm font-medium">
+                    {data?.omgang?.bana || "Bergsåker"}
+                  </p>
+                  <p className="mt-1 text-xs">
+                    Stark vinterbana där form, styrka och rätt balans betyder
+                    mycket.
+                  </p>
+                </div>
+                <div className="rounded-xl bg-slate-50 p-3">
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                    Datum & spelstopp
+                  </p>
+                  <p className="mt-1 text-sm font-medium">
+                    {data?.omgang?.datum || "Lördag 8 november"}
+                  </p>
+                  <p className="mt-1 text-xs">
+                    Spelstopp ca 16:20 – dubbelkolla alltid tiden hos ATG.
+                  </p>
+                </div>
+                <div className="rounded-xl bg-slate-50 p-3">
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                    Jackpott
+                  </p>
+                  <p className="mt-1 text-sm font-medium">
+                    {data?.omgang?.jackpot || "Ca 50 miljoner kr"}
+                  </p>
+                  <p className="mt-1 text-xs">
+                    Extra pengar i potten gör att rätt rad kan bli rejält
+                    värd.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-3 flex flex-wrap items-center gap-3 text-xs">
+                <a
+                  href="https://assets.ctfassets.net/hkip2osr81id/39uvrIW4wvyccGJij4j7X7/e48d16ad41ce42b912807ef8195f21db/251108_BERGSAKER_GP_V85_1.pdf"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1 rounded-full bg-sky-600 px-3 py-1.5 font-medium text-white shadow-sm hover:bg-sky-700"
+                >
+                  📄 Gratisprogram Bergsåker
+                </a>
+                <a
+                  href="https://www.atg.se/V85"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1 rounded-full bg-slate-900 px-3 py-1.5 font-medium text-slate-50 hover:bg-black"
+                >
+                  🎫 Spela V85 hos ATG
+                </a>
+                <a
+                  href="https://thomasuhrberg.se/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1 rounded-full border border-slate-300 bg-white px-3 py-1.5 font-medium text-slate-800 hover:border-slate-400"
+                >
+                  🧠 Thomas Uhrberg – tips & info
+                </a>
+              </div>
+            </section>
           </div>
 
-          {/* Swish-tipset kort (överst på sidan) */}
           <section
-            id="swish"
-            className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white/90 shadow-sm px-4 py-5 flex flex-col justify-between"
+            id="swish-tipset"
+            className="scroll-mt-28 space-y-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
           >
-            <div>
-              <div className="flex items-center gap-2 text-xs font-semibold text-sky-700 uppercase">
-                💸 Swish-tipset
-                <span className="inline-flex items-center rounded-full bg-sky-100 px-2 py-[1px] text-[10px] font-medium text-sky-800">
-                  Veckans kupong – 100 kr
-                </span>
-              </div>
-              <h2 className="mt-2 text-lg font-semibold text-slate-900">
-                Låst V85-rad – skickas via SMS
-              </h2>
-              <p className="mt-2 text-sm text-slate-600">
-                Tipset kostar{" "}
-                <span className="font-semibold text-slate-900">19 kr</span>. När
-                du swishat skickas raden manuellt via SMS till numret du
-                anger i meddelandet.
+            <div className="space-y-1">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
+                Swish-tipset
               </p>
-
-              <div className="mt-3 rounded-lg bg-sky-50 border border-sky-100 px-3 py-2 text-xs text-sky-900">
-                <div className="font-semibold mb-1">Så gör du:</div>
-                <ol className="list-decimal list-inside space-y-1">
-                  <li>Öppna Swish-appen.</li>
-                  <li>
-                    Skanna QR-koden nedan. Spelar du från mobilen kan du
-                    öppna sidan på en annan enhet eller spara en skärmdump
-                    av QR-koden.
-                  </li>
-                  <li>
-                    Skriv ditt mobilnummer i meddelandet – raden skickas via
-                    SMS.
-                  </li>
-                </ol>
-              </div>
+              <h2 className="text-lg font-semibold">
+                Veckans kupong – 100 kr (tips för 19 kr)
+              </h2>
+              <p className="text-xs text-slate-600">
+                Ett färdigt V85-förslag för 100 kr – du får raden och spelar den
+                själv på ATG.
+              </p>
             </div>
 
-            <div className="mt-4 flex items-center justify-between gap-3">
-              <div className="text-[11px] text-slate-500 max-w-[60%]">
-                Raden är låst här på sidan – du får den efter betalning. Spela
-                ansvarsfullt. 18+.
+            <div className="space-y-3 rounded-xl border border-amber-200 bg-amber-50/80 px-3 py-3 text-xs text-amber-900">
+              <p className="flex items-center gap-2 text-[13px] font-semibold">
+                <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-amber-100 text-xs">
+                  💡
+                </span>
+                Veckans kupong är låst
+              </p>
+              <p>
+                Tipset kostar <span className="font-semibold">19 kr</span>. När
+                du har swishat enligt instruktionen nedan skickas raden
+                manuellt via SMS till numret du uppger i meddelandet.
+              </p>
+              <p>
+                Betalning sker via Swish med QR-koden eller nummer i appen. Du
+                får alltid bekräftelse när tipset är skickat.
+              </p>
+            </div>
+
+            <div className="grid gap-3 rounded-xl border border-slate-200 bg-slate-50/80 p-3 text-xs sm:grid-cols-[1.5fr,1fr]">
+              <div className="space-y-2">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                  Så funkar Swish-tipset
+                </p>
+                <ol className="list-decimal space-y-1 pl-4 text-slate-700">
+                  <li>Öppna Swish-appen på din telefon.</li>
+                  <li>
+                    Välj{" "}
+                    <span className="font-medium">“Skanna QR-kod”</span> och
+                    rikta kameran mot QR-koden här bredvid.
+                  </li>
+                  <li>
+                    Belopp: <span className="font-semibold">19 kr</span>.
+                  </li>
+                  <li>
+                    Skriv ditt{" "}
+                    <span className="font-semibold">
+                      mobilnummer i meddelandet
+                    </span>{" "}
+                    (dit tipset ska skickas).
+                  </li>
+                  <li>Godkänn betalningen.</li>
+                </ol>
+                <p className="mt-1 text-[11px] text-slate-500">
+                  När betalningen syns får du veckans kupong via SMS så snart
+                  som möjligt.
+                </p>
               </div>
-              <div className="shrink-0">
-                <img
-                  src="./swish-qr.png"
-                  alt="Swish QR-kod för veckans V85-tips"
-                  className="h-24 w-24 rounded-md border border-slate-200 bg-white object-contain"
-                />
+              <div className="flex flex-col items-center justify-center gap-2">
+                <div className="rounded-xl border border-slate-200 bg-white p-2">
+                  <img
+                    src="./swish-qr.png"
+                    alt="Swish QR-kod för veckans kupong"
+                    className="h-40 w-40 object-contain"
+                  />
+                </div>
+                <p className="text-[11px] text-slate-500 text-center">
+                  Skanna QR-koden med Swish-appen för att betala 19 kr och få
+                  tipset via SMS.
+                </p>
               </div>
             </div>
           </section>
         </section>
 
-        {/* VECKANS OMGÅNG */}
         <section
-          id="omgang"
-          className="scroll-mt-24 space-y-3 border-t border-slate-200 pt-6"
+          id="v85-guide"
+          className="mt-6 scroll-mt-28 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
         >
-          <h2 className="text-xl font-semibold text-slate-900">
-            🏁 Veckans omgång
-          </h2>
-          <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4 sm:p-5 space-y-2">
-            {omgang ? (
-              <>
-                <p className="text-sm sm:text-base text-slate-900">
-                  <span className="font-semibold">{omgang.bana}</span> –{" "}
-                  {omgang.datum}
-                </p>
-                {omgang.beskrivning && (
-                  <p className="text-sm text-slate-600">
-                    {omgang.beskrivning}
-                  </p>
-                )}
-              </>
-            ) : (
-              <p className="text-sm text-slate-600">
-                Omgången är inte uppdaterad ännu.
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
+                För dig som vill fördjupa dig
               </p>
-            )}
-            <div className="text-[11px] text-slate-500">
-              Gratisprogram:{" "}
+              <h2 className="text-base font-semibold">
+                V85 – så funkar spelet och den nya 30/50/70-fördelningen
+              </h2>
+            </div>
+          </div>
+
+          <div className="mt-3 grid gap-3 md:grid-cols-2">
+            <div className="rounded-xl border border-slate-200 bg-slate-50/80 p-3 text-sm text-slate-700">
+              <h3 className="text-sm font-semibold text-slate-900">
+                Grunderna i V85
+              </h3>
+              <p className="mt-1 text-xs">
+                V85 är ett streckspel där du ska hitta vinnaren i åtta lopp.
+                Ju fler rätt du har, desto större del av potten får du. Du
+                väljer själv hur många hästar du vill gardera med i varje
+                avdelning.
+              </p>
+              <ul className="mt-2 list-disc space-y-1 pl-4 text-xs">
+                <li>8 avdelningar – minst en häst per lopp.</li>
+                <li>
+                  Systemkostnad = antal rader × 0,25 kr (eller enligt
+                  aktuell radinsats).
+                </li>
+                <li>
+                  Spelas oftast som <span className="font-medium">V86</span>{" "}
+                  men med kvällens bana/omgång som fokus.
+                </li>
+              </ul>
+            </div>
+
+            <div className="rounded-xl border border-sky-200 bg-sky-50/80 p-3 text-sm text-slate-800">
+              <h3 className="text-sm font-semibold text-slate-900">
+                Ny utdelningsmodell – 30 / 50 / 70
+              </h3>
+              <p className="mt-1 text-xs">
+                I den nya modellen fördelas potten mellan olika
+                vinstpooler på ett lite annorlunda sätt än tidigare, för att
+                ge mer stabil utdelning men fortfarande chans på riktigt stora
+                pengar.
+              </p>
+              <ul className="mt-2 list-disc space-y-1 pl-4 text-xs">
+                <li>
+                  Största delen av potten går fortsatt till{" "}
+                  <span className="font-medium">8 rätt</span>.
+                </li>
+                <li>
+                  Mindre men viktig del till 7 och 6 rätt – så att fler får
+                  tillbaka en slant även med en miss.
+                </li>
+                <li>
+                  Jackpottar byggs upp när utdelningen blir låg eller ingen
+                  utdelning ges i någon pott.
+                </li>
+              </ul>
+              <p className="mt-2 text-[11px] text-slate-600">
+                Exakta procentsiffror och aktuella regler hittar du alltid hos
+                ATG under spelinformationen för V86/V85.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section
+          id="gratis-tips"
+          className="mt-6 scroll-mt-28 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+        >
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
+                Gratis tips & analyser
+              </p>
+              <h2 className="text-base font-semibold">
+                Samlade länkar inför veckans V85
+              </h2>
+              <p className="mt-1 text-xs text-slate-600">
+                Här hittar du gratisanalyser, krönikor och idéer som kan hjälpa
+                dig bygga din egen kupong.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-3 grid gap-3 md:grid-cols-2">
+            {gratisTipsLankar.map((lank) => (
               <a
-                href="https://assets.ctfassets.net/hkip2osr81id/39uvrIW4wvyccGJij4j7X7/e48d16ad41ce42b912807ef8195f21db/251108_BERGSAKER_GP_V85_1.pdf"
+                key={lank.url}
+                href={lank.url}
                 target="_blank"
                 rel="noreferrer"
-                className="text-sky-700 hover:text-sky-900 font-medium underline"
+                className="flex items-start justify-between gap-2 rounded-xl border border-slate-200 bg-slate-50/60 px-3 py-2 text-xs text-slate-700 hover:border-sky-300 hover:bg-sky-50/80"
               >
-                Öppna PDF för veckans omgång
+                <div>
+                  <p className="font-medium text-slate-900">{lank.namn}</p>
+                  <p className="mt-0.5 text-[11px] text-slate-500">
+                    {lank.typ}
+                  </p>
+                </div>
+                <span className="mt-1 text-[11px] text-slate-400">
+                  Öppna →
+                </span>
               </a>
-            </div>
+            ))}
           </div>
         </section>
 
-        {/* V85-GUIDE */}
-        <section
-          id="guide"
-          className="scroll-mt-24 space-y-3 border-t border-slate-200 pt-6"
-        >
-          <h2 className="text-xl font-semibold text-slate-900">
-            📘 Så funkar V85
-          </h2>
-          <div className="grid md:grid-cols-2 gap-4">
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 space-y-2">
-              <h3 className="font-semibold text-slate-900 text-base">
-                Upplägget
-              </h3>
-              <p className="text-sm text-slate-600">
-                V85 är ett streckspel där du ska hitta vinnaren i åtta lopp.
-                Du spelar med minst en häst i varje avdelning – ju fler hästar
-                du tar med, desto större chans att överleva omgången, men
-                också högre radkostnad.
-              </p>
-              <p className="text-sm text-slate-600">
-                Radpriset är{" "}
-                <span className="font-semibold text-slate-900">
-                  0,50 kr per rad
-                </span>
-                . En enkelrad med en häst i varje lopp kostar 0,50 kr. Lägger
-                du till fler hästar multipliceras priset snabbt – därför är
-                spikar viktiga.
-              </p>
-              <p className="text-sm text-slate-600">
-                Du spelar antingen via{" "}
-                <a
-                  href="https://www.atg.se"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-sky-700 hover:text-sky-900 font-medium underline"
-                >
-                  atg.se
-                </a>{" "}
-                eller i butik/ombud.
-              </p>
-            </div>
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 space-y-2">
-              <h3 className="font-semibold text-slate-900 text-base">
-                Utbetalningar & 30/50/70-nyheten
-              </h3>
-              <p className="text-sm text-slate-600">
-                V85 kan ge utbetalning på 8, 7 och ibland 6 rätt – beroende på
-                hur svår omgången blir. ATG kan justera fördelningen mellan
-                utdelningsnivåerna beroende på omsättning och svårighetsgrad.
-              </p>
-              <p className="text-sm text-slate-600">
-                En nyhet i systemvärlden är att många andelssystem jobbar med
-                principer som{" "}
-                <span className="font-semibold text-slate-900">
-                  30 / 50 / 70
-                </span>
-                . Det är ett sätt att tänka kring hur stor del av insatsen som
-                ska läggas på favoritbetonade lopp respektive mer chansartade
-                avdelningar – för att hitta rätt balans mellan säkerhet och
-                potential.
-              </p>
-              <p className="text-sm text-slate-600">
-                Kort sagt: du vill kombinera stabila spikar med smarta
-                skrällgarderingar – så att systemet både kan överleva och
-                skjuta iväg i värde när det smäller.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* GRATIS TIPS & ANALYSER */}
-        <section
-          id="tips"
-          className="scroll-mt-24 space-y-3 border-t border-slate-200 pt-6"
-        >
-          <h2 className="text-xl font-semibold text-slate-900">
-            🧩 Gratis tips & analyser
-          </h2>
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
-            <p className="text-sm text-slate-600 mb-3">
-              Här är några ställen där du kan läsa mer inför omgången:
-            </p>
-            <div className="grid md:grid-cols-2 gap-3 text-sm">
-              <ul className="space-y-2">
-                <li>
-                  <a
-                    href="https://www.atg.se/V85/tips/251108-lordag-811-tips-till-v85-pa-bergsaker"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-sky-700 hover:text-sky-900 font-medium"
-                  >
-                    ATG – Omgångens tips
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://www.atg.se/V85/tips/vass-eller-kass-v85-lordag"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-sky-700 hover:text-sky-900 font-medium"
-                  >
-                    Vass eller Kass – V85
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://www.atg.se/V85/tips/bjornkollen-v85-lordag"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-sky-700 hover:text-sky-900 font-medium"
-                  >
-                    Björnkollen – V85
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://www.atg.se/V85/tips/251107-stallsnack-v85-bergsaker-multijackpot"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-sky-700 hover:text-sky-900 font-medium"
-                  >
-                    Stallsnack – Bergsåker
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://www.atg.se/V85/tips/korsdragaren-fran-vi-tippa-v85"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-sky-700 hover:text-sky-900 font-medium"
-                  >
-                    Korsdragaren – Vi Tippa V85
-                  </a>
-                </li>
-              </ul>
-              <ul className="space-y-2">
-                <li>
-                  <a
-                    href="https://gratistravtips.se/"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-sky-700 hover:text-sky-900 font-medium"
-                  >
-                    Gratistravtips.se
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://travstugan.se/"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-sky-700 hover:text-sky-900 font-medium"
-                  >
-                    Travstugan
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://www.aftonbladet.se/sportbladet/trav365/"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-sky-700 hover:text-sky-900 font-medium"
-                  >
-                    Trav365 – Aftonbladet
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://www.travronden.se/"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-sky-700 hover:text-sky-900 font-medium"
-                  >
-                    Travronden (premium)
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://www.thomasuhrberg.se/"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-sky-700 hover:text-sky-900 font-medium"
-                  >
-                    Thomas Uhrberg – tips & analyser
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://www.atg.se/tillsammans/lagsida/teameastman" 
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-sky-700 hover:text-sky-900 font-medium"
-                  >
-                    Spela med Omgångskollen (Team Wästman)
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        {/* SPIK / SKRÄLL / VARNING */}
         <section
           id="nycklar"
-          className="scroll-mt-24 space-y-3 border-t border-slate-200 pt-6"
+          className="mt-6 scroll-mt-28 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
         >
-          <h2 className="text-xl font-semibold text-slate-900">
-            🎯 Spikar & skrällar
-          </h2>
-          <div className="grid md:grid-cols-3 gap-4">
-            <div className="rounded-2xl border border-emerald-200 bg-emerald-50/80 p-4 sm:p-5 space-y-2">
-              <div className="text-xs font-semibold text-emerald-800 uppercase">
-                Spik
-              </div>
-              <h3 className="text-base font-semibold text-slate-900">
-                {nycklar?.spik?.titel ?? "2 Shogun R.R"}
-              </h3>
-              <p className="text-sm text-emerald-900">
-                {nycklar?.spik?.text ??
-                  "Stark spik i ett annars öppet lopp – kan bära systemet."}
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
+                Nycklar till omgången
               </p>
+              <h2 className="text-base font-semibold">
+                Spikar, skrällbud och varningar
+              </h2>
             </div>
-            <div className="rounded-2xl border border-amber-200 bg-amber-50/80 p-4 sm:p-5 space-y-2">
-              <div className="text-xs font-semibold text-amber-800 uppercase">
-                Skräll
-              </div>
-              <h3 className="text-base font-semibold text-slate-900">
-                {nycklar?.skrall?.titel ?? "12 Funny Guy & 6 Cuelebre"}
-              </h3>
-              <p className="text-sm text-amber-900">
-                {nycklar?.skrall?.text ??
-                  "Två roliga streck som kan rensa rejält om favoriten faller."}
-              </p>
-            </div>
-            <div className="rounded-2xl border border-rose-200 bg-rose-50/80 p-4 sm:p-5 space-y-2">
-              <div className="text-xs font-semibold text-rose-800 uppercase">
-                Varning
-              </div>
-              <h3 className="text-base font-semibold text-slate-900">
-                {nycklar?.varning?.titel ?? "12 Freeloader"}
-              </h3>
-              <p className="text-sm text-rose-900">
-                {nycklar?.varning?.text ??
-                  "Glöms lätt bort, men har både form och kunnande för att vinna."}
-              </p>
-            </div>
+          </div>
+
+          <div className="mt-3 grid gap-3 sm:grid-cols-3 text-sm">
+            {Object.entries(nycklar).map(([key, item]) => {
+              const tone = item.tone || "green";
+              const bg =
+                tone === "green"
+                  ? "bg-emerald-50 border-emerald-200"
+                  : tone === "yellow"
+                  ? "bg-amber-50 border-amber-200"
+                  : "bg-rose-50 border-rose-200";
+              const label =
+                key === "spik" ? "Spik" : key === "skrall" ? "Skräll" : "Varning";
+
+              return (
+                <div
+                  key={key}
+                  className={`rounded-xl border px-3 py-3 ${bg}`}
+                >
+                  <div className="text-[11px] font-mono uppercase tracking-wide text-slate-500">
+                    {label}
+                  </div>
+                  <h3 className="mt-1 text-sm font-semibold">{item.titel}</h3>
+                  <p className="mt-1 text-xs text-slate-700">{item.text}</p>
+                </div>
+              );
+            })}
           </div>
         </section>
 
-        {/* VECKANS KUPONG – LÅST INFO, INGEN RAD VISAS */}
-        <section
-          id="kupong"
-          className="scroll-mt-24 space-y-3 border-t border-slate-200 pt-6"
-        >
-          <h2 className="text-xl font-semibold text-slate-900">
-            🧾 Veckans kupong (låst)
-          </h2>
-          <div className="grid md:grid-cols-[1.3fr,1fr] gap-4">
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 space-y-2">
-              <div className="flex items-center gap-2 text-xs font-semibold text-slate-700 uppercase">
-                💡 Veckans kupong är låst
-              </div>
-              <p className="text-sm text-slate-600">
-                Raden visas inte här på sidan. Tipset kostar{" "}
-                <span className="font-semibold text-slate-900">19 kr</span> och
-                efter att du swishat skickas den manuellt via SMS till numret
-                du anger i meddelandet.
-              </p>
-              <p className="text-sm text-slate-600">
-                Kupongen är byggd för cirka{" "}
-                <span className="font-semibold text-slate-900">100 kr</span>,
-                med en blandning av tryggare spikar och chansartade lopp där vi
-                går för bra värde.
-              </p>
-              <p className="text-xs text-slate-500">
-                Spela alltid ansvarsfullt. Se spelet som underhållning – aldrig
-                som en genväg till pengar.
-              </p>
-            </div>
-            <div className="rounded-2xl border border-sky-200 bg-sky-50/80 p-4 sm:p-5 space-y-2">
-              <h3 className="text-sm font-semibold text-slate-900">
-                Betalning via Swish
-              </h3>
-              <p className="text-sm text-slate-700">
-                Använd QR-koden under{" "}
-                <span className="font-semibold">Swish-tipset</span> högst upp
-                på sidan. Kom ihåg att alltid skriva ditt{" "}
-                <span className="font-semibold">mobilnummer i meddelandet</span>
-                , så att raden kan skickas till rätt person.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* OM OMGÅNGSKOLLEN */}
         <section
           id="om-omgangskollen"
-          className="scroll-mt-24 space-y-3 border-t border-slate-200 pt-6 pb-10"
+          className="mt-6 scroll-mt-28 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
         >
-          <h2 className="text-xl font-semibold text-slate-900">
-            ℹ️ Om Omgångskollen
-          </h2>
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 space-y-3 text-sm text-slate-700">
-            <p className="font-semibold text-slate-900">
-              Allt började redan när jag var en liten kille.
-            </p>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
+                Om sidan
+              </p>
+              <h2 className="text-base font-semibold">Om Omgångskollen</h2>
+            </div>
+          </div>
+
+          <div className="mt-3 space-y-3 text-sm text-slate-700">
             <p>
-              Min mamma jobbade i toton på Jägersro, och varje tisdag och under
-              de stora tävlingsdagarna fick jag hänga med henne till banan. Jag
-              minns ljudet av hovarna mot banan, doften av stall och spänningen
-              i luften när loppen drog igång. Där väcktes mitt hästintresse – och
+              Allt började redan när jag var en liten kille. Min mamma jobbade i
+              toton på Jägersro, och varje tisdag och under de stora
+              tävlingsdagarna fick jag hänga med henne till banan. Jag minns
+              ljudet av hovarna mot banan, doften av stall och spänningen i
+              luften när loppen drog igång. Där väcktes mitt hästintresse – och
               en fascination för travet som hängt med hela livet.
             </p>
             <p>
               När jag blev äldre började jag själv jobba i toton. Det blev många
-              kvällar med både kunder, kollegor och den där speciella stämningen
-              som bara finns på en travbana. Jag och min kusin har sedan dess
-              följt travet nära, och varje helg är det självklart att vi kikar
-              på V85 och diskuterar loppen in i minsta detalj.
+              kvällar med både kunder, kollegor och den där speciella
+              stämningen som bara finns på en travbana. Jag och min kusin har
+              sedan dess följt travet nära, och varje helg är det självklart att
+              vi kikar på V85 och diskuterar loppen in i minsta detalj.
             </p>
             <p>
               Omgångskollen är mitt lilla hobbyprojekt – skapat ur passionen för
@@ -602,11 +636,17 @@ function App() {
           </div>
         </section>
       </main>
+
+      <footer className="border-t border-slate-200 bg-white py-4 text-center text-[11px] text-slate-500">
+        Spela ansvarsfullt. 18+ · Stödlinjen: 020-81 91 00 · Omgångskollen är
+        ett fristående hobbyprojekt och inte kopplat till ATG.
+      </footer>
     </div>
   );
 }
 
 export default App;
+
 
 
 
