@@ -377,11 +377,11 @@ function App() {
                 <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-amber-100 text-xs">
                   💡
                 </span>
-                Veckans kupong är låst
+                Veckans kuponger är låsta
               </p>
               <p>
                 Tipset kostar <span className="font-semibold">19 kr</span>. När
-                du har swishat enligt instruktionen nedan skickas raden
+                du har swishat enligt instruktionen nedan skickas raderna
                 manuellt via SMS till numret du uppger i meddelandet.
               </p>
               <p>
