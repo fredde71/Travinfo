@@ -367,7 +367,7 @@ function App() {
                 Veckans 3 kuponger – (tips för 19 kr)
               </h2>
               <p className="text-xs text-slate-600">
-                Ett färdigt V85-förslag för 100 kr – du får raden och spelar den
+                Tre färdiga V85-förslag – du får raderna och spelar dom
                 själv på ATG.
               </p>
             </div>
