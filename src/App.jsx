@@ -364,7 +364,7 @@ function App() {
                 Swish-tipset
               </p>
               <h2 className="text-lg font-semibold">
-                Veckans kupong – 100 kr (tips för 19 kr)
+                Veckans 3 kuponger – (tips för 19 kr)
               </h2>
               <p className="text-xs text-slate-600">
                 Ett färdigt V85-förslag för 100 kr – du får raden och spelar den
