@@ -257,7 +257,7 @@ function App() {
                     Nästa V85-omgång
                   </p>
                   <h1 className="mt-1 text-2xl font-bold">
-                    {data?.omgang?.rubrik || "V85 Bergsåker – Multijackpot"}
+                    {data?.omgang?.rubrik || "V85 Eskilstuna"}
                   </h1>
                   <p className="mt-1 text-sm text-sky-100/90">
                     {data?.omgang?.bana || "Bergsåker"}{" "}
