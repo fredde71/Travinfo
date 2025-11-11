@@ -1,17 +1,144 @@
 {
   "omgang": {
     "spelform": "V85",
+    "rubrik": "V85 Eskilstuna – Sundbyholm",
     "bana": "Eskilstuna, officiellt känd som Sundbyholms travbana",
     "datum": "Lördag 15 november 2025",
-    "jackpot": "Ingen jackpot denna veckan",
+    "jackpot": "Ingen jackpot den här veckan",
     "startTid": "16:10",
-    "nedrakning": "2025-11-15T20:30:00+01:00",
+    "countdownTarget": "2025-11-15T16:10:00+01:00",
     "status": "Ej uppdaterat – väntar på analys",
     "senastUppdaterad": "",
     "introText": "Eskilstuna bjuder på en intressant V85-omgång där startspår, spetsstrider och form blir helt avgörande. Omgången känns öppet spelad med både starka favoriter och flera skrällchanser.",
     "banaVaderText": "Banan i Eskilstuna är något trång att volta på, särskilt över 1640 meter, vilket kan skapa utmaningar för hästar med springspår. Spår 1 i volt är statistiskt extra gynnsamt och det vinns generellt många lopp från ledningen. Upploppet är 182 meter långt och väder samt underlag kan få stor betydelse för vilka som orkar hela vägen.",
-    "beskrivning": "Eskilstuna-omgång med fokus på positioner, spetsstrider och form – här gäller det att ha koll på både balansändringar och vilka som trivs på banprofilen."
+    "beskrivning": "Eskilstuna-omgång med fokus på positioner, spetsstrider och form – här gäller det att ha koll på både balansändringar och vilka som trivs på banprofilen.",
+    "programUrl": "https://assets.ctfassets.net/hkip2osr81id/39uvrIW4wvyccGJij4j7X7/e48d16ad41ce42b912807ef8195f21db/251108_BERGSAKER_GP_V85_1.pdf"
   },
+  "barometer": {
+    "favoritProcent": 65,
+    "text": "Några tunga favoriter ser ut att bli hårt streckade – men det finns ett par riktigt öppna lopp där skrällen ligger nära till hands."
+  },
+  "startlistor": [
+    {
+      "avd": "V85–1",
+      "kort": "5 Global Dancer – 2 Shogun R.R – 6 Indigo Sisu"
+    },
+    {
+      "avd": "V85–2",
+      "kort": "4 Favoritname – 1 Utmanare – 9 Skrällbud"
+    },
+    {
+      "avd": "V85–3",
+      "kort": "11 Stark Spurtare – 3 Ledarhäst – 6 Första utmanare"
+    }
+  ],
+  "banaStatistik": {
+    "kuskar": [
+      {
+        "namn": "Ulf Ohlsson",
+        "segerprocent": 27
+      },
+      {
+        "namn": "Jorma Kontio",
+        "segerprocent": 22
+      },
+      {
+        "namn": "Emilia Leo",
+        "segerprocent": 19
+      }
+    ],
+    "tranare": [
+      {
+        "namn": "Toppstall A",
+        "segerprocent": 24
+      },
+      {
+        "namn": "Formstall B",
+        "segerprocent": 21
+      },
+      {
+        "namn": "Lokalt stall C",
+        "segerprocent": 18
+      }
+    ]
+  },
+  "nyheter": [
+    {
+      "rubrik": "Favoriten ändrar balans inför V85–3",
+      "kalla": "ATG",
+      "tid": "Fredag 14:32",
+      "url": "https://www.atg.se"
+    },
+    {
+      "rubrik": "Senaste nytt om banunderlaget på Eskilstuna",
+      "kalla": "Travronden",
+      "tid": "Fredag 11:05",
+      "url": "https://www.travronden.se"
+    },
+    {
+      "rubrik": "Skrällbudet som rensar i V85–7?",
+      "kalla": "Trav365",
+      "tid": "Torsdag 19:40",
+      "url": "https://www.aftonbladet.se/sportbladet/trav365"
+    }
+  ],
+  "gratisTips": [
+    {
+      "namn": "Fem Tippar V85",
+      "url": "https://www.atg.se/V85/tips/fem-tippar-v85",
+      "typ": "ATG"
+    },
+    {
+      "namn": "Vass eller Kass – V85 lördag",
+      "url": "https://www.atg.se/V85/tips/vass-eller-kass-v85-lordag",
+      "typ": "ATG"
+    },
+    {
+      "namn": "Björn Goop – Björnkollen V85",
+      "url": "https://www.atg.se/V85/tips/bjornkollen-v85-lordag",
+      "typ": "ATG"
+    },
+    {
+      "namn": "V85 med Fernlund",
+      "url": "https://www.atg.se/V85/tips/v85-med-fernlund-lordag",
+      "typ": "ATG"
+    },
+    {
+      "namn": "ATG – Tips till veckans V85",
+      "url": "https://www.atg.se/V85/tips/251104-lordag-811-tips-till-v85-pa-bergsaker",
+      "typ": "ATG"
+    },
+    {
+      "namn": "Korsdragaren från Vi Tippa",
+      "url": "https://www.atg.se/V85/tips/korsdragaren-fran-vi-tippa-v85",
+      "typ": "ATG"
+    },
+    {
+      "namn": "Stallsnack V85 – Bergsåker Multijackpot",
+      "url": "https://www.atg.se/V85/tips/251107-stallsnack-v85-bergsaker-multijackpot",
+      "typ": "ATG"
+    },
+    {
+      "namn": "Gratistravtips.se",
+      "url": "https://gratistravtips.se/",
+      "typ": "Gratis tips"
+    },
+    {
+      "namn": "Travstugan",
+      "url": "https://travstugan.se/",
+      "typ": "Gratis tips"
+    },
+    {
+      "namn": "Trav365 – Sportbladet",
+      "url": "https://www.aftonbladet.se/sportbladet/trav365/a/Gyv09Q/v85-tips-bergsaker-lordagen-8-november-basta-skrallarna-andelssystem-jackpott-50-miljoner",
+      "typ": "Analys"
+    },
+    {
+      "namn": "Travronden (premium)",
+      "url": "https://www.travronden.se/",
+      "typ": "Premium"
+    }
+  ],
   "nycklar": {
     "spik": {
       "titel": "Spiken kommer när analysen är klar",
@@ -28,6 +155,27 @@
       "text": "Här lyfter vi favoriter som kan vara överstreckade eller lägen som är luriga.",
       "tone": "yellow"
     }
-  }
+  },
+  "historik": [
+    {
+      "bana": "Bergsåker",
+      "datum": "Lördag 8 november 2025",
+      "etikett": "Multijackpot, hög utdelning på 8 rätt",
+      "url": "https://www.atg.se"
+    },
+    {
+      "bana": "Romme",
+      "datum": "Lördag 1 november 2025",
+      "etikett": "Storfavorit föll – skrällomgång",
+      "url": "https://www.atg.se"
+    },
+    {
+      "bana": "Åby",
+      "datum": "Lördag 25 oktober 2025",
+      "etikett": "Spikarna levererade, låg utdelning",
+      "url": "https://www.atg.se"
+    }
+  ]
 }
+
 
