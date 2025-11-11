@@ -1,16 +1,16 @@
 {
   "omgang": {
     "spelform": "V85",
-    "rubrik": "V85 Eskilstuna – ingen jackpot",
-    "bana": "Eskilstuna, officielt känd som Sundbyholms travbana",
+    "bana": "Eskilstuna, officiellt känd som Sundbyholms travbana",
     "datum": "Lördag 15 november 2025",
     "jackpot": "Ingen jackpot denna veckan",
     "startTid": "16:10",
     "nedrakning": "2025-11-15T20:30:00+01:00",
     "status": "Ej uppdaterat – väntar på analys",
     "senastUppdaterad": "",
-    "beskrivning": "Då är det Eskilstuna som står som värd för kommande helgs V85 -tävlingar.",
-    "programUrl": "https://assets.ctfassets.net/hkip2osr81id/39uvrIW4wvyccGJij4j7X7/e48d16ad41ce42b912807ef8195f21db/251108_BERGSAKER_GP_V85_1.pdf"
+    "introText": "Eskilstuna bjuder på en intressant V85-omgång där startspår, spetsstrider och form blir helt avgörande. Omgången känns öppet spelad med både starka favoriter och flera skrällchanser.",
+    "banaVaderText": "Banan i Eskilstuna är något trång att volta på, särskilt över 1640 meter, vilket kan skapa utmaningar för hästar med springspår. Spår 1 i volt är statistiskt extra gynnsamt och det vinns generellt många lopp från ledningen. Upploppet är 182 meter långt och väder samt underlag kan få stor betydelse för vilka som orkar hela vägen.",
+    "beskrivning": "Eskilstuna-omgång med fokus på positioner, spetsstrider och form – här gäller det att ha koll på både balansändringar och vilka som trivs på banprofilen."
   },
   "nycklar": {
     "spik": {
@@ -30,3 +30,4 @@
     }
   }
 }
+
