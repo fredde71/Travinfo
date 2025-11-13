@@ -230,6 +230,21 @@ function App() {
   const historik = data?.historik || defaultHistorik;
   const gratisTips = data?.gratisTips || [];
 
+  // 🔄 Beräkna text till "Uppdaterad"-badgen
+  let senastUppdateradText = null;
+  if (data?.omgang?.senastUppdaterad) {
+    senastUppdateradText = data.omgang.senastUppdaterad;
+  } else if (typeof document !== "undefined" && document.lastModified) {
+    const d = new Date(document.lastModified);
+    senastUppdateradText = d.toLocaleString("sv-SE", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-sky-50/40 to-slate-100 text-slate-900">
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur">
@@ -293,10 +308,10 @@ function App() {
         <section className="grid gap-4 md:grid-cols-[2fr,1.4fr] md:items-start">
           <div className="space-y-4">
             {/* Uppdaterad-badge ovanför huvudrutan */}
-            {data?.omgang?.senastUppdaterad && (
+            {senastUppdateradText && (
               <div className="mb-1 flex justify-start">
                 <span className="inline-flex items-center rounded-full bg-emerald-100 px-3 py-1 text-[11px] font-medium text-emerald-700 border border-emerald-200 shadow-sm">
-                  🔄 Uppdaterad {data.omgang.senastUppdaterad}
+                  🔄 Uppdaterad {senastUppdateradText}
                 </span>
               </div>
             )}
