@@ -1,10 +1,10 @@
 {
   "omgang": {
-    "bana": "Romme",
-    "datum": "Lördag 1 november 2025",
+    "bana": "Solvalla / Åby",
+    "datum": "onsdag 12 november 2025",
     "spelstopp": "16:20",
-    "jackpot": "≈42 miljoner kr i potten",
-    "beskrivning": "Tuff omgång på Romme. Flera öppna lopp och inte lika tung favoritdominans som senast. 8 lopp, utdelning ända ner till 5 rätt. Du kan spela sänkt insats (30%, 50%, 70%) så systemet inte blir för dyrt."
+    "jackpot": "Ingen jackpotinfo",
+    "beskrivning": "Automatisk uppdatering via script."
   },
   "snabbfakta": {
     "antalLopp": "8",
@@ -15,73 +15,19 @@
   },
   "nycklar": {
     "spik": {
-      "titel": "Hickovelocissimo",
-      "text": "Spikförslag enligt senaste analyser.",
-      "tone": "green"
+      "titel": "Ej uppdaterad",
+      "text": "Väntar på analys.",
+      "tone": "gray"
     },
     "skrall": {
-      "titel": "Lion Mearas",
-      "text": "Lågprocentare med chans att skrälla.",
-      "tone": "yellow"
+      "titel": "Ej uppdaterad",
+      "text": "Väntar på analys.",
+      "tone": "gray"
     },
     "varning": {
-      "titel": "Francesco Zet",
-      "text": "Stor favorit med frågetecken.",
-      "tone": "red"
+      "titel": "Ej uppdaterad",
+      "text": "Väntar på analys.",
+      "tone": "gray"
     }
-  },
-  "formbarometer": [
-    {
-      "name": "Hickovelocissimo",
-      "avd": "4",
-      "form": "1-1-2",
-      "streck": "28%",
-      "signal": "Stabil toppform",
-      "color": "green"
-    },
-    {
-      "name": "Lion Mearas",
-      "avd": "6",
-      "form": "4-3-5",
-      "streck": "5%",
-      "signal": "Undervärderad skräll",
-      "color": "yellow"
-    },
-    {
-      "name": "Francesco Zet",
-      "avd": "1",
-      "form": "–",
-      "streck": "68%",
-      "signal": "Högprocentare med frågetecken",
-      "color": "red"
-    }
-  ],
-  "stallSnack": [
-    {
-      "name": "Francesco Zet",
-      "avd": "1",
-      "quote": "Behöver lopp i kroppen efter vila.",
-      "signal": "Risk för ringrost",
-      "color": "yellow"
-    },
-    {
-      "name": "Lion Mearas",
-      "avd": "6",
-      "quote": "Känns bättre än raden. Kan överraska.",
-      "signal": "Möjlig skräll",
-      "color": "green"
-    },
-    {
-      "name": "Hickovelocissimo",
-      "avd": "4",
-      "quote": "Allt känns bra. Inga ändringar. Kör för vinst.",
-      "signal": "Spikläge",
-      "color": "green"
-    }
-  ],
-  "bana": {
-    "underlag": "Romme – medelrask bana. Fördel spets men det går att vinna bakifrån över lång distans.",
-    "spelvarde": "Jackpot ≈42 Mkr. Flera lopp öppna och favorittrycket är lägre än normalt.",
-    "snabbcheck": "8 lopp • Spelstopp 16:20 • Utdelning ända ner till 5 rätt."
   }
 }

@@ -1,31 +1,33 @@
 {
   "omgang": {
-    "spelform": "V85",
-    "bana": "Bergsåker",
-    "datum": "Lördag 8 november 2025",
-    "jackpot": "Jackpott 50 miljoner",
-    "startTid": "20:30",
-    "nedrakning": "2025-11-08T20:30:00+01:00",
-    "status": "Ej uppdaterat – väntar på analys",
-    "senastUppdaterad": "",
-    "beskrivning": "Bergsåker bjuder ofta på utslagsgivande lopp med långt upplopp och krävande vinterförhållanden. Här gäller det att hitta hästar som trivs med tempo hela vägen och orkar hela vägen in i mål.",
-    "programUrl": "https://assets.ctfassets.net/hkip2osr81id/39uvrIW4wvyccGJij4j7X7/e48d16ad41ce42b912807ef8195f21db/251108_BERGSAKER_GP_V85_1.pdf"
+    "bana": "Solvalla / Åby",
+    "datum": "onsdag 12 november 2025",
+    "spelstopp": "16:20",
+    "jackpot": "Ingen jackpotinfo",
+    "beskrivning": "Automatisk uppdatering via script."
+  },
+  "snabbfakta": {
+    "antalLopp": "8",
+    "radpris": "0,50 kr / rad",
+    "utdelning": "8 / 7 / 6 / 5 rätt",
+    "spelstopp": "16:20",
+    "aterbetalning": "65%"
   },
   "nycklar": {
     "spik": {
-      "titel": "Spiken kommer när analysen är klar",
-      "text": "Just nu jobbar vi med att hitta omgångens bästa spik. Titta in igen närmare spelstopp.",
-      "tone": "yellow"
+      "titel": "Ej uppdaterad",
+      "text": "Väntar på analys.",
+      "tone": "gray"
     },
     "skrall": {
-      "titel": "Skrälljakten",
-      "text": "Vi letar efter hästar som kan rensa rejält i kuponghögarna. Skrällförslagen dyker upp här.",
-      "tone": "red"
+      "titel": "Ej uppdaterad",
+      "text": "Väntar på analys.",
+      "tone": "gray"
     },
     "varning": {
-      "titel": "Varningar att ta på allvar",
-      "text": "Här lyfter vi favoriter som kan vara överstreckade eller lägen som är luriga.",
-      "tone": "yellow"
+      "titel": "Ej uppdaterad",
+      "text": "Väntar på analys.",
+      "tone": "gray"
     }
   }
 }
