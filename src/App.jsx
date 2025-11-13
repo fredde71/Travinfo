@@ -114,63 +114,89 @@ const defaultNycklar = {
   },
 };
 
-const gratisTipsLankar = [
-  {
-    namn: "Fem Tippar V85",
-    url: "https://www.atg.se/V85/tips/fem-tippar-v85",
-    typ: "ATG",
-  },
-  {
-    namn: "Vass eller Kass – V85 lördag",
-    url: "https://www.atg.se/V85/tips/vass-eller-kass-v85-lordag",
-    typ: "ATG",
-  },
-  {
-    namn: "Björn Goop – Björnkollen V85",
-    url: "https://www.atg.se/V85/tips/bjornkollen-v85-lordag",
-    typ: "ATG",
-  },
-  {
-    namn: "V85 med Fernlund",
-    url: "https://www.atg.se/V85/tips/v85-med-fernlund-lordag",
-    typ: "ATG",
-  },
-  {
-    namn: "ATG – Tips till veckans V85",
-    url: "https://www.atg.se/V85/tips/251104-lordag-811-tips-till-v85-pa-bergsaker",
-    typ: "ATG",
-  },
-  {
-    namn: "Korsdragaren från Vi Tippa",
-    url: "https://www.atg.se/V85/tips/korsdragaren-fran-vi-tippa-v85",
-    typ: "ATG",
-  },
-  {
-    namn: "Stallsnack V85 – Bergsåker Multijackpot",
-    url: "https://www.atg.se/V85/tips/251107-stallsnack-v85-bergsaker-multijackpot",
-    typ: "ATG",
-  },
-  {
-    namn: "Gratistravtips.se",
-    url: "https://gratistravtips.se/",
-    typ: "Gratis tips",
-  },
-  {
-    namn: "Travstugan",
-    url: "https://travstugan.se/",
-    typ: "Gratis tips",
-  },
-  {
-    namn: "Trav365 – Sportbladet",
-    url: "https://www.aftonbladet.se/sportbladet/trav365/a/Gyv09Q/v85-tips-bergsaker-lordagen-8-november-basta-skrallarna-andelssystem-jackpott-50-miljoner",
-    typ: "Analys",
-  },
-  {
-    namn: "Travronden (premium)",
-    url: "https://www.travronden.se/",
-    typ: "Premium",
-  },
-];
+const BANA_LAT = 59.379;
+const BANA_LON = 16.554;
+
+const defaultBarometer = {
+  favoritProcent: 60,
+  text: "Lite blandad känsla – några starka favoriter men också läge för skrällar i ett par avdelningar.",
+};
+
+const defaultHistorik = [];
+
+function BaneVader({ beskrivning }) {
+  const [vader, setVader] = useState(null);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    async function fetchVader() {
+      try {
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${BANA_LAT}&longitude=${BANA_LON}&current_weather=true&hourly=precipitation`;
+        const res = await fetch(url);
+        const json = await res.json();
+        if (json.current_weather) {
+          const temp = json.current_weather.temperature;
+          const wind = json.current_weather.windspeed;
+          const precip =
+            json.hourly && Array.isArray(json.hourly.precipitation)
+              ? json.hourly.precipitation[0]
+              : 0;
+          setVader({
+            temp,
+            wind,
+            precip,
+          });
+        } else {
+          setError(true);
+        }
+      } catch {
+        setError(true);
+      }
+    }
+    fetchVader();
+  }, []);
+
+  if (error) {
+    return (
+      <p className="mt-3 text-xs text-slate-500">
+        Kunde inte hämta väderdata just nu.
+      </p>
+    );
+  }
+
+  if (!vader) {
+    return (
+      <p className="mt-3 text-xs text-slate-500">
+        Hämtar väderdata för banan...
+      </p>
+    );
+  }
+
+  const tungBana =
+    (typeof vader.precip === "number" && vader.precip > 2) ||
+    (typeof vader.wind === "number" && vader.wind > 8);
+
+  const tungBanaText = tungBana
+    ? "Förutsättningarna talar för lite tyngre bana – håll koll på hästar som trivs med kraftigare underlag."
+    : "Inga tydliga tecken på tung bana just nu, mer normala förutsättningar att vänta.";
+
+  return (
+    <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-700">
+      <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+        Banförhållanden just nu
+      </p>
+      <p className="mt-1">
+        🌡️ Temperatur: <span className="font-semibold">{vader.temp} °C</span> ·{" "}
+        💨 Vind: <span className="font-semibold">{vader.wind} m/s</span> · 🌧️{" "}
+        Nederbörd: <span className="font-semibold">{vader.precip} mm</span>
+      </p>
+      <p className="mt-1 italic text-slate-600">{tungBanaText}</p>
+      {beskrivning && (
+        <p className="mt-2 text-[11px] text-slate-600">{beskrivning}</p>
+      )}
+    </div>
+  );
+}
 
 function App() {
   const [data, setData] = useState(null);
@@ -181,8 +207,8 @@ function App() {
       .then((res) => res.json())
       .then((json) => {
         setData(json);
-        if (json?.omgang?.countdownTarget) {
-          setCountdownTarget(json.omgang.countdownTarget);
+        if (json?.omgang?.nedrakning) {
+          setCountdownTarget(json.omgang.nedrakning);
         } else if (json?.omgang?.datum) {
           const dateString = `${json.omgang.datum} 16:20`;
           setCountdownTarget(dateString);
@@ -197,9 +223,15 @@ function App() {
   }, []);
 
   const nycklar = data?.nycklar || defaultNycklar;
+  const barometer = data?.barometer || defaultBarometer;
+  const startlistor = data?.startlistor || null;
+  const banaStatistik = data?.banaStatistik || null;
+  const nyheter = data?.nyheter || [];
+  const historik = data?.historik || defaultHistorik;
+  const gratisTips = data?.gratisTips || [];
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-sky-50/40 to-slate-100 text-slate-900">
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur">
         <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
           <div className="flex items-center gap-2">
@@ -229,6 +261,11 @@ function App() {
               </a>
             </li>
             <li>
+              <a href="#senaste-nytt" className="hover:text-slate-900">
+                📰 Senaste nytt
+              </a>
+            </li>
+            <li>
               <a href="#gratis-tips" className="hover:text-slate-900">
                 🆓 Gratis tips
               </a>
@@ -236,6 +273,11 @@ function App() {
             <li>
               <a href="#nycklar" className="hover:text-slate-900">
                 🎯 Spikar & skrällar
+              </a>
+            </li>
+            <li>
+              <a href="#faq" className="hover:text-slate-900">
+                ❓ FAQ
               </a>
             </li>
             <li>
@@ -250,6 +292,15 @@ function App() {
       <main className="mx-auto max-w-6xl px-4 pb-12 pt-6">
         <section className="grid gap-4 md:grid-cols-[2fr,1.4fr] md:items-start">
           <div className="space-y-4">
+            {/* Uppdaterad-badge ovanför huvudrutan */}
+            {data?.omgang?.senastUppdaterad && (
+              <div className="mb-1 flex justify-start">
+                <span className="inline-flex items-center rounded-full bg-emerald-100 px-3 py-1 text-[11px] font-medium text-emerald-700 border border-emerald-200 shadow-sm">
+                  🔄 Uppdaterad {data.omgang.senastUppdaterad}
+                </span>
+              </div>
+            )}
+
             <div className="rounded-2xl bg-gradient-to-br from-sky-600 via-sky-500 to-sky-700 p-[1px] shadow-md">
               <div className="flex flex-col justify-between gap-4 rounded-2xl bg-slate-900/95 p-4 text-slate-50 sm:flex-row sm:items-center">
                 <div>
@@ -279,13 +330,35 @@ function App() {
               </div>
             </div>
 
+            <div className="rounded-2xl border border-sky-100 bg-sky-50/70 px-4 py-3 text-xs text-slate-800 shadow-sm">
+              <div className="flex items-center justify-between gap-2">
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-sky-600">
+                    Spelhumör i omgången
+                  </p>
+                  <p className="mt-1 text-sm font-medium">
+                    Favorit–/skrällbarometer: {barometer.favoritProcent} %
+                  </p>
+                  <p className="mt-1 text-[11px] text-slate-600">
+                    {barometer.text}
+                  </p>
+                </div>
+                <div className="hidden h-12 w-12 items-center justify-center rounded-full bg-white text-sky-700 shadow-inner sm:flex">
+                  <span className="text-sm font-semibold">
+                    {barometer.favoritProcent}%
+                  </span>
+                </div>
+              </div>
+            </div>
+
             <section
               id="omgang"
               className="scroll-mt-28 space-y-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
             >
               <h2 className="text-base font-semibold">Veckans omgång</h2>
               <p className="text-sm text-slate-700">
-                {data?.omgang?.beskrivning ||
+                {data?.omgang?.introText ||
+                  data?.omgang?.beskrivning ||
                   "Bergsåker bjuder på en lurig V85-omgång med flera öppna lopp, högklassiga hästar och multijackpot. Spelvärdet är högt – både för spikletare och skrälljägare."}
               </p>
               <div className="mt-2 grid gap-3 text-xs text-slate-600 sm:grid-cols-3">
@@ -309,7 +382,7 @@ function App() {
                     {data?.omgang?.datum || "Lördag 8 november"}
                   </p>
                   <p className="mt-1 text-xs">
-                    Spelstopp ca 16:20 – dubbelkolla alltid tiden hos ATG.
+                    Spelstopp 16:10 – dubbelkolla alltid tiden hos ATG.
                   </p>
                 </div>
                 <div className="rounded-xl bg-slate-50 p-3">
@@ -326,14 +399,88 @@ function App() {
                 </div>
               </div>
 
+              <BaneVader
+                beskrivning={
+                  data?.omgang?.banaVaderText || data?.omgang?.beskrivning
+                }
+              />
+
+              {startlistor && startlistor.length > 0 && (
+                <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50/80 p-3 text-xs text-slate-700">
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                    Kort startlista – topp 3 per avdelning
+                  </p>
+                  <div className="mt-2 space-y-1.5">
+                    {startlistor.map((lopp) => (
+                      <p key={lopp.avd}>
+                        <span className="font-semibold">{lopp.avd}:</span>{" "}
+                        <span>{lopp.kort}</span>
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {banaStatistik &&
+                ((banaStatistik.kuskar &&
+                  banaStatistik.kuskar.length > 0) ||
+                  (banaStatistik.tranare &&
+                    banaStatistik.tranare.length > 0)) && (
+                  <div className="mt-3 grid gap-3 text-xs text-slate-700 sm:grid-cols-2">
+                    {banaStatistik.kuskar &&
+                      banaStatistik.kuskar.length > 0 && (
+                        <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                          <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                            Bästa kuskar på banan
+                          </p>
+                          <ul className="mt-1 space-y-1">
+                            {banaStatistik.kuskar.map((kusk) => (
+                              <li key={kusk.namn}>
+                                <span className="font-medium">
+                                  {kusk.namn}
+                                </span>{" "}
+                                <span className="text-slate-500">
+                                  – {kusk.segerprocent}% segrar
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    {banaStatistik.tranare &&
+                      banaStatistik.tranare.length > 0 && (
+                        <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                          <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                            Formstarka tränare
+                          </p>
+                          <ul className="mt-1 space-y-1">
+                            {banaStatistik.tranare.map((tr) => (
+                              <li key={tr.namn}>
+                                <span className="font-medium">
+                                  {tr.namn}
+                                </span>{" "}
+                                <span className="text-slate-500">
+                                  – {tr.segerprocent}% segrar
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                  </div>
+                )}
+
               <div className="mt-3 flex flex-wrap items-center gap-3 text-xs">
                 <a
-                  href="https://assets.ctfassets.net/hkip2osr81id/39uvrIW4wvyccGJij4j7X7/e48d16ad41ce42b912807ef8195f21db/251108_BERGSAKER_GP_V85_1.pdf"
+                  href={
+                    data?.omgang?.programUrl ||
+                    "https://assets.ctfassets.net/hkip2osr81id/39uvrIW4wvyccGJij4j7X7/e48d16ad41ce42b912807ef8195f21db/251108_BERGSAKER_GP_V85_1.pdf"
+                  }
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center gap-1 rounded-full bg-sky-600 px-3 py-1.5 font-medium text-white shadow-sm hover:bg-sky-700"
                 >
-                  📄 Gratisprogram Bergsåker
+                  📄 Gratisprogram Eskilstuna
                 </a>
                 <a
                   href="https://www.atg.se/V85"
@@ -414,6 +561,26 @@ function App() {
                   </li>
                   <li>Godkänn betalningen.</li>
                 </ol>
+                <div className="mt-3 rounded-lg bg-slate-900/5 p-3 text-[11px] text-slate-700">
+                  <p className="font-semibold text-slate-900">
+                    📱 Surfar du direkt i mobilen?
+                  </p>
+                  <ul className="mt-1 list-disc space-y-1 pl-4">
+                    <li>Ta en skärmdump på QR-koden här på sidan.</li>
+                    <li>Öppna Swish-appen.</li>
+                    <li>
+                      Välj funktionen för att skanna QR-kod från bild (om din
+                      app har det), annars skriv in uppgifterna manuellt.
+                    </li>
+                    <li>
+                      Ange belopp 19 kr och skriv ditt mobilnummer i
+                      meddelandefältet.
+                    </li>
+                    <li>
+                      Godkänn betalningen – tipset skickas sedan via SMS.
+                    </li>
+                  </ul>
+                </div>
                 <p className="mt-1 text-[11px] text-slate-500">
                   När betalningen syns får du veckans kupong via SMS så snart
                   som möjligt.
@@ -507,6 +674,51 @@ function App() {
           </div>
         </section>
 
+        {nyheter.length > 0 && (
+          <section
+            id="senaste-nytt"
+            className="mt-6 scroll-mt-28 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+          >
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
+                  Senaste nytt
+                </p>
+                <h2 className="text-base font-semibold">
+                  Nyheter inför veckans omgång
+                </h2>
+                <p className="mt-1 text-xs text-slate-600">
+                  Strukna hästar, balansändringar och analyser från travmedia.
+                </p>
+              </div>
+            </div>
+            <div className="mt-3 grid gap-3 md:grid-cols-2">
+              {nyheter.map((nytt) => (
+                <a
+                  key={nytt.url}
+                  href={nytt.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-start justify-between gap-2 rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2 text-xs text-slate-700 hover:border-sky-300 hover:bg-sky-50/90"
+                >
+                  <div>
+                    <p className="font-medium text-slate-900">
+                      {nytt.rubrik}
+                    </p>
+                    <p className="mt-0.5 text-[11px] text-slate-500">
+                      {nytt.kalla}
+                      {nytt.tid ? ` · ${nytt.tid}` : ""}
+                    </p>
+                  </div>
+                  <span className="mt-1 text-[11px] text-slate-400">
+                    Läs →
+                  </span>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
+
         <section
           id="gratis-tips"
           className="mt-6 scroll-mt-28 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
@@ -527,7 +739,7 @@ function App() {
           </div>
 
           <div className="mt-3 grid gap-3 md:grid-cols-2">
-            {gratisTipsLankar.map((lank) => (
+            {gratisTips.map((lank) => (
               <a
                 key={lank.url}
                 href={lank.url}
@@ -592,6 +804,110 @@ function App() {
           </div>
         </section>
 
+        {historik && historik.length > 0 && (
+          <section
+            id="historik"
+            className="mt-6 scroll-mt-28 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+          >
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
+                  Tidigare omgångar
+                </p>
+                <h2 className="text-base font-semibold">
+                  Senaste V85-omgångarna
+                </h2>
+              </div>
+            </div>
+            <div className="mt-3 space-y-1.5 text-xs text-slate-700">
+              {historik.map((rad) => (
+                <div
+                  key={`${rad.bana}-${rad.datum}`}
+                  className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-2"
+                >
+                  <div>
+                    <p className="font-medium text-slate-900">
+                      {rad.bana} – {rad.datum}
+                    </p>
+                    {rad.etikett && (
+                      <p className="text-[11px] text-slate-500">
+                        {rad.etikett}
+                      </p>
+                    )}
+                  </div>
+                  {rad.url && (
+                    <a
+                      href={rad.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-[11px] font-medium text-sky-700 hover:underline"
+                    >
+                      Visa →
+                    </a>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* FAQ-sektion */}
+        <section
+          id="faq"
+          className="mt-6 scroll-mt-28 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+        >
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
+              Vanliga frågor
+            </p>
+            <h2 className="text-base font-semibold">FAQ – Frågor & svar</h2>
+          </div>
+
+          <div className="mt-3 space-y-4 text-sm text-slate-700">
+            <div>
+              <p className="font-semibold">
+                Hur ofta uppdateras tipsen inför V85?
+              </p>
+              <p className="text-xs mt-1">
+                Sidan uppdateras normalt torsdag–lördag inför omgången. Vid sena
+                strykningar eller uppgifter som påverkar loppen kan sidan
+                uppdateras närmare spelstopp.
+              </p>
+            </div>
+
+            <div>
+              <p className="font-semibold">Är tipsen gratis?</p>
+              <p className="text-xs mt-1">
+                Analysdelarna på sidan är gratis att läsa. Swish-tipset kostar
+                19 kr och då får du tre färdiga kuponger via SMS som du själv
+                spelar på ATG.
+              </p>
+            </div>
+
+            <div>
+              <p className="font-semibold">
+                Var kommer startlistor och övrig data ifrån?
+              </p>
+              <p className="text-xs mt-1">
+                All information sammanställs manuellt inför varje omgång.
+                Ambitionen är att på sikt hämta mer data automatiskt via öppna
+                API:er om det blir möjligt.
+              </p>
+            </div>
+
+            <div>
+              <p className="font-semibold">
+                Garanti på vinst eller “säkra” system?
+              </p>
+              <p className="text-xs mt-1">
+                Nej. Trav är ett spel med risk och slump. Tipsen är endast
+                idéer och inspiration – spela alltid ansvarsfullt och bara för
+                pengar du har råd att förlora.
+              </p>
+            </div>
+          </div>
+        </section>
+
         <section
           id="om-omgangskollen"
           className="mt-6 scroll-mt-28 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
@@ -646,14 +962,3 @@ function App() {
 }
 
 export default App;
-
-
-
-
-
-
-
-
-
-
-
