@@ -1,7 +1,7 @@
 {
   "name": "travinfo",
   "version": "0.0.3",
-  "private": true,
+  "type": "module",
   "scripts": {
     "dev": "vite --strictPort --port 5173",
     "build": "vite build",
