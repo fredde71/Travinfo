@@ -48,7 +48,7 @@
     {
       "namn": "Trav365 – V85 Analys & tips",
       "typ": "Gratis analys",
-      "url": "https://www.trav365.se"
+      "url": "https://www.aftonbladet.se/sportbladet/trav365"
     },
     {
       "namn": "Expressen – Trav (gratisdelen)",
@@ -56,19 +56,14 @@
       "url": "https://www.expressen.se/sport/trav/"
     },
     {
-      "namn": "Aftonbladet Trav",
-      "typ": "Nyheter & snack",
-      "url": "https://www.aftonbladet.se/sportbladet/travgalopp"
-    },
-    {
       "namn": "Travronden (betalsajt)",
       "typ": "Premium tips & rank",
       "url": "https://www.travronden.se"
     },
     {
-      "namn": "Bladet Trav (gratis analyser)",
-      "typ": "Analys",
-      "url": "https://travbladet.se"
+      "namn": "Thomas Uhrberg",
+      "typ": "Analys/Tips",
+      "url": "https://thomasuhrberg.se"
     }
   ],
 
