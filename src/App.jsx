@@ -256,14 +256,19 @@ function App() {
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-sky-50/40 to-slate-100 text-slate-900">
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur">
         <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
-          <div className="flex items-center gap-2">
-            <img
-              src="./omgangskollen-dark.png"
-              alt="Omgångskollen logotyp"
-              className="h-8 w-auto"
-            />
-            <span className="text-sm font-semibold tracking-tight">
-              Omgångskollen
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <img
+                src="./omgangskollen-dark.png"
+                alt="Omgångskollen logotyp"
+                className="h-8 w-auto"
+              />
+              <span className="text-sm font-semibold tracking-tight">
+                Omgångskollen
+              </span>
+            </div>
+            <span className="hidden rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-slate-500 sm:inline-flex">
+              Inofficiell V85-guide · ej ATG
             </span>
           </div>
           <ul className="flex gap-4 text-xs sm:text-sm text-slate-600">
@@ -537,11 +542,12 @@ function App() {
                 Swish-tipset
               </p>
               <h2 className="text-lg font-semibold">
-                Veckans 3 kuponger – (tips för 19 kr)
+                Veckans tre speltips – (19 kr)
               </h2>
               <p className="text-xs text-slate-600">
-                Tre färdiga V85-förslag – du får raderna och spelar dem
-                själv på ATG.
+                Tre genomarbetade V85-förslag inför lördagens omgång. Du får
+                raderna via SMS och spelar alltid själv hos ATG – Omgångskollen
+                är ett fristående hobbyprojekt utan koppling till ATG.
               </p>
             </div>
 
@@ -550,16 +556,17 @@ function App() {
                 <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-amber-100 text-xs">
                   💡
                 </span>
-                Veckans kuponger är låsta
+                Veckans tre speltips är låsta
               </p>
               <p>
                 Tipset kostar <span className="font-semibold">19 kr</span>. När
-                du har swishat enligt instruktionen nedan skickas raderna
-                manuellt via SMS till numret du uppger i meddelandet.
+                du har swishat enligt instruktionen nedan skickas tre färdiga
+                V85-förslag manuellt via SMS till numret du uppger i
+                meddelandet.
               </p>
               <p>
-                Betalning sker via Swish med QR-koden eller nummer i appen. Du
-                får alltid bekräftelse när tipset är skickat.
+                Du spelar alltid systemen själv hos ATG. Omgångskollen säljer
+                endast spelförslag och är ett fristående hobbyprojekt.
               </p>
             </div>
 
@@ -608,7 +615,7 @@ function App() {
                   </ul>
                 </div>
                 <p className="mt-1 text-[11px] text-slate-500">
-                  När betalningen syns får du veckans kupong via SMS så snart
+                  När betalningen syns får du veckans speltips via SMS så snart
                   som möjligt.
                 </p>
               </div>
@@ -616,13 +623,13 @@ function App() {
                 <div className="rounded-xl border border-slate-200 bg-white p-2">
                   <img
                     src="./swish-qr.png"
-                    alt="Swish QR-kod för veckans kupong"
+                    alt="Swish QR-kod för veckans tre speltips"
                     className="h-40 w-40 object-contain"
                   />
                 </div>
                 <p className="text-[11px] text-slate-500 text-center">
                   Skanna QR-koden med Swish-appen för att betala 19 kr och få
-                  tipset via SMS.
+                  speltipsen via SMS.
                 </p>
               </div>
             </div>
@@ -783,7 +790,7 @@ function App() {
           </div>
         </section>
 
-                <section
+        <section
           id="nycklar"
           className="mt-6 scroll-mt-28 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
         >
