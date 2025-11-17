@@ -504,7 +504,7 @@ function App() {
                     "Gratisprogram till omgången"}
                 </a>
                 <a
-                  href="https://www.atg.se/v86" /* ändra till V85-länk när ATG har rätt path */
+                  href="https://www.atg.se/v85"
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center gap-1 rounded-full bg-slate-900 px-3 py-1.5 font-medium text-slate-50 hover:bg-black"
