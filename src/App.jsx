@@ -114,9 +114,6 @@ const defaultNycklar = {
   },
 };
 
-const BANA_LAT = 59.379;
-const BANA_LON = 16.554;
-
 const defaultBarometer = {
   favoritProcent: 60,
   text: "Lite blandad känsla – några starka favoriter men också läge för skrällar i ett par avdelningar.",
@@ -124,14 +121,14 @@ const defaultBarometer = {
 
 const defaultHistorik = [];
 
-function BaneVader({ beskrivning }) {
+function BaneVader({ beskrivning, lat, lon }) {
   const [vader, setVader] = useState(null);
   const [error, setError] = useState(false);
 
   useEffect(() => {
     async function fetchVader() {
       try {
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${BANA_LAT}&longitude=${BANA_LON}&current_weather=true&hourly=precipitation`;
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=precipitation`;
         const res = await fetch(url);
         const json = await res.json();
         if (json.current_weather) {
@@ -154,7 +151,7 @@ function BaneVader({ beskrivning }) {
       }
     }
     fetchVader();
-  }, []);
+  }, [lat, lon]);
 
   if (error) {
     return (
@@ -210,15 +207,17 @@ function App() {
         if (json?.omgang?.nedrakning) {
           setCountdownTarget(json.omgang.nedrakning);
         } else if (json?.omgang?.datum) {
-          const dateString = `${json.omgang.datum} 16:20`;
+          const dateString = `${json.omgang.datum} ${
+            json.omgang.spelstopp || "16:20"
+          }`;
           setCountdownTarget(dateString);
         } else {
-          setCountdownTarget("2024-11-08T16:20:00+01:00");
+          setCountdownTarget("2025-11-22T16:20:00+01:00");
         }
       })
       .catch(() => {
         setData(null);
-        setCountdownTarget("2024-11-08T16:20:00+01:00");
+        setCountdownTarget("2025-11-22T16:20:00+01:00");
       });
   }, []);
 
@@ -244,6 +243,9 @@ function App() {
       minute: "2-digit",
     });
   }
+
+  const banaLat = data?.omgang?.banaLat || 59.379;
+  const banaLon = data?.omgang?.banaLon || 16.554;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-sky-50/40 to-slate-100 text-slate-900">
@@ -323,17 +325,17 @@ function App() {
                     Nästa V85-omgång
                   </p>
                   <h1 className="mt-1 text-2xl font-bold">
-                    {data?.omgang?.rubrik || "V85 Eskilstuna"}
+                    {data?.omgang?.rubrik || "V85 – veckans omgång"}
                   </h1>
                   <p className="mt-1 text-sm text-sky-100/90">
-                    {data?.omgang?.bana || "Bergsåker"}{" "}
+                    {data?.omgang?.bana || "Travbana"}{" "}
                     {data?.omgang?.datum
                       ? `· ${data.omgang.datum}`
-                      : "· Lördag 8 november"}
+                      : "· lördag"}
                   </p>
                   <p className="mt-1 text-xs text-sky-100/80">
                     {data?.omgang?.jackpot ||
-                      "Jackpott ca 50 miljoner i åttarättspotten."}
+                      "Jackpott eller extra pengar i potten kan ge rejäl utdelning."}
                   </p>
                 </div>
                 <div className="rounded-xl border border-sky-300/40 bg-slate-900/80 px-3 py-2">
@@ -374,7 +376,7 @@ function App() {
               <p className="text-sm text-slate-700">
                 {data?.omgang?.introText ||
                   data?.omgang?.beskrivning ||
-                  "Bergsåker bjuder på en lurig V85-omgång med flera öppna lopp, högklassiga hästar och multijackpot. Spelvärdet är högt – både för spikletare och skrälljägare."}
+                  "Veckans V85-omgång bjuder på en blandning av starka favoriter och öppna lopp där skrällarna lurar runt hörnet."}
               </p>
               <div className="mt-2 grid gap-3 text-xs text-slate-600 sm:grid-cols-3">
                 <div className="rounded-xl bg-slate-50 p-3">
@@ -382,11 +384,11 @@ function App() {
                     Bana
                   </p>
                   <p className="mt-1 text-sm font-medium">
-                    {data?.omgang?.bana || "Bergsåker"}
+                    {data?.omgang?.bana || "Travbana"}
                   </p>
                   <p className="mt-1 text-xs">
-                    Stark vinterbana där form, styrka och rätt balans betyder
-                    mycket.
+                    Lokala förutsättningar, form på stallet och balans kan göra
+                    stor skillnad här.
                   </p>
                 </div>
                 <div className="rounded-xl bg-slate-50 p-3">
@@ -394,10 +396,11 @@ function App() {
                     Datum & spelstopp
                   </p>
                   <p className="mt-1 text-sm font-medium">
-                    {data?.omgang?.datum || "Lördag 8 november"}
+                    {data?.omgang?.datum || "lördag"}
                   </p>
                   <p className="mt-1 text-xs">
-                    Spelstopp 16:10 – dubbelkolla alltid tiden hos ATG.
+                    Spelstopp {data?.omgang?.spelstopp || "16:20"} – dubbelkolla
+                    alltid tiden hos ATG.
                   </p>
                 </div>
                 <div className="rounded-xl bg-slate-50 p-3">
@@ -405,11 +408,10 @@ function App() {
                     Jackpott
                   </p>
                   <p className="mt-1 text-sm font-medium">
-                    {data?.omgang?.jackpot || "Ca 50 miljoner kr"}
+                    {data?.omgang?.jackpot || "Ingen jackpottinfo"}
                   </p>
                   <p className="mt-1 text-xs">
-                    Extra pengar i potten gör att rätt rad kan bli rejält
-                    värd.
+                    Extra pengar i potten kan göra bra rader riktigt värdefulla.
                   </p>
                 </div>
               </div>
@@ -418,6 +420,8 @@ function App() {
                 beskrivning={
                   data?.omgang?.banaVaderText || data?.omgang?.beskrivning
                 }
+                lat={banaLat}
+                lon={banaLon}
               />
 
               {startlistor && startlistor.length > 0 && (
@@ -495,10 +499,12 @@ function App() {
                   rel="noreferrer"
                   className="inline-flex items-center gap-1 rounded-full bg-sky-600 px-3 py-1.5 font-medium text-white shadow-sm hover:bg-sky-700"
                 >
-                  📄 Gratisprogram Eskilstuna
+                  📄{" "}
+                  {data?.omgang?.programLabel ||
+                    "Gratisprogram till omgången"}
                 </a>
                 <a
-                  href="https://www.atg.se/V85"
+                  href="https://www.atg.se/v86" /* ändra till V85-länk när ATG har rätt path */
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center gap-1 rounded-full bg-slate-900 px-3 py-1.5 font-medium text-slate-50 hover:bg-black"
@@ -529,7 +535,7 @@ function App() {
                 Veckans 3 kuponger – (tips för 19 kr)
               </h2>
               <p className="text-xs text-slate-600">
-                Tre färdiga V85-förslag – du får raderna och spelar dom
+                Tre färdiga V85-förslag – du får raderna och spelar dem
                 själv på ATG.
               </p>
             </div>
@@ -628,7 +634,7 @@ function App() {
                 För dig som vill fördjupa dig
               </p>
               <h2 className="text-base font-semibold">
-                V85 – så funkar spelet och den nya 30/50/70-fördelningen
+                V85 – så funkar spelet och utdelningen
               </h2>
             </div>
           </div>
@@ -639,51 +645,47 @@ function App() {
                 Grunderna i V85
               </h3>
               <p className="mt-1 text-xs">
-                V85 är ett streckspel där du ska hitta vinnaren i åtta lopp.
-                Ju fler rätt du har, desto större del av potten får du. Du
-                väljer själv hur många hästar du vill gardera med i varje
+                V85 är ett streckspel där du ska hitta vinnaren i åtta lopp på
+                lördagen. Ju fler rätt du har, desto större del av potten får
+                du. Du väljer själv hur många hästar du vill gardera med i varje
                 avdelning.
               </p>
               <ul className="mt-2 list-disc space-y-1 pl-4 text-xs">
                 <li>8 avdelningar – minst en häst per lopp.</li>
                 <li>
-                  Systemkostnad = antal rader × 0,25 kr (eller enligt
-                  aktuell radinsats).
+                  Systemkostnad = antal rader × 0,25 kr (eller den radinsats
+                  som gäller för V85 hos ATG).
                 </li>
                 <li>
-                  Spelas oftast som <span className="font-medium">V86</span>{" "}
-                  men med kvällens bana/omgång som fokus.
+                  Fokus här är alltid helgens V85-omgång – en sida för trav
+                  på lördagar.
                 </li>
               </ul>
             </div>
 
             <div className="rounded-xl border border-sky-200 bg-sky-50/80 p-3 text-sm text-slate-800">
               <h3 className="text-sm font-semibold text-slate-900">
-                Ny utdelningsmodell – 30 / 50 / 70
+                Utdelning och jackpottar
               </h3>
               <p className="mt-1 text-xs">
-                I den nya modellen fördelas potten mellan olika
-                vinstpooler på ett lite annorlunda sätt än tidigare, för att
-                ge mer stabil utdelning men fortfarande chans på riktigt stora
-                pengar.
+                Potten delas mellan olika vinstnivåer, där störst del går till
+                full pott. Lägre nivåer ger oftare lite tillbaka även om en
+                spik eller idé missar.
               </p>
               <ul className="mt-2 list-disc space-y-1 pl-4 text-xs">
+                <li>Största delen av potten går till högsta vinstnivån.</li>
                 <li>
-                  Största delen av potten går fortsatt till{" "}
-                  <span className="font-medium">8 rätt</span>.
+                  Lägre vinstnivåer gör att fler får tillbaka en slant även med
+                  någon miss.
                 </li>
                 <li>
-                  Mindre men viktig del till 7 och 6 rätt – så att fler får
-                  tillbaka en slant även med en miss.
-                </li>
-                <li>
-                  Jackpottar byggs upp när utdelningen blir låg eller ingen
-                  utdelning ges i någon pott.
+                  Jackpottar byggs upp när utdelningen blir låg eller inte
+                  delas ut.
                 </li>
               </ul>
               <p className="mt-2 text-[11px] text-slate-600">
                 Exakta procentsiffror och aktuella regler hittar du alltid hos
-                ATG under spelinformationen för V86/V85.
+                ATG under spelinformationen för V85.
               </p>
             </div>
           </div>
@@ -799,6 +801,8 @@ function App() {
                   ? "bg-emerald-50 border-emerald-200"
                   : tone === "yellow"
                   ? "bg-amber-50 border-amber-200"
+                  : tone === "gray"
+                  ? "bg-slate-50 border-slate-200"
                   : "bg-rose-50 border-rose-200";
               const label =
                 key === "spik" ? "Spik" : key === "skrall" ? "Skräll" : "Varning";

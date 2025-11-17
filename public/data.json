@@ -1,10 +1,18 @@
 {
   "omgang": {
-    "bana": "Solvalla / Åby",
-    "datum": "onsdag 12 november 2025",
+    "typ": "V85",
+    "rubrik": "V85 Solvalla",
+    "bana": "Solvalla",
+    "datum": "lördag 22 november 2025",
     "spelstopp": "16:20",
-    "jackpot": "Ingen jackpotinfo",
-    "beskrivning": "Automatisk uppdatering via script."
+    "nedrakning": "2025-11-22T16:20:00+01:00",
+    "jackpot": "Ingen jackpottinfo",
+    "introText": "Automatisk uppdatering via script.",
+    "banaVaderText": "Kort kommentar om hur banan brukar vara, eller om dagens förutsättningar.",
+    "programUrl": "https://exempel.se/program.pdf",
+    "programLabel": "Gratisprogram Solvalla",
+    "banaLat": 59.379,
+    "banaLon": 16.554
   },
   "snabbfakta": {
     "antalLopp": "8",
@@ -29,5 +37,13 @@
       "text": "Väntar på analys.",
       "tone": "gray"
     }
-  }
+  },
+  "nyheter": [],
+  "gratisTips": [],
+  "startlistor": [],
+  "banaStatistik": {
+    "kuskar": [],
+    "tranare": []
+  },
+  "historik": []
 }
