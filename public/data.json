@@ -6,13 +6,13 @@
     "datum": "lördag 22 november 2025",
     "spelstopp": "16:10",
     "nedrakning": "2025-11-22T16:10:00+01:00",
-    "jackpot": "Ingen jackpottinfo",
-    "introText": "Jägersro bjuder på en spännande V85-omgång med flera öppna lopp och intressanta lågprocentare. Formen på stall Skåne är stark – upplagt för en spelvärd lördag.",
-    "banaVaderText": "Jägersros bana är snabb och ofta spetsgynnad vid torrt väder. Håll koll på vind och eventuella balansändringar inför loppen.",
+    "jackpot": "Dubbeljackpott – minst 48 miljoner i åttarättspotten.",
+    "introText": "Jägersro bjuder på en spelvärd V85-omgång med Svensk Uppfödningslöpning som höjdpunkt och dubbeljackpott i potten. Flera starka favoriter men också gott om skrällbud från formstall i söder.",
+    "banaVaderText": "Jägersros bana är snabb och ofta spetsgynnad vid torra förhållanden. Blir det regn och blåst kan det gynna starka hästar som tål att gå ute i spåren.",
     "programUrl": "https://assets.ctfassets.net/hkip2osr81id/39uvrIW4wvyccGJij4j7X7/b1d5b662303620d2dc167a9aae9f406c/251122_JAGERSRO_GP_V85_1.pdf",
     "programLabel": "Gratisprogram Jägersro",
     "spelaUrl": "https://www.atg.se/spel/2025-11-22/V85/jagersro/avd/1",
-    "banaLat": 55.570,
+    "banaLat": 55.57,
     "banaLon": 13.043
   },
 
@@ -26,51 +26,104 @@
 
   "nycklar": {
     "spik": {
-      "titel": "Ej uppdaterad",
-      "text": "Väntar på analys.",
-      "tone": "gray"
+      "titel": "8 Blixt Lane (V85-?)",
+      "text": "Formstark häst från toppstall som trivs på Jägersro. Bra utgångsläge och klar förstahäst på kupongen – given spik om procenten inte skenar totalt.",
+      "tone": "green"
     },
     "skrall": {
-      "titel": "Ej uppdaterad",
-      "text": "Väntar på analys.",
-      "tone": "gray"
+      "titel": "7 Lion Mearas (V85-?)",
+      "text": "Stark sort som ofta gör bra lopp utan att vinna ihjäl sig. Rätt resa och tempo kan göra honom till omgångens roliga lågprocentare.",
+      "tone": "yellow"
     },
     "varning": {
-      "titel": "Ej uppdaterad",
-      "text": "Väntar på analys.",
-      "tone": "gray"
+      "titel": "3 Magic Jewel (V85-?)",
+      "text": "Talangfull treåring som möter tufft motstånd men har fart för att överraska. Ska absolut med på större system i ett öppet lopp.",
+      "tone": "red"
     }
   },
 
-  "nyheter": [],
+  "nyheter": [
+    {
+      "rubrik": "Dubbeljackpot på V85 – minst 48 miljoner i potten",
+      "kalla": "SverigeTravet",
+      "tid": "15 november",
+      "url": "https://www.sverigetravet.se/travspel/dubbel-jackpot-till-v85-lordag-22-november-2025"
+    },
+    {
+      "rubrik": "V85-jackpott på Jägersro 22 november",
+      "kalla": "Travronden",
+      "tid": "17 november",
+      "url": "https://www.travronden.se/travsport/spelmarknad/spelbolag/a/v85-jackpott-pa-jagersro-22-november"
+    },
+    {
+      "rubrik": "Tidiga V85-tankar till Jägersro – spikar, skrällar och system",
+      "kalla": "Trav365 / Aftonbladet",
+      "tid": "17 november",
+      "url": "https://www.aftonbladet.se/sportbladet/trav365/a/Rz3k2J/v85-tips-lordagen-22-november-pa-jagersro-analys-spikar-skrallar-och-system-jackpott-48-miljoner"
+    },
+    {
+      "rubrik": "V85-tips Jägersro – tidiga tankar inför lördagen",
+      "kalla": "Travcash",
+      "tid": "17 november",
+      "url": "https://travcash.se/v85-tips/v85-tips-lordag-jagersro-22-11-tidiga-tankar/"
+    }
+  ],
 
   "gratisTips": [
     {
-      "namn": "Trav365 – V85 Analys & tips",
-      "typ": "Gratis analys",
-      "url": "https://www.aftonbladet.se/sportbladet/trav365"
+      "namn": "Trav365 – V85-tips Jägersro",
+      "typ": "Gratis analys & plusmaterial",
+      "url": "https://www.aftonbladet.se/sportbladet/trav365/a/Rz3k2J/v85-tips-lordagen-22-november-pa-jagersro-analys-spikar-skrallar-och-system-jackpott-48-miljoner"
     },
     {
-      "namn": "Expressen – Trav (gratisdelen)",
-      "typ": "Nyheter & gratisinfo",
-      "url": "https://www.expressen.se/sport/trav/"
+      "namn": "Gratistravtips – V85 Jägersro 22/11",
+      "typ": "ABCD-ranking & startlista",
+      "url": "https://www.gratistravtips.se/jagersro-trav/2025-11-22/v85"
     },
     {
-      "namn": "Travronden (betalsajt)",
-      "typ": "Premium tips & rank",
-      "url": "https://www.travronden.se"
+      "namn": "Travet.se – V85 startlista Jägersro",
+      "typ": "Startlista & procent",
+      "url": "https://www.travet.se/v85-startlista/v85-startlista-22-november-2025/"
     },
     {
-      "namn": "Thomas Uhrberg",
-      "typ": "Analys/Tips",
-      "url": "https://thomasuhrberg.se"
+      "namn": "SverigeTravet – Dubbeljackpot-info V85 Jägersro",
+      "typ": "Nyhet & spelinformation",
+      "url": "https://www.sverigetravet.se/travspel/dubbel-jackpot-till-v85-lordag-22-november-2025"
+    },
+    {
+      "namn": "Travronden Spel – V85 Jägersro",
+      "typ": "Betalsajt – tips & system",
+      "url": "https://www.travrondenspel.se/v85/V85-jagersro-2025-11-22"
+    },
+    {
+      "namn": "Travtips Thomas Uhrberg",
+      "typ": "analys/Tips",
+      "url": "https://www.thomasuhrberg.se"
+    },
+    {
+      "namn": "Gratistravtips – alla lopp Jägersro 22/11",
+      "typ": "Ranking & resultat",
+      "url": "https://www.gratistravtips.se/jagersro-trav/2025-11-22"
     }
   ],
 
   "startlistor": [],
 
   "banaStatistik": {
-    "kuskar": [],
+    "kuskar": [
+      {
+        "namn": "Johan Untersteiner",
+        "segerprocent": 24
+      },
+      {
+        "namn": "Joakim Lövgren",
+        "segerprocent": 15
+      },
+      {
+        "namn": "Adrian Kolgjini",
+        "segerprocent": 14
+      }
+    ],
     "tranare": []
   },
 

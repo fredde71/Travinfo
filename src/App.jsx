@@ -783,7 +783,7 @@ function App() {
           </div>
         </section>
 
-        <section
+                <section
           id="nycklar"
           className="mt-6 scroll-mt-28 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
         >
@@ -800,24 +800,35 @@ function App() {
 
           <div className="mt-3 grid gap-3 sm:grid-cols-3 text-sm">
             {Object.entries(nycklar).map(([key, item]) => {
-              const tone = item.tone || "green";
-              const bg =
-                tone === "green"
-                  ? "bg-emerald-50 border-emerald-200"
-                  : tone === "yellow"
-                  ? "bg-amber-50 border-amber-200"
-                  : tone === "gray"
-                  ? "bg-slate-50 border-slate-200"
-                  : "bg-rose-50 border-rose-200";
               const label =
                 key === "spik" ? "Spik" : key === "skrall" ? "Skräll" : "Varning";
+
+              // 🎨 Nya färger per typ
+              let bgClasses = "";
+              let labelClasses = "";
+
+              if (key === "spik") {
+                // Spik = tydligt grön
+                bgClasses = "bg-emerald-50 border-emerald-300";
+                labelClasses = "text-emerald-700";
+              } else if (key === "skrall") {
+                // Skräll = gul/orange
+                bgClasses = "bg-amber-50 border-amber-300";
+                labelClasses = "text-amber-700";
+              } else {
+                // Varning (och ev. övrigt) = röd/rosa
+                bgClasses = "bg-rose-50 border-rose-300";
+                labelClasses = "text-rose-700";
+              }
 
               return (
                 <div
                   key={key}
-                  className={`rounded-xl border px-3 py-3 ${bg}`}
+                  className={`rounded-xl border px-3 py-3 ${bgClasses}`}
                 >
-                  <div className="text-[11px] font-mono uppercase tracking-wide text-slate-500">
+                  <div
+                    className={`text-[11px] font-mono uppercase tracking-wide ${labelClasses}`}
+                  >
                     {label}
                   </div>
                   <h3 className="mt-1 text-sm font-semibold">{item.titel}</h3>
