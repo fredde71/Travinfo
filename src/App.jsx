@@ -247,6 +247,11 @@ function App() {
   const banaLat = data?.omgang?.banaLat || 59.379;
   const banaLon = data?.omgang?.banaLon || 16.554;
 
+  // 🔗 Säker V85-länk – använder data.omgang.spelaUrl om den finns, annars fallback
+  const spelaUrl =
+    data?.omgang?.spelaUrl ||
+    "https://www.atg.se/spel/2025-11-22/V85/solvalla/avd/1";
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-sky-50/40 to-slate-100 text-slate-900">
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur">
@@ -504,7 +509,7 @@ function App() {
                     "Gratisprogram till omgången"}
                 </a>
                 <a
-                  href="https://www.atg.se/v85"
+                  href={spelaUrl}
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center gap-1 rounded-full bg-slate-900 px-3 py-1.5 font-medium text-slate-50 hover:bg-black"

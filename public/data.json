@@ -12,7 +12,8 @@
     "programUrl": "https://exempel.se/program.pdf",
     "programLabel": "Gratisprogram Solvalla",
     "banaLat": 59.379,
-    "banaLon": 16.554
+    "banaLon": 16.554,
+    "spelaUrl": "https://www.atg.se/spel/2025-11-22/V85/solvalla/avd/1"
   },
   "snabbfakta": {
     "antalLopp": "8",
@@ -37,6 +38,10 @@
       "text": "Väntar på analys.",
       "tone": "gray"
     }
+  },
+  "barometer": {
+    "favoritProcent": 60,
+    "text": "Lite blandad känsla – några starka favoriter men också läge för skrällar i ett par avdelningar."
   },
   "nyheter": [],
   "gratisTips": [],
