@@ -1,27 +1,29 @@
 {
   "omgang": {
     "typ": "V85",
-    "rubrik": "V85 Solvalla",
-    "bana": "Solvalla",
+    "rubrik": "V85 Jägersro",
+    "bana": "Jägersro",
     "datum": "lördag 22 november 2025",
-    "spelstopp": "16:20",
-    "nedrakning": "2025-11-22T16:20:00+01:00",
+    "spelstopp": "16:10",
+    "nedrakning": "2025-11-22T16:10:00+01:00",
     "jackpot": "Ingen jackpottinfo",
-    "introText": "Automatisk uppdatering via script.",
-    "banaVaderText": "Kort kommentar om hur banan brukar vara, eller om dagens förutsättningar.",
-    "programUrl": "https://exempel.se/program.pdf",
-    "programLabel": "Gratisprogram Solvalla",
-    "banaLat": 59.379,
-    "banaLon": 16.554,
-    "spelaUrl": "https://www.atg.se/spel/2025-11-22/V85/solvalla/avd/1"
+    "introText": "Jägersro bjuder på en spännande V85-omgång med flera öppna lopp och intressanta lågprocentare. Formen på stall Skåne är stark – upplagt för en spelvärd lördag.",
+    "banaVaderText": "Jägersros bana är snabb och ofta spetsgynnad vid torrt väder. Håll koll på vind och eventuella balansändringar inför loppen.",
+    "programUrl": "https://assets.ctfassets.net/hkip2osr81id/39uvrIW4wvyccGJij4j7X7/b1d5b662303620d2dc167a9aae9f406c/251122_JAGERSRO_GP_V85_1.pdf",
+    "programLabel": "Gratisprogram Jägersro",
+    "spelaUrl": "https://www.atg.se/spel/2025-11-22/V85/jagersro/avd/1",
+    "banaLat": 55.570,
+    "banaLon": 13.043
   },
+
   "snabbfakta": {
     "antalLopp": "8",
     "radpris": "0,50 kr / rad",
     "utdelning": "8 / 7 / 6 / 5 rätt",
-    "spelstopp": "16:20",
+    "spelstopp": "16:10",
     "aterbetalning": "65%"
   },
+
   "nycklar": {
     "spik": {
       "titel": "Ej uppdaterad",
@@ -39,16 +41,43 @@
       "tone": "gray"
     }
   },
-  "barometer": {
-    "favoritProcent": 60,
-    "text": "Lite blandad känsla – några starka favoriter men också läge för skrällar i ett par avdelningar."
-  },
+
   "nyheter": [],
-  "gratisTips": [],
+
+  "gratisTips": [
+    {
+      "namn": "Trav365 – V85 Analys & tips",
+      "typ": "Gratis analys",
+      "url": "https://www.trav365.se"
+    },
+    {
+      "namn": "Expressen – Trav (gratisdelen)",
+      "typ": "Nyheter & gratisinfo",
+      "url": "https://www.expressen.se/sport/trav/"
+    },
+    {
+      "namn": "Aftonbladet Trav",
+      "typ": "Nyheter & snack",
+      "url": "https://www.aftonbladet.se/sportbladet/travgalopp"
+    },
+    {
+      "namn": "Travronden (betalsajt)",
+      "typ": "Premium tips & rank",
+      "url": "https://www.travronden.se"
+    },
+    {
+      "namn": "Bladet Trav (gratis analyser)",
+      "typ": "Analys",
+      "url": "https://travbladet.se"
+    }
+  ],
+
   "startlistor": [],
+
   "banaStatistik": {
     "kuskar": [],
     "tranare": []
   },
+
   "historik": []
 }
