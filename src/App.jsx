@@ -229,6 +229,17 @@ function App() {
   const historik = data?.historik || defaultHistorik;
   const gratisTips = data?.gratisTips || [];
 
+  // Dela upp gratissajter / betalsajter baserat på "typ"
+  const gratisLankar = gratisTips.filter((lank) => {
+    const t = String(lank.typ || "").toLowerCase();
+    return !t.includes("betal");
+  });
+
+  const betalLankar = gratisTips.filter((lank) => {
+    const t = String(lank.typ || "").toLowerCase();
+    return t.includes("betal");
+  });
+
   // 🔄 Beräkna text till "Uppdaterad"-badgen
   let senastUppdateradText = null;
   if (data?.omgang?.senastUppdaterad) {
@@ -395,6 +406,13 @@ function App() {
                     Lokala förutsättningar, form på stallet och balans kan göra
                     stor skillnad här.
                   </p>
+                  {data?.omgang?.bana === "Jägersro" && (
+                    <p className="mt-1 text-xs text-slate-600">
+                      Jägersro är en spetsgynnad bana, detta beror på att direkt
+                      efter målgång ligger avfarten in till stallbacken och att
+                      detta då får spetshästarna att springa lite snabbare.
+                    </p>
+                  )}
                 </div>
                 <div className="rounded-xl bg-slate-50 p-3">
                   <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
@@ -623,7 +641,7 @@ function App() {
           </section>
         </section>
 
-        {/* Länkarna upp – hög prio */}
+        {/* Länkar – uppdelat gratis / betal */}
         <section
           id="gratis-tips"
           className="mt-6 scroll-mt-28 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
@@ -631,38 +649,94 @@ function App() {
           <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
-                Gratis tips & analyser
+                Tips & analyser
               </p>
               <h2 className="text-base font-semibold">
                 Samlade länkar inför veckans V85
               </h2>
               <p className="mt-1 text-xs text-slate-600">
                 Här hittar du analyser, startlistor och spelidéer från flera
-                olika travsajter – både gratis och betalt.
+                olika travsajter – uppdelat på gratissajter och betalsajter.
               </p>
             </div>
           </div>
 
-          <div className="mt-3 grid gap-3 md:grid-cols-2">
-            {gratisTips.map((lank) => (
-              <a
-                key={lank.url}
-                href={lank.url}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-start justify-between gap-2 rounded-xl border border-slate-200 bg-slate-50/60 px-3 py-2 text-xs text-slate-700 hover:border-sky-300 hover:bg-sky-50/80"
-              >
-                <div>
-                  <p className="font-medium text-slate-900">{lank.namn}</p>
-                  <p className="mt-0.5 text-[11px] text-slate-500">
-                    {lank.typ}
+          <div className="mt-3 grid gap-4 md:grid-cols-2">
+            <div>
+              <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-700">
+                Gratissajter
+              </h3>
+              <p className="mt-1 text-[11px] text-slate-500">
+                Öppna analyser, startlistor och idéer utan inloggning.
+              </p>
+              <div className="mt-2 space-y-2">
+                {gratisLankar.map((lank) => (
+                  <a
+                    key={lank.url}
+                    href={lank.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-start justify-between gap-2 rounded-xl border border-emerald-100 bg-emerald-50/60 px-3 py-2 text-xs text-slate-700 hover:border-emerald-300 hover:bg-emerald-50/90"
+                  >
+                    <div>
+                      <p className="font-medium text-slate-900">
+                        {lank.namn}
+                      </p>
+                      <p className="mt-0.5 text-[11px] text-slate-500">
+                        {lank.typ}
+                      </p>
+                    </div>
+                    <span className="mt-1 text-[11px] text-emerald-700">
+                      Öppna →
+                    </span>
+                  </a>
+                ))}
+                {gratisLankar.length === 0 && (
+                  <p className="mt-2 text-[11px] text-slate-500">
+                    Inga gratissajter inlagda ännu.
                   </p>
+                )}
+              </div>
+            </div>
+
+            {betalLankar.length > 0 && (
+              <div>
+                <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-amber-700">
+                  Betalsajter
+                </h3>
+                <p className="mt-1 text-[11px] text-slate-500">
+                  Premiumtips för dig som vill fördjupa dig extra.
+                </p>
+                <div className="mt-2 space-y-2">
+                  {betalLankar.map((lank) => (
+                    <a
+                      key={lank.url}
+                      href={lank.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-start justify-between gap-2 rounded-xl border border-amber-200 bg-amber-50/70 px-3 py-2 text-xs text-slate-800 hover:border-amber-300 hover:bg-amber-50/90"
+                    >
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <p className="font-medium text-slate-900">
+                            {lank.namn}
+                          </p>
+                          <span className="inline-flex rounded-full bg-amber-100 px-2 py-[2px] text-[10px] font-medium text-amber-800">
+                            Betal
+                          </span>
+                        </div>
+                        <p className="mt-0.5 text-[11px] text-slate-600">
+                          {lank.typ}
+                        </p>
+                      </div>
+                      <span className="mt-1 text-[11px] text-amber-700">
+                        Öppna →
+                      </span>
+                    </a>
+                  ))}
                 </div>
-                <span className="mt-1 text-[11px] text-slate-400">
-                  Öppna →
-                </span>
-              </a>
-            ))}
+              </div>
+            )}
           </div>
         </section>
 
@@ -710,6 +784,59 @@ function App() {
             </div>
           </section>
         )}
+
+        {/* 🔼 Flyttad hit – direkt efter Senaste nytt */}
+        <section
+          id="nycklar"
+          className="mt-6 scroll-mt-28 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+        >
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
+                Nycklar till omgången
+              </p>
+              <h2 className="text-base font-semibold">
+                Spikar, skrällbud och varningar
+              </h2>
+            </div>
+          </div>
+
+          <div className="mt-3 grid gap-3 sm:grid-cols-3 text-sm">
+            {Object.entries(nycklar).map(([key, item]) => {
+              const label =
+                key === "spik" ? "Spik" : key === "skrall" ? "Skräll" : "Varning";
+
+              let bgClasses = "";
+              let labelClasses = "";
+
+              if (key === "spik") {
+                bgClasses = "bg-emerald-50 border-emerald-300";
+                labelClasses = "text-emerald-700";
+              } else if (key === "skrall") {
+                bgClasses = "bg-amber-50 border-amber-300";
+                labelClasses = "text-amber-700";
+              } else {
+                bgClasses = "bg-rose-50 border-rose-300";
+                labelClasses = "text-rose-700";
+              }
+
+              return (
+                <div
+                  key={key}
+                  className={`rounded-xl border px-3 py-3 ${bgClasses}`}
+                >
+                  <div
+                    className={`text-[11px] font-mono uppercase tracking-wide ${labelClasses}`}
+                  >
+                    {label}
+                  </div>
+                  <h3 className="mt-1 text-sm font-semibold">{item.titel}</h3>
+                  <p className="mt-1 text-xs text-slate-700">{item.text}</p>
+                </div>
+              );
+            })}
+          </div>
+        </section>
 
         <section
           id="v85-guide"
@@ -775,58 +902,6 @@ function App() {
                 ATG under spelinformationen för V85.
               </p>
             </div>
-          </div>
-        </section>
-
-        <section
-          id="nycklar"
-          className="mt-6 scroll-mt-28 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
-        >
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
-                Nycklar till omgången
-              </p>
-              <h2 className="text-base font-semibold">
-                Spikar, skrällbud och varningar
-              </h2>
-            </div>
-          </div>
-
-          <div className="mt-3 grid gap-3 sm:grid-cols-3 text-sm">
-            {Object.entries(nycklar).map(([key, item]) => {
-              const label =
-                key === "spik" ? "Spik" : key === "skrall" ? "Skräll" : "Varning";
-
-              let bgClasses = "";
-              let labelClasses = "";
-
-              if (key === "spik") {
-                bgClasses = "bg-emerald-50 border-emerald-300";
-                labelClasses = "text-emerald-700";
-              } else if (key === "skrall") {
-                bgClasses = "bg-amber-50 border-amber-300";
-                labelClasses = "text-amber-700";
-              } else {
-                bgClasses = "bg-rose-50 border-rose-300";
-                labelClasses = "text-rose-700";
-              }
-
-              return (
-                <div
-                  key={key}
-                  className={`rounded-xl border px-3 py-3 ${bgClasses}`}
-                >
-                  <div
-                    className={`text-[11px] font-mono uppercase tracking-wide ${labelClasses}`}
-                  >
-                    {label}
-                  </div>
-                  <h3 className="mt-1 text-sm font-semibold">{item.titel}</h3>
-                  <p className="mt-1 text-xs text-slate-700">{item.text}</p>
-                </div>
-              );
-            })}
           </div>
         </section>
 
