@@ -15,7 +15,6 @@
     "banaLat": 55.57,
     "banaLon": 13.043
   },
-
   "snabbfakta": {
     "antalLopp": "8",
     "radpris": "0,50 kr / rad",
@@ -23,7 +22,6 @@
     "spelstopp": "16:10",
     "aterbetalning": "65%"
   },
-
   "nycklar": {
     "spik": {
       "titel": "8 Blixt Lane (V85-?)",
@@ -41,7 +39,6 @@
       "tone": "red"
     }
   },
-
   "nyheter": [
     {
       "rubrik": "Dubbeljackpot på V85 – minst 48 miljoner i potten",
@@ -68,7 +65,6 @@
       "url": "https://travcash.se/v85-tips/v85-tips-lordag-jagersro-22-11-tidiga-tankar/"
     }
   ],
-
   "gratisTips": [
     {
       "namn": "Trav365 – V85-tips Jägersro",
@@ -96,8 +92,18 @@
       "url": "https://www.travrondenspel.se/v85/V85-jagersro-2025-11-22"
     },
     {
+      "namn": "Fem tippar V85 – ATG",
+      "typ": "Panel med fem tipsters",
+      "url": "https://www.atg.se/V85/tips/fem-tippar-v85"
+    },
+    {
+      "namn": "Korsdragaren – Vi Tippa / ATG",
+      "typ": "Spelidéer & drag",
+      "url": "https://www.atg.se/V85/tips/korsdragaren-fran-vi-tippa-v85"
+    },
+    {
       "namn": "Travtips Thomas Uhrberg",
-      "typ": "analys/Tips",
+      "typ": "Analys & tips",
       "url": "https://www.thomasuhrberg.se"
     },
     {
@@ -106,9 +112,7 @@
       "url": "https://www.gratistravtips.se/jagersro-trav/2025-11-22"
     }
   ],
-
   "startlistor": [],
-
   "banaStatistik": {
     "kuskar": [
       {
@@ -126,6 +130,5 @@
     ],
     "tranare": []
   },
-
   "historik": []
 }

@@ -256,19 +256,14 @@ function App() {
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-sky-50/40 to-slate-100 text-slate-900">
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur">
         <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <img
-                src="./omgangskollen-dark.png"
-                alt="Omgångskollen logotyp"
-                className="h-8 w-auto"
-              />
-              <span className="text-sm font-semibold tracking-tight">
-                Omgångskollen
-              </span>
-            </div>
-            <span className="hidden rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-slate-500 sm:inline-flex">
-              Inofficiell V85-guide · ej ATG
+          <div className="flex items-center gap-2">
+            <img
+              src="./omgangskollen-dark.png"
+              alt="Omgångskollen logotyp"
+              className="h-8 w-auto"
+            />
+            <span className="text-sm font-semibold tracking-tight">
+              Omgångskollen
             </span>
           </div>
           <ul className="flex gap-4 text-xs sm:text-sm text-slate-600">
@@ -278,13 +273,18 @@ function App() {
               </a>
             </li>
             <li>
+              <a href="#gratis-tips" className="hover:text-slate-900">
+                🆓 Gratis tips
+              </a>
+            </li>
+            <li>
               <a href="#swish-tipset" className="hover:text-slate-900">
                 💰 Swish-tipset
               </a>
             </li>
             <li>
-              <a href="#v85-guide" className="hover:text-slate-900">
-                📘 V85-guide
+              <a href="#nycklar" className="hover:text-slate-900">
+                🎯 Spikar & skrällar
               </a>
             </li>
             <li>
@@ -293,13 +293,8 @@ function App() {
               </a>
             </li>
             <li>
-              <a href="#gratis-tips" className="hover:text-slate-900">
-                🆓 Gratis tips
-              </a>
-            </li>
-            <li>
-              <a href="#nycklar" className="hover:text-slate-900">
-                🎯 Spikar & skrällar
+              <a href="#v85-guide" className="hover:text-slate-900">
+                📘 V85-guide
               </a>
             </li>
             <li>
@@ -521,14 +516,6 @@ function App() {
                 >
                   🎫 Spela V85 hos ATG
                 </a>
-                <a
-                  href="https://thomasuhrberg.se/"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1 rounded-full border border-slate-300 bg-white px-3 py-1.5 font-medium text-slate-800 hover:border-slate-400"
-                >
-                  🧠 Thomas Uhrberg – tips & info
-                </a>
               </div>
             </section>
           </div>
@@ -636,6 +623,94 @@ function App() {
           </section>
         </section>
 
+        {/* Länkarna upp – hög prio */}
+        <section
+          id="gratis-tips"
+          className="mt-6 scroll-mt-28 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+        >
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
+                Gratis tips & analyser
+              </p>
+              <h2 className="text-base font-semibold">
+                Samlade länkar inför veckans V85
+              </h2>
+              <p className="mt-1 text-xs text-slate-600">
+                Här hittar du analyser, startlistor och spelidéer från flera
+                olika travsajter – både gratis och betalt.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-3 grid gap-3 md:grid-cols-2">
+            {gratisTips.map((lank) => (
+              <a
+                key={lank.url}
+                href={lank.url}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-start justify-between gap-2 rounded-xl border border-slate-200 bg-slate-50/60 px-3 py-2 text-xs text-slate-700 hover:border-sky-300 hover:bg-sky-50/80"
+              >
+                <div>
+                  <p className="font-medium text-slate-900">{lank.namn}</p>
+                  <p className="mt-0.5 text-[11px] text-slate-500">
+                    {lank.typ}
+                  </p>
+                </div>
+                <span className="mt-1 text-[11px] text-slate-400">
+                  Öppna →
+                </span>
+              </a>
+            ))}
+          </div>
+        </section>
+
+        {nyheter.length > 0 && (
+          <section
+            id="senaste-nytt"
+            className="mt-6 scroll-mt-28 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+          >
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
+                  Senaste nytt
+                </p>
+                <h2 className="text-base font-semibold">
+                  Nyheter inför veckans omgång
+                </h2>
+                <p className="mt-1 text-xs text-slate-600">
+                  Strukna hästar, balansändringar och analyser från travmedia.
+                </p>
+              </div>
+            </div>
+            <div className="mt-3 grid gap-3 md:grid-cols-2">
+              {nyheter.map((nytt) => (
+                <a
+                  key={nytt.url}
+                  href={nytt.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-start justify-between gap-2 rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2 text-xs text-slate-700 hover:border-sky-300 hover:bg-sky-50/90"
+                >
+                  <div>
+                    <p className="font-medium text-slate-900">
+                      {nytt.rubrik}
+                    </p>
+                    <p className="mt-0.5 text-[11px] text-slate-500">
+                      {nytt.kalla}
+                      {nytt.tid ? ` · ${nytt.tid}` : ""}
+                    </p>
+                  </div>
+                  <span className="mt-1 text-[11px] text-slate-400">
+                    Läs →
+                  </span>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
+
         <section
           id="v85-guide"
           className="mt-6 scroll-mt-28 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
@@ -703,93 +778,6 @@ function App() {
           </div>
         </section>
 
-        {nyheter.length > 0 && (
-          <section
-            id="senaste-nytt"
-            className="mt-6 scroll-mt-28 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
-          >
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
-                  Senaste nytt
-                </p>
-                <h2 className="text-base font-semibold">
-                  Nyheter inför veckans omgång
-                </h2>
-                <p className="mt-1 text-xs text-slate-600">
-                  Strukna hästar, balansändringar och analyser från travmedia.
-                </p>
-              </div>
-            </div>
-            <div className="mt-3 grid gap-3 md:grid-cols-2">
-              {nyheter.map((nytt) => (
-                <a
-                  key={nytt.url}
-                  href={nytt.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-start justify-between gap-2 rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2 text-xs text-slate-700 hover:border-sky-300 hover:bg-sky-50/90"
-                >
-                  <div>
-                    <p className="font-medium text-slate-900">
-                      {nytt.rubrik}
-                    </p>
-                    <p className="mt-0.5 text-[11px] text-slate-500">
-                      {nytt.kalla}
-                      {nytt.tid ? ` · ${nytt.tid}` : ""}
-                    </p>
-                  </div>
-                  <span className="mt-1 text-[11px] text-slate-400">
-                    Läs →
-                  </span>
-                </a>
-              ))}
-            </div>
-          </section>
-        )}
-
-        <section
-          id="gratis-tips"
-          className="mt-6 scroll-mt-28 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
-        >
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
-                Gratis tips & analyser
-              </p>
-              <h2 className="text-base font-semibold">
-                Samlade länkar inför veckans V85
-              </h2>
-              <p className="mt-1 text-xs text-slate-600">
-                Här hittar du gratisanalyser, krönikor och idéer som kan hjälpa
-                dig bygga din egen kupong.
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-3 grid gap-3 md:grid-cols-2">
-            {gratisTips.map((lank) => (
-              <a
-                key={lank.url}
-                href={lank.url}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-start justify-between gap-2 rounded-xl border border-slate-200 bg-slate-50/60 px-3 py-2 text-xs text-slate-700 hover:border-sky-300 hover:bg-sky-50/80"
-              >
-                <div>
-                  <p className="font-medium text-slate-900">{lank.namn}</p>
-                  <p className="mt-0.5 text-[11px] text-slate-500">
-                    {lank.typ}
-                  </p>
-                </div>
-                <span className="mt-1 text-[11px] text-slate-400">
-                  Öppna →
-                </span>
-              </a>
-            ))}
-          </div>
-        </section>
-
         <section
           id="nycklar"
           className="mt-6 scroll-mt-28 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
@@ -810,20 +798,16 @@ function App() {
               const label =
                 key === "spik" ? "Spik" : key === "skrall" ? "Skräll" : "Varning";
 
-              // 🎨 Nya färger per typ
               let bgClasses = "";
               let labelClasses = "";
 
               if (key === "spik") {
-                // Spik = tydligt grön
                 bgClasses = "bg-emerald-50 border-emerald-300";
                 labelClasses = "text-emerald-700";
               } else if (key === "skrall") {
-                // Skräll = gul/orange
                 bgClasses = "bg-amber-50 border-amber-300";
                 labelClasses = "text-amber-700";
               } else {
-                // Varning (och ev. övrigt) = röd/rosa
                 bgClasses = "bg-rose-50 border-rose-300";
                 labelClasses = "text-rose-700";
               }
@@ -893,7 +877,7 @@ function App() {
           </section>
         )}
 
-        {/* FAQ-sektion */}
+        {/* FAQ – ny layout i kort */}
         <section
           id="faq"
           className="mt-6 scroll-mt-28 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
@@ -905,43 +889,43 @@ function App() {
             <h2 className="text-base font-semibold">FAQ – Frågor & svar</h2>
           </div>
 
-          <div className="mt-3 space-y-4 text-sm text-slate-700">
-            <div>
+          <div className="mt-3 grid gap-3 text-sm text-slate-700 md:grid-cols-2">
+            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
               <p className="font-semibold">
                 Hur ofta uppdateras tipsen inför V85?
               </p>
-              <p className="text-xs mt-1">
+              <p className="mt-1 text-xs">
                 Sidan uppdateras normalt torsdag–lördag inför omgången. Vid sena
                 strykningar eller uppgifter som påverkar loppen kan sidan
                 uppdateras närmare spelstopp.
               </p>
             </div>
 
-            <div>
+            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
               <p className="font-semibold">Är tipsen gratis?</p>
-              <p className="text-xs mt-1">
+              <p className="mt-1 text-xs">
                 Analysdelarna på sidan är gratis att läsa. Swish-tipset kostar
-                19 kr och då får du tre färdiga kuponger via SMS som du själv
-                spelar på ATG.
+                19 kr och då får du tre färdiga speltips som du själv spelar hos
+                ATG.
               </p>
             </div>
 
-            <div>
+            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
               <p className="font-semibold">
                 Var kommer startlistor och övrig data ifrån?
               </p>
-              <p className="text-xs mt-1">
-                All information sammanställs manuellt inför varje omgång.
-                Ambitionen är att på sikt hämta mer data automatiskt via öppna
-                API:er om det blir möjligt.
+              <p className="mt-1 text-xs">
+                All information på sidan sammanställs manuellt inför varje
+                omgång. Målet är att på sikt använda officiella data via ATG:s
+                AIS-tjänst.
               </p>
             </div>
 
-            <div>
+            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
               <p className="font-semibold">
                 Garanti på vinst eller “säkra” system?
               </p>
-              <p className="text-xs mt-1">
+              <p className="mt-1 text-xs">
                 Nej. Trav är ett spel med risk och slump. Tipsen är endast
                 idéer och inspiration – spela alltid ansvarsfullt och bara för
                 pengar du har råd att förlora.
