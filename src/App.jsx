@@ -552,7 +552,7 @@ function App() {
               <p className="text-xs text-slate-600">
                 Tre genomarbetade V85-förslag inför lördagens omgång. Du får
                 raderna via SMS och spelar alltid själv hos ATG – Omgångskollen
-                är ett fristående hobbyprojekt utan koppling till ATG.
+                är fristående utan koppling till ATG.
               </p>
             </div>
 
@@ -571,7 +571,7 @@ function App() {
               </p>
               <p>
                 Du spelar alltid systemen själv hos ATG. Omgångskollen säljer
-                endast spelförslag och är ett fristående hobbyprojekt.
+                endast spelförslag och är ett fristående bolag utan koppling till ATG.
               </p>
             </div>
 
