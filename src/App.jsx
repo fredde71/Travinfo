@@ -198,6 +198,7 @@ function BaneVader({ beskrivning, lat, lon }) {
 function App() {
   const [data, setData] = useState(null);
   const [countdownTarget, setCountdownTarget] = useState(null);
+  const [mobileOpen, setMobileOpen] = useState(false); // 🔹 NY: mobilmeny-state
 
   useEffect(() => {
     fetch("./data.json")
@@ -277,7 +278,9 @@ function App() {
               Omgångskollen
             </span>
           </div>
-          <ul className="flex gap-4 text-xs sm:text-sm text-slate-600">
+
+          {/* Desktopmeny */}
+          <ul className="hidden md:flex gap-4 text-xs sm:text-sm text-slate-600">
             <li>
               <a href="#omgang" className="hover:text-slate-900">
                 🏁 Omgången
@@ -319,7 +322,109 @@ function App() {
               </a>
             </li>
           </ul>
+
+          {/* Hamburgermeny – endast mobil */}
+          <button
+            type="button"
+            className="inline-flex items-center justify-center rounded-md border border-slate-200 bg-white px-2 py-1 text-xs font-medium text-slate-700 shadow-sm md:hidden"
+            onClick={() => setMobileOpen((prev) => !prev)}
+            aria-label="Öppna mobilmeny"
+          >
+            {mobileOpen ? (
+              <span className="flex items-center gap-1">
+                <span>Stäng</span>
+                <span className="text-lg leading-none">✕</span>
+              </span>
+            ) : (
+              <span className="flex items-center gap-1">
+                <span>Meny</span>
+                <span className="text-lg leading-none">☰</span>
+              </span>
+            )}
+          </button>
         </nav>
+
+        {/* Mobilmeny-panel */}
+        {mobileOpen && (
+          <div className="md:hidden border-t border-slate-200 bg-white/95">
+            <nav className="mx-auto max-w-6xl px-4 py-2">
+              <ul className="flex flex-col gap-1 text-sm text-slate-700">
+                <li>
+                  <a
+                    href="#omgang"
+                    className="block rounded-md px-2 py-1 hover:bg-slate-100"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    🏁 Omgången
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#gratis-tips"
+                    className="block rounded-md px-2 py-1 hover:bg-slate-100"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    🆓 Gratis tips
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#swish-tipset"
+                    className="block rounded-md px-2 py-1 hover:bg-slate-100"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    💰 Swish-tipset
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#nycklar"
+                    className="block rounded-md px-2 py-1 hover:bg-slate-100"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    🎯 Spikar & skrällar
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#senaste-nytt"
+                    className="block rounded-md px-2 py-1 hover:bg-slate-100"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    📰 Senaste nytt
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#v85-guide"
+                    className="block rounded-md px-2 py-1 hover:bg-slate-100"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    📘 V85-guide
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#faq"
+                    className="block rounded-md px-2 py-1 hover:bg-slate-100"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    ❓ FAQ
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#om-omgangskollen"
+                    className="block rounded-md px-2 py-1 hover:bg-slate-100"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    ℹ️ Om Omgångskollen
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        )}
       </header>
 
       <main className="mx-auto max-w-6xl px-4 pb-12 pt-6">
@@ -785,7 +890,7 @@ function App() {
           </section>
         )}
 
-        {/* 🔼 Flyttad hit – direkt efter Senaste nytt */}
+        {/* 🔼 Nycklar efter Senaste nytt */}
         <section
           id="nycklar"
           className="mt-6 scroll-mt-28 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
