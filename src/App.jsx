@@ -656,7 +656,7 @@ function App() {
               </h2>
               <p className="text-xs text-slate-600">
                 Tre genomarbetade V85-förslag inför lördagens omgång. Du får
-                raderna via SMS och spelar alltid själv hos ATG – Omgångskollen
+                raderna via SMS senast en timme innan spelstopp och spelar alltid själv hos ATG – Omgångskollen
                 är fristående utan koppling till ATG.
               </p>
             </div>
