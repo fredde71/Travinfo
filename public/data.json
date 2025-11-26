@@ -1,20 +1,21 @@
 {
   "omgang": {
     "typ": "V85",
-    "rubrik": "V85 Jägersro",
-    "bana": "Jägersro",
-    "datum": "lördag 22 november 2025",
+    "rubrik": "V85 Solvalla – jackpott 60 miljoner",
+    "bana": "Solvalla",
+    "datum": "lördag 29 november 2025",
     "spelstopp": "16:10",
-    "nedrakning": "2025-11-22T16:10:00+01:00",
-    "jackpot": "Dubbeljackpott – minst 48 miljoner i åttarättspotten.",
-    "introText": "Jägersro bjuder på en spelvärd V85-omgång med Svensk Uppfödningslöpning som höjdpunkt och dubbeljackpott i potten. Flera starka favoriter men också gott om skrällbud från formstall i söder.",
-    "banaVaderText": "Jägersros bana är snabb och ofta spetsgynnad vid torra förhållanden. Blir det regn och blåst kan det gynna starka hästar som tål att gå ute i spåren.",
-    "programUrl": "https://assets.ctfassets.net/hkip2osr81id/39uvrIW4wvyccGJij4j7X7/b1d5b662303620d2dc167a9aae9f406c/251122_JAGERSRO_GP_V85_1.pdf",
-    "programLabel": "Gratisprogram Jägersro",
-    "spelaUrl": "https://www.atg.se/spel/2025-11-22/V85/jagersro/avd/1",
-    "banaLat": 55.57,
-    "banaLon": 13.043
+    "nedrakning": "2025-11-29T16:10:00+01:00",
+    "jackpot": "Jackpott – minst 60 miljoner i åttarättspotten.",
+    "introText": "Solvalla står för värdskapet för en intressant V85-omgång med jackpott på 60 miljoner i potten. Storstjärnor som Francesco Zet lockar många streck, men bakom favoriterna finns gott om tänkbara skrällbud för den som vågar gå emot.",
+    "banaVaderText": "Solvalla är en allroundbana med 196 meters upplopp och ingen open stretch. Det gör att både starka spurtare och spetsbetonade hästar har bra chans – mycket avgörs av tempo och position in på upploppet.",
+    "programUrl": "https://assets.ctfassets.net/hkip2osr81id/39uvrIW4wvyccGJij4j7X7/b15c04689faa695210679cfa8f88a17f/251129_SOLVALLA_GP_V85_1.pdf",
+    "programLabel": "Gratisprogram Solvalla",
+    "spelaUrl": "https://www.atg.se/spel/2025-11-29/V85/solvalla/avd/1",
+    "banaLat": 59.34,
+    "banaLon": 18.00
   },
+
   "snabbfakta": {
     "antalLopp": "8",
     "radpris": "0,50 kr / rad",
@@ -22,118 +23,52 @@
     "spelstopp": "16:10",
     "aterbetalning": "65%"
   },
+
   "nycklar": {
     "spik": {
-      "titel": "8 Blixt Lane (V85-?)",
-      "text": "Formstark häst från toppstall som trivs på Jägersro. Bra utgångsläge och klar förstahäst på kupongen – given spik om procenten inte skenar totalt.",
+      "titel": "10 Francesco Zet (V85-5)",
+      "text": "Världsstjärna som sällan lämnar banan utan att vara långt framme. Distans, bana och läge passar perfekt – solklar omgångsspik för många system så länge rapporterna är fortsatt positiva.",
       "tone": "green"
     },
     "skrall": {
-      "titel": "7 Lion Mearas (V85-?)",
-      "text": "Stark sort som ofta gör bra lopp utan att vinna ihjäl sig. Rätt resa och tempo kan göra honom till omgångens roliga lågprocentare.",
+      "titel": "12 Ready Creation (V85-3)",
+      "text": "Bakspår och en del trafikproblem att lösa, men kapacitet nog att blåsa många om tempot blir högt. Ett roligt lågprocentarbud som kan skrälla till rejält om det stämmer på vägen.",
       "tone": "yellow"
     },
     "varning": {
-      "titel": "3 Magic Jewel (V85-?)",
-      "text": "Talangfull treåring som möter tufft motstånd men har fart för att överraska. Ska absolut med på större system i ett öppet lopp.",
+      "titel": "7 Clarissa (V85-5)",
+      "text": "Många stirrar sig blinda på Francesco Zet, men Clarissa har form, läge och kapacitet för att göra loppet betydligt mer öppet än procenten antyder. Ett måstebud för dig som garderar storfavoriten.",
       "tone": "red"
     }
   },
+
   "nyheter": [
     {
-      "rubrik": "Dubbeljackpot på V85 – minst 48 miljoner i potten",
-      "kalla": "SverigeTravet",
-      "tid": "15 november",
-      "url": "https://www.sverigetravet.se/travspel/dubbel-jackpot-till-v85-lordag-22-november-2025"
+      "rubrik": "Jackpott 60 miljoner på V85 Solvalla",
+      "kalla": "ATG",
+      "tid": "",
+      "url": "https://www.atg.se/spel/2025-11-29/V85/solvalla/avd/1"
     },
     {
-      "rubrik": "V85-jackpott på Jägersro 22 november",
-      "kalla": "Travronden",
-      "tid": "17 november",
-      "url": "https://www.travronden.se/travsport/spelmarknad/spelbolag/a/v85-jackpott-pa-jagersro-22-november"
-    },
-    {
-      "rubrik": "Tidiga V85-tankar till Jägersro – spikar, skrällar och system",
+      "rubrik": "V85-tips Solvalla – analys, spikar och skrällar",
       "kalla": "Trav365 / Aftonbladet",
-      "tid": "17 november",
-      "url": "https://www.aftonbladet.se/sportbladet/trav365/a/Rz3k2J/v85-tips-lordagen-22-november-pa-jagersro-analys-spikar-skrallar-och-system-jackpott-48-miljoner"
+      "tid": "Tidiga tankar",
+      "url": "https://www.aftonbladet.se/sportbladet/trav365/a/WvloXG/v85-tips-lordagen-29-november-pa-solvalla-analys-spikar-skrallar-och-system-jackpott-60-miljoner"
     },
     {
-      "rubrik": "V85-tips Jägersro – tidiga tankar inför lördagen",
-      "kalla": "Travcash",
-      "tid": "17 november",
-      "url": "https://travcash.se/v85-tips/v85-tips-lordag-jagersro-22-11-tidiga-tankar/"
+      "rubrik": "Vinstrikaste kuskarna på Solvalla 2025",
+      "kalla": "Svensk Travsport",
+      "tid": "",
+      "url": "https://sportapp.travsport.se/toplists?categoryId=1&typeId=1&list=S&year=2025&licenseType=S&gender=B&homeTrack=A&raceOnTrack=1&typeOfRace=B&sulkyOrMonte=S&breed=B&returnNumberOfEntries=200&onlyYouth=false"
     }
   ],
+
   "gratisTips": [
     {
-      "namn": "Trav365 – V85-tips Jägersro",
+      "namn": "Trav365 – V85-tips Solvalla",
       "typ": "Gratis analys & plusmaterial",
-      "url": "https://www.aftonbladet.se/sportbladet/trav365/a/Rz3k2J/v85-tips-lordagen-22-november-pa-jagersro-analys-spikar-skrallar-och-system-jackpott-48-miljoner"
+      "url": "https://www.aftonbladet.se/sportbladet/trav365/a/WvloXG/v85-tips-lordagen-29-november-pa-solvalla-analys-spikar-skrallar-och-system-jackpott-60-miljoner"
     },
     {
       "namn": "Gratistravtips – V85 Jägersro 22/11",
-      "typ": "ABCD-ranking & startlista",
-      "url": "https://www.gratistravtips.se/jagersro-trav/2025-11-22/v85"
-    },
-    {
-      "namn": "Travet.se – V85 startlista Jägersro",
-      "typ": "Startlista & procent",
-      "url": "https://www.travet.se/v85-startlista/v85-startlista-22-november-2025/"
-    },
-    {
-      "namn": "SverigeTravet – Dubbeljackpot-info V85 Jägersro",
-      "typ": "Nyhet & spelinformation",
-      "url": "https://www.sverigetravet.se/travspel/dubbel-jackpot-till-v85-lordag-22-november-2025"
-    },
-    {
-      "namn": "Travronden Spel – V85 Jägersro",
-      "typ": "Betalsajt – tips & system",
-      "url": "https://www.travrondenspel.se/v85/V85-jagersro-2025-11-22"
-    },
-    {
-      "namn": "Guiden",
-      "typ": "Betalsajt – tips & system",
-      "url": "https://www.guiden.se"
-    },
-    {
-      "namn": "Fem tippar V85 – ATG",
-      "typ": "Panel med fem tipsters",
-      "url": "https://www.atg.se/V85/tips/fem-tippar-v85"
-    },
-    {
-      "namn": "Korsdragaren – Vi Tippa / ATG",
-      "typ": "Spelidéer & drag",
-      "url": "https://www.atg.se/V85/tips/korsdragaren-fran-vi-tippa-v85"
-    },
-    {
-      "namn": "Travtips Thomas Uhrberg",
-      "typ": "Analys & tips",
-      "url": "https://www.thomasuhrberg.se"
-    },
-    {
-      "namn": "Gratistravtips – alla lopp Jägersro 22/11",
-      "typ": "Ranking & resultat",
-      "url": "https://www.gratistravtips.se/jagersro-trav/2025-11-22"
-    }
-  ],
-  "startlistor": [],
-  "banaStatistik": {
-    "kuskar": [
-      {
-        "namn": "Johan Untersteiner",
-        "segerprocent": 24
-      },
-      {
-        "namn": "Joakim Lövgren",
-        "segerprocent": 15
-      },
-      {
-        "namn": "Adrian Kolgjini",
-        "segerprocent": 14
-      }
-    ],
-    "tranare": []
-  },
-  "historik": []
-}
+      "typ": "
