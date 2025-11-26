@@ -1,19 +1,19 @@
 {
   "omgang": {
     "typ": "V85",
-    "rubrik": "V85 Solvalla – jackpott 60 miljoner",
+    "rubrik": "V85 Solvalla",
     "bana": "Solvalla",
     "datum": "lördag 29 november 2025",
     "spelstopp": "16:10",
     "nedrakning": "2025-11-29T16:10:00+01:00",
     "jackpot": "Jackpott – minst 60 miljoner i åttarättspotten.",
-    "introText": "Solvalla står för värdskapet för en intressant V85-omgång med jackpott på 60 miljoner i potten. Storstjärnor som Francesco Zet lockar många streck, men bakom favoriterna finns gott om tänkbara skrällbud för den som vågar gå emot.",
-    "banaVaderText": "Solvalla är en allroundbana med 196 meters upplopp och ingen open stretch. Det gör att både starka spurtare och spetsbetonade hästar har bra chans – mycket avgörs av tempo och position in på upploppet.",
+    "introText": "Solvalla står för värdskapet när veckans V85-omgång avgörs med jackpott på 60 miljoner i åttarättspotten. Flera tunga favoriter, däribland Francesco Zet, men också utrymme för skrällar i de mer öppna loppen.",
+    "banaVaderText": "Solvallas upplopp är 196 meter långt och banan saknar open stretch. Spurthästarna får gott om tid att jobba in ledaren, men positionerna in på upploppet är fortfarande viktiga.",
     "programUrl": "https://assets.ctfassets.net/hkip2osr81id/39uvrIW4wvyccGJij4j7X7/b15c04689faa695210679cfa8f88a17f/251129_SOLVALLA_GP_V85_1.pdf",
     "programLabel": "Gratisprogram Solvalla",
     "spelaUrl": "https://www.atg.se/spel/2025-11-29/V85/solvalla/avd/1",
-    "banaLat": 59.34,
-    "banaLon": 18.00
+    "banaLat": 59.351,
+    "banaLon": 18.008
   },
 
   "snabbfakta": {
@@ -26,18 +26,18 @@
 
   "nycklar": {
     "spik": {
-      "titel": "10 Francesco Zet (V85-5)",
-      "text": "Världsstjärna som sällan lämnar banan utan att vara långt framme. Distans, bana och läge passar perfekt – solklar omgångsspik för många system så länge rapporterna är fortsatt positiva.",
+      "titel": "10 Francesco Zet & 7 Clarissa",
+      "text": "Två tunga favoriter som kan bära upp kupongen: 10 Francesco Zet i V85-5 och 7 Clarissa i ett senare lopp. Båda står för hög kapacitet och trivs på Solvalla.",
       "tone": "green"
     },
     "skrall": {
       "titel": "12 Ready Creation (V85-3)",
-      "text": "Bakspår och en del trafikproblem att lösa, men kapacitet nog att blåsa många om tempot blir högt. Ett roligt lågprocentarbud som kan skrälla till rejält om det stämmer på vägen.",
+      "text": "Ready Creation är en stark skrällkandidat med rätt resa. Får han tempo på loppet kan han runda många till slut och rensa rejält i kuponghögen.",
       "tone": "yellow"
     },
     "varning": {
-      "titel": "7 Clarissa (V85-5)",
-      "text": "Många stirrar sig blinda på Francesco Zet, men Clarissa har form, läge och kapacitet för att göra loppet betydligt mer öppet än procenten antyder. Ett måstebud för dig som garderar storfavoriten.",
+      "titel": "10 Francesco Zet (V85-5)",
+      "text": "Francesco Zet är omgångens megafavorit. Formen och kapaciteten är odiskutabel – men som alltid med extremt hårt spelade hästar gäller det att ha en plan B om något oväntat händer.",
       "tone": "red"
     }
   },
@@ -46,19 +46,19 @@
     {
       "rubrik": "Jackpott 60 miljoner på V85 Solvalla",
       "kalla": "ATG",
-      "tid": "",
+      "tid": "aktuell omgång",
       "url": "https://www.atg.se/spel/2025-11-29/V85/solvalla/avd/1"
     },
     {
-      "rubrik": "V85-tips Solvalla – analys, spikar och skrällar",
+      "rubrik": "Tidiga V85-tankar – spikar, skrällar och system",
       "kalla": "Trav365 / Aftonbladet",
-      "tid": "Tidiga tankar",
+      "tid": "inför 29 november",
       "url": "https://www.aftonbladet.se/sportbladet/trav365/a/WvloXG/v85-tips-lordagen-29-november-pa-solvalla-analys-spikar-skrallar-och-system-jackpott-60-miljoner"
     },
     {
       "rubrik": "Vinstrikaste kuskarna på Solvalla 2025",
       "kalla": "Svensk Travsport",
-      "tid": "",
+      "tid": "statistik 2025",
       "url": "https://sportapp.travsport.se/toplists?categoryId=1&typeId=1&list=S&year=2025&licenseType=S&gender=B&homeTrack=A&raceOnTrack=1&typeOfRace=B&sulkyOrMonte=S&breed=B&returnNumberOfEntries=200&onlyYouth=false"
     }
   ],
@@ -70,5 +70,23 @@
       "url": "https://www.aftonbladet.se/sportbladet/trav365/a/WvloXG/v85-tips-lordagen-29-november-pa-solvalla-analys-spikar-skrallar-och-system-jackpott-60-miljoner"
     },
     {
-      "namn": "Gratistravtips – V85 Jägersro 22/11",
-      "typ": "
+      "namn": "Vinstrikaste kuskarna på Solvalla",
+      "typ": "Statistik & topplista",
+      "url": "https://sportapp.travsport.se/toplists?categoryId=1&typeId=1&list=S&year=2025&licenseType=S&gender=B&homeTrack=A&raceOnTrack=1&typeOfRace=B&sulkyOrMonte=S&breed=B&returnNumberOfEntries=200&onlyYouth=false"
+    },
+    {
+      "namn": "Travtips Thomas Uhrberg",
+      "typ": "Analys & tips",
+      "url": "https://www.thomasuhrberg.se"
+    }
+  ],
+
+  "startlistor": [],
+
+  "banaStatistik": {
+    "kuskar": [],
+    "tranare": []
+  },
+
+  "historik": []
+}
