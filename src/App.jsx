@@ -198,7 +198,7 @@ function BaneVader({ beskrivning, lat, lon }) {
 function App() {
   const [data, setData] = useState(null);
   const [countdownTarget, setCountdownTarget] = useState(null);
-  const [mobileOpen, setMobileOpen] = useState(false); // 🔹 NY: mobilmeny-state
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     fetch("./data.json")
@@ -265,8 +265,9 @@ function App() {
     "https://www.atg.se/spel/2025-11-22/V85/solvalla/avd/1";
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-sky-50/40 to-slate-100 text-slate-900">
-      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur">
+    <div className="min-h-screen bg-slate-50 text-slate-900">
+      {/* HEADER */}
+      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
         <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
           <div className="flex items-center gap-2">
             <img
@@ -279,64 +280,20 @@ function App() {
             </span>
           </div>
 
-          {/* Desktopmeny */}
-          <ul className="hidden md:flex gap-4 text-xs sm:text-sm text-slate-600">
-            <li>
-              <a href="#omgang" className="hover:text-slate-900">
-                🏁 Omgången
-              </a>
-            </li>
-            <li>
-              <a href="#gratis-tips" className="hover:text-slate-900">
-                🆓 Gratis tips
-              </a>
-            </li>
-            <li>
-              <a href="#swish-tipset" className="hover:text-slate-900">
-                💰 Swish-tipset
-              </a>
-            </li>
-            <li>
-              <a href="#nycklar" className="hover:text-slate-900">
-                🎯 Spikar & skrällar
-              </a>
-            </li>
-            <li>
-              <a href="#senaste-nytt" className="hover:text-slate-900">
-                📰 Senaste nytt
-              </a>
-            </li>
-            <li>
-              <a href="#v85-guide" className="hover:text-slate-900">
-                📘 V85-guide
-              </a>
-            </li>
-            <li>
-              <a href="#faq" className="hover:text-slate-900">
-                ❓ FAQ
-              </a>
-            </li>
-            <li>
-              <a href="#om-omgangskollen" className="hover:text-slate-900">
-                ℹ️ Om Omgångskollen
-              </a>
-            </li>
-          </ul>
-
-          {/* Hamburgermeny – endast mobil */}
+          {/* ENDA menyn – samma för mobil & desktop */}
           <button
             type="button"
-            className="inline-flex items-center justify-center rounded-md border border-slate-200 bg-white px-2 py-1 text-xs font-medium text-slate-700 shadow-sm md:hidden"
+            className="inline-flex items-center justify-center rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm"
             onClick={() => setMobileOpen((prev) => !prev)}
-            aria-label="Öppna mobilmeny"
+            aria-label="Öppna meny"
           >
             {mobileOpen ? (
-              <span className="flex items-center gap-1">
+              <span className="flex items-center gap-2">
                 <span>Stäng</span>
                 <span className="text-lg leading-none">✕</span>
               </span>
             ) : (
-              <span className="flex items-center gap-1">
+              <span className="flex items-center gap-2">
                 <span>Meny</span>
                 <span className="text-lg leading-none">☰</span>
               </span>
@@ -344,33 +301,45 @@ function App() {
           </button>
         </nav>
 
-        {/* Mobilmeny-panel */}
+        {/* HELSKÄRMS-MENY */}
         {mobileOpen && (
-          <div className="md:hidden border-t border-slate-200 bg-white/95">
-            <nav className="mx-auto max-w-6xl px-4 py-2">
-              <ul className="flex flex-col gap-1 text-sm text-slate-700">
+          <div className="fixed inset-0 z-50 bg-black/40">
+            <nav className="absolute right-0 top-0 flex h-full w-72 max-w-[80%] flex-col bg-white shadow-2xl">
+              <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
+                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+                  Navigation
+                </span>
+                <button
+                  type="button"
+                  className="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  Stäng ✕
+                </button>
+              </div>
+              <ul className="flex flex-1 flex-col gap-1 overflow-y-auto px-2 py-3 text-sm text-slate-800">
                 <li>
                   <a
                     href="#omgang"
-                    className="block rounded-md px-2 py-1 hover:bg-slate-100"
+                    className="block rounded-md px-3 py-2 hover:bg-slate-100"
                     onClick={() => setMobileOpen(false)}
                   >
-                    🏁 Omgången
+                    🏁 Veckans omgång
                   </a>
                 </li>
                 <li>
                   <a
                     href="#gratis-tips"
-                    className="block rounded-md px-2 py-1 hover:bg-slate-100"
+                    className="block rounded-md px-3 py-2 hover:bg-slate-100"
                     onClick={() => setMobileOpen(false)}
                   >
-                    🆓 Gratis tips
+                    🆓 Tips & analyser
                   </a>
                 </li>
                 <li>
                   <a
                     href="#swish-tipset"
-                    className="block rounded-md px-2 py-1 hover:bg-slate-100"
+                    className="block rounded-md px-3 py-2 hover:bg-slate-100"
                     onClick={() => setMobileOpen(false)}
                   >
                     💰 Swish-tipset
@@ -378,17 +347,8 @@ function App() {
                 </li>
                 <li>
                   <a
-                    href="#nycklar"
-                    className="block rounded-md px-2 py-1 hover:bg-slate-100"
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    🎯 Spikar & skrällar
-                  </a>
-                </li>
-                <li>
-                  <a
                     href="#senaste-nytt"
-                    className="block rounded-md px-2 py-1 hover:bg-slate-100"
+                    className="block rounded-md px-3 py-2 hover:bg-slate-100"
                     onClick={() => setMobileOpen(false)}
                   >
                     📰 Senaste nytt
@@ -396,8 +356,17 @@ function App() {
                 </li>
                 <li>
                   <a
+                    href="#nycklar"
+                    className="block rounded-md px-3 py-2 hover:bg-slate-100"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    🎯 Spikar & skrällar
+                  </a>
+                </li>
+                <li>
+                  <a
                     href="#v85-guide"
-                    className="block rounded-md px-2 py-1 hover:bg-slate-100"
+                    className="block rounded-md px-3 py-2 hover:bg-slate-100"
                     onClick={() => setMobileOpen(false)}
                   >
                     📘 V85-guide
@@ -405,8 +374,17 @@ function App() {
                 </li>
                 <li>
                   <a
+                    href="#historik"
+                    className="block rounded-md px-3 py-2 hover:bg-slate-100"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    📆 Tidigare omgångar
+                  </a>
+                </li>
+                <li>
+                  <a
                     href="#faq"
-                    className="block rounded-md px-2 py-1 hover:bg-slate-100"
+                    className="block rounded-md px-3 py-2 hover:bg-slate-100"
                     onClick={() => setMobileOpen(false)}
                   >
                     ❓ FAQ
@@ -415,7 +393,7 @@ function App() {
                 <li>
                   <a
                     href="#om-omgangskollen"
-                    className="block rounded-md px-2 py-1 hover:bg-slate-100"
+                    className="block rounded-md px-3 py-2 hover:bg-slate-100"
                     onClick={() => setMobileOpen(false)}
                   >
                     ℹ️ Om Omgångskollen
@@ -427,6 +405,7 @@ function App() {
         )}
       </header>
 
+      {/* MAIN */}
       <main className="mx-auto max-w-6xl px-4 pb-12 pt-6">
         <section className="grid gap-4 md:grid-cols-[2fr,1.4fr] md:items-start">
           <div className="space-y-4">
@@ -890,7 +869,7 @@ function App() {
           </section>
         )}
 
-        {/* 🔼 Nycklar efter Senaste nytt */}
+        {/* Nycklar efter Senaste nytt */}
         <section
           id="nycklar"
           className="mt-6 scroll-mt-14 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
@@ -1057,7 +1036,7 @@ function App() {
           </section>
         )}
 
-        {/* FAQ – ny layout i kort */}
+        {/* FAQ */}
         <section
           id="faq"
           className="mt-6 scroll-mt-14 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
@@ -1114,6 +1093,7 @@ function App() {
           </div>
         </section>
 
+        {/* OM */}
         <section
           id="om-omgangskollen"
           className="mt-6 scroll-mt-14 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
