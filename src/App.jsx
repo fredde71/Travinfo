@@ -230,7 +230,6 @@ function App() {
   const historik = data?.historik || defaultHistorik;
   const gratisTips = data?.gratisTips || [];
 
-  // Dela upp gratissajter / betalsajter baserat på "typ"
   const gratisLankar = gratisTips.filter((lank) => {
     const t = String(lank.typ || "").toLowerCase();
     return !t.includes("betal");
@@ -241,7 +240,6 @@ function App() {
     return t.includes("betal");
   });
 
-  // 🔄 Beräkna text till "Uppdaterad"-badgen
   let senastUppdateradText = null;
   if (data?.omgang?.senastUppdaterad) {
     senastUppdateradText = data.omgang.senastUppdaterad;
@@ -259,69 +257,105 @@ function App() {
   const banaLat = data?.omgang?.banaLat || 59.379;
   const banaLon = data?.omgang?.banaLon || 16.554;
 
-  // 🔗 Säker V85-länk – använder data.omgang.spelaUrl om den finns, annars fallback
   const spelaUrl =
     data?.omgang?.spelaUrl ||
     "https://www.atg.se/spel/2025-11-22/V85/solvalla/avd/1";
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
-      {/* HEADER */}
+            {/* HEADER */}
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
-        <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
+        <nav className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
           <div className="flex items-center gap-2">
             <img
               src="./omgangskollen-dark.png"
               alt="Omgångskollen logotyp"
-              className="h-8 w-auto"
+              className="h-7 w-auto"
             />
-            <span className="text-sm font-semibold tracking-tight">
+            <span className="text-xs font-semibold tracking-tight text-slate-800">
               Omgångskollen
             </span>
           </div>
 
-          {/* ENDA menyn – samma för mobil & desktop */}
+          {/* Desktopmeny – visas först på större skärmar */}
+          <ul className="hidden lg:flex items-center gap-3 text-[11px] tracking-tight text-slate-600">
+            <li>
+              <a href="#omgang" className="hover:text-slate-900 whitespace-nowrap">
+                🏁 Omgången
+              </a>
+            </li>
+            <li>
+              <a href="#gratis-tips" className="hover:text-slate-900 whitespace-nowrap">
+                🆓 Gratis tips
+              </a>
+            </li>
+            <li>
+              <a href="#swish-tipset" className="hover:text-slate-900 whitespace-nowrap">
+                💰 Swish-tipset
+              </a>
+            </li>
+            <li>
+              <a href="#senaste-nytt" className="hover:text-slate-900 whitespace-nowrap">
+                📰 Senaste nytt
+              </a>
+            </li>
+            <li>
+              <a href="#nycklar" className="hover:text-slate-900 whitespace-nowrap">
+                🎯 Spikar & skrällar
+              </a>
+            </li>
+            <li>
+              <a href="#v85-guide" className="hover:text-slate-900 whitespace-nowrap">
+                📘 V85-guide
+              </a>
+            </li>
+            <li>
+              <a href="#historik" className="hover:text-slate-900 whitespace-nowrap">
+                📆 Tidigare omgångar
+              </a>
+            </li>
+            <li>
+              <a href="#faq" className="hover:text-slate-900 whitespace-nowrap">
+                ❓ FAQ
+              </a>
+            </li>
+            <li>
+              <a href="#om-omgangskollen" className="hover:text-slate-900 whitespace-nowrap">
+                ℹ️ Om Omgångskollen
+              </a>
+            </li>
+          </ul>
+
+          {/* Mobil-knapp – visas på små & mellanstora skärmar */}
           <button
             type="button"
-            className="inline-flex items-center justify-center rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm"
+            className="inline-flex items-center justify-center rounded-md border border-slate-200 bg-white px-3 py-1 text-[11px] font-medium text-slate-700 shadow-sm lg:hidden"
             onClick={() => setMobileOpen((prev) => !prev)}
             aria-label="Öppna meny"
           >
             {mobileOpen ? (
-              <span className="flex items-center gap-2">
+              <span className="flex items-center gap-1">
                 <span>Stäng</span>
-                <span className="text-lg leading-none">✕</span>
+                <span className="text-base leading-none">✕</span>
               </span>
             ) : (
-              <span className="flex items-center gap-2">
+              <span className="flex items-center gap-1">
                 <span>Meny</span>
-                <span className="text-lg leading-none">☰</span>
+                <span className="text-base leading-none">☰</span>
               </span>
             )}
           </button>
         </nav>
 
-        {/* HELSKÄRMS-MENY */}
+        {/* Mobilmeny-panel under headern */}
         {mobileOpen && (
-          <div className="fixed inset-0 z-50 bg-black/40">
-            <nav className="absolute right-0 top-0 flex h-full w-72 max-w-[80%] flex-col bg-white shadow-2xl">
-              <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
-                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-                  Navigation
-                </span>
-                <button
-                  type="button"
-                  className="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  Stäng ✕
-                </button>
-              </div>
-              <ul className="flex flex-1 flex-col gap-1 overflow-y-auto px-2 py-3 text-sm text-slate-800">
+          <div className="lg:hidden border-t border-slate-200 bg-white/95">
+            <nav className="mx-auto max-w-6xl px-4 py-2">
+              <ul className="flex flex-col gap-1 text-sm text-slate-800">
                 <li>
                   <a
                     href="#omgang"
-                    className="block rounded-md px-3 py-2 hover:bg-slate-100"
+                    className="block rounded-md px-2 py-1 hover:bg-slate-100"
                     onClick={() => setMobileOpen(false)}
                   >
                     🏁 Veckans omgång
@@ -330,7 +364,7 @@ function App() {
                 <li>
                   <a
                     href="#gratis-tips"
-                    className="block rounded-md px-3 py-2 hover:bg-slate-100"
+                    className="block rounded-md px-2 py-1 hover:bg-slate-100"
                     onClick={() => setMobileOpen(false)}
                   >
                     🆓 Tips & analyser
@@ -339,7 +373,7 @@ function App() {
                 <li>
                   <a
                     href="#swish-tipset"
-                    className="block rounded-md px-3 py-2 hover:bg-slate-100"
+                    className="block rounded-md px-2 py-1 hover:bg-slate-100"
                     onClick={() => setMobileOpen(false)}
                   >
                     💰 Swish-tipset
@@ -348,7 +382,7 @@ function App() {
                 <li>
                   <a
                     href="#senaste-nytt"
-                    className="block rounded-md px-3 py-2 hover:bg-slate-100"
+                    className="block rounded-md px-2 py-1 hover:bg-slate-100"
                     onClick={() => setMobileOpen(false)}
                   >
                     📰 Senaste nytt
@@ -357,7 +391,7 @@ function App() {
                 <li>
                   <a
                     href="#nycklar"
-                    className="block rounded-md px-3 py-2 hover:bg-slate-100"
+                    className="block rounded-md px-2 py-1 hover:bg-slate-100"
                     onClick={() => setMobileOpen(false)}
                   >
                     🎯 Spikar & skrällar
@@ -366,7 +400,7 @@ function App() {
                 <li>
                   <a
                     href="#v85-guide"
-                    className="block rounded-md px-3 py-2 hover:bg-slate-100"
+                    className="block rounded-md px-2 py-1 hover:bg-slate-100"
                     onClick={() => setMobileOpen(false)}
                   >
                     📘 V85-guide
@@ -375,7 +409,7 @@ function App() {
                 <li>
                   <a
                     href="#historik"
-                    className="block rounded-md px-3 py-2 hover:bg-slate-100"
+                    className="block rounded-md px-2 py-1 hover:bg-slate-100"
                     onClick={() => setMobileOpen(false)}
                   >
                     📆 Tidigare omgångar
@@ -384,7 +418,7 @@ function App() {
                 <li>
                   <a
                     href="#faq"
-                    className="block rounded-md px-3 py-2 hover:bg-slate-100"
+                    className="block rounded-md px-2 py-1 hover:bg-slate-100"
                     onClick={() => setMobileOpen(false)}
                   >
                     ❓ FAQ
@@ -393,7 +427,7 @@ function App() {
                 <li>
                   <a
                     href="#om-omgangskollen"
-                    className="block rounded-md px-3 py-2 hover:bg-slate-100"
+                    className="block rounded-md px-2 py-1 hover:bg-slate-100"
                     onClick={() => setMobileOpen(false)}
                   >
                     ℹ️ Om Omgångskollen
@@ -409,7 +443,6 @@ function App() {
       <main className="mx-auto max-w-6xl px-4 pb-12 pt-6">
         <section className="grid gap-4 md:grid-cols-[2fr,1.4fr] md:items-start">
           <div className="space-y-4">
-            {/* Uppdaterad-badge ovanför huvudrutan */}
             {senastUppdateradText && (
               <div className="mb-1 flex justify-start">
                 <span className="inline-flex items-center rounded-full bg-emerald-100 px-3 py-1 text-[11px] font-medium text-emerald-700 border border-emerald-200 shadow-sm">
@@ -952,7 +985,7 @@ function App() {
                 <li>8 avdelningar – minst en häst per lopp.</li>
                 <li>
                   Systemkostnad = antal rader × 0,25 kr (eller den radinsats
-                  som gäller för V85 hos ATG).
+                  som gäller för V85).
                 </li>
                 <li>
                   Fokus här är alltid helgens V85-omgång – en sida för trav
@@ -967,7 +1000,7 @@ function App() {
               </h3>
               <p className="mt-1 text-xs">
                 Potten delas mellan olika vinstnivåer, där störst del går till
-                full pott. Lägre nivåer ger oftare lite tillbaka även om en
+                full pott. Lägre nivåer gör oftare lite tillbaka även om en
                 spik eller idé missar.
               </p>
               <ul className="mt-2 list-disc space-y-1 pl-4 text-xs">
