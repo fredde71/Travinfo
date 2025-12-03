@@ -229,6 +229,7 @@ function App() {
   const nyheter = data?.nyheter || [];
   const historik = data?.historik || defaultHistorik;
   const gratisTips = data?.gratisTips || [];
+  const snabbfakta = data?.snabbfakta || null;
 
   const gratisLankar = gratisTips.filter((lank) => {
     const t = String(lank.typ || "").toLowerCase();
@@ -263,7 +264,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
-            {/* HEADER */}
+      {/* HEADER */}
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
         <nav className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
           <div className="flex items-center gap-2">
@@ -277,56 +278,83 @@ function App() {
             </span>
           </div>
 
-          {/* Desktopmeny – visas först på större skärmar */}
-          <ul className="hidden lg:flex items-center gap-3 text-[11px] tracking-tight text-slate-600">
+          {/* Desktopmeny – ren och liten, visas bara på större skärmar */}
+          <ul className="hidden items-center gap-3 text-[11px] tracking-tight text-slate-600 lg:flex">
             <li>
-              <a href="#omgang" className="hover:text-slate-900 whitespace-nowrap">
+              <a
+                href="#omgang"
+                className="whitespace-nowrap hover:text-slate-900"
+              >
                 🏁 Omgången
               </a>
             </li>
             <li>
-              <a href="#gratis-tips" className="hover:text-slate-900 whitespace-nowrap">
+              <a
+                href="#gratis-tips"
+                className="whitespace-nowrap hover:text-slate-900"
+              >
                 🆓 Gratis tips
               </a>
             </li>
             <li>
-              <a href="#swish-tipset" className="hover:text-slate-900 whitespace-nowrap">
+              <a
+                href="#swish-tipset"
+                className="whitespace-nowrap hover:text-slate-900"
+              >
                 💰 Swish-tipset
               </a>
             </li>
             <li>
-              <a href="#senaste-nytt" className="hover:text-slate-900 whitespace-nowrap">
+              <a
+                href="#senaste-nytt"
+                className="whitespace-nowrap hover:text-slate-900"
+              >
                 📰 Senaste nytt
               </a>
             </li>
             <li>
-              <a href="#nycklar" className="hover:text-slate-900 whitespace-nowrap">
+              <a
+                href="#nycklar"
+                className="whitespace-nowrap hover:text-slate-900"
+              >
                 🎯 Spikar & skrällar
               </a>
             </li>
             <li>
-              <a href="#v85-guide" className="hover:text-slate-900 whitespace-nowrap">
+              <a
+                href="#v85-guide"
+                className="whitespace-nowrap hover:text-slate-900"
+              >
                 📘 V85-guide
               </a>
             </li>
             <li>
-              <a href="#historik" className="hover:text-slate-900 whitespace-nowrap">
+              <a
+                href="#historik"
+                className="whitespace-nowrap hover:text-slate-900"
+              >
                 📆 Tidigare omgångar
               </a>
             </li>
             <li>
-              <a href="#faq" className="hover:text-slate-900 whitespace-nowrap">
+              <a
+                href="#faq"
+                className="whitespace-nowrap hover:text-slate-900"
+              >
                 ❓ FAQ
               </a>
             </li>
             <li>
-              <a href="#om-omgangskollen" className="hover:text-slate-900 whitespace-nowrap">
+              <a
+                href="#om-omgangskollen"
+                className="whitespace-nowrap hover:text-slate-900"
+              >
                 ℹ️ Om Omgångskollen
               </a>
             </li>
           </ul>
 
-          {/* Mobil-knapp – visas på små & mellanstora skärmar */}
+          {/* Mobil-knapp – syns upp till lg */}
           <button
             type="button"
             className="inline-flex items-center justify-center rounded-md border border-slate-200 bg-white px-3 py-1 text-[11px] font-medium text-slate-700 shadow-sm lg:hidden"
@@ -349,7 +377,7 @@ function App() {
 
         {/* Mobilmeny-panel under headern */}
         {mobileOpen && (
-          <div className="lg:hidden border-t border-slate-200 bg-white/95">
+          <div className="border-t border-slate-200 bg-white/95 lg:hidden">
             <nav className="mx-auto max-w-6xl px-4 py-2">
               <ul className="flex flex-col gap-1 text-sm text-slate-800">
                 <li>
@@ -445,12 +473,13 @@ function App() {
           <div className="space-y-4">
             {senastUppdateradText && (
               <div className="mb-1 flex justify-start">
-                <span className="inline-flex items-center rounded-full bg-emerald-100 px-3 py-1 text-[11px] font-medium text-emerald-700 border border-emerald-200 shadow-sm">
+                <span className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-100 px-3 py-1 text-[11px] font-medium text-emerald-700 shadow-sm">
                   🔄 Uppdaterad {senastUppdateradText}
                 </span>
               </div>
             )}
 
+            {/* Hero / toppkort */}
             <div className="rounded-2xl bg-gradient-to-br from-sky-600 via-sky-500 to-sky-700 p-[1px] shadow-md">
               <div className="flex flex-col justify-between gap-4 rounded-2xl bg-slate-900/95 p-4 text-slate-50 sm:flex-row sm:items-center">
                 <div>
@@ -480,6 +509,7 @@ function App() {
               </div>
             </div>
 
+            {/* Barometer */}
             <div className="rounded-2xl border border-sky-100 bg-sky-50/70 px-4 py-3 text-xs text-slate-800 shadow-sm">
               <div className="flex items-center justify-between gap-2">
                 <div>
@@ -501,9 +531,57 @@ function App() {
               </div>
             </div>
 
+            {/* Snabbfakta – från data.snabbfakta */}
+            {snabbfakta && (
+              <div className="grid gap-3 text-xs text-slate-700 sm:grid-cols-5">
+                <div className="rounded-xl border border-slate-200 bg-white p-3 sm:col-span-2">
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                    Snabbfakta om spelet
+                  </p>
+                  <ul className="mt-2 space-y-1">
+                    <li>
+                      <span className="font-medium">Antal lopp:</span>{" "}
+                      {snabbfakta.antalLopp}
+                    </li>
+                    <li>
+                      <span className="font-medium">Radpris:</span>{" "}
+                      {snabbfakta.radpris}
+                    </li>
+                    <li>
+                      <span className="font-medium">Utdelning:</span>{" "}
+                      {snabbfakta.utdelning}
+                    </li>
+                  </ul>
+                </div>
+                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                    Spelstopp
+                  </p>
+                  <p className="mt-2 text-sm font-medium">
+                    {snabbfakta.spelstopp || data?.omgang?.spelstopp || "16:20"}
+                  </p>
+                  <p className="mt-1 text-[11px] text-slate-600">
+                    Dubbelkolla alltid tiden hos ATG innan du lämnar in.
+                  </p>
+                </div>
+                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 sm:col-span-2">
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                    Återbetalning
+                  </p>
+                  <p className="mt-2 text-sm font-medium">
+                    {snabbfakta.aterbetalning || "—"}
+                  </p>
+                  <p className="mt-1 text-[11px] text-slate-600">
+                    Exakta villkor och regler hittar du alltid hos ATG.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Veckans omgång */}
             <section
               id="omgang"
-              className="scroll-mt-14 space-y-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+              className="scroll-mt-16 space-y-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
             >
               <h2 className="text-base font-semibold">Veckans omgång</h2>
               <p className="text-sm text-slate-700">
@@ -525,9 +603,8 @@ function App() {
                   </p>
                   {data?.omgang?.bana === "Jägersro" && (
                     <p className="mt-1 text-xs text-slate-600">
-                      Jägersro är en spetsgynnad bana, detta beror på att direkt
-                      efter målgång ligger avfarten in till stallbacken och att
-                      detta då får spetshästarna att springa lite snabbare.
+                      Jägersro är en spetsgynnad bana, bland annat på grund av
+                      avfarten in till stallbacken direkt efter målgång.
                     </p>
                   )}
                 </div>
@@ -655,9 +732,10 @@ function App() {
             </section>
           </div>
 
+          {/* Swish-tipset */}
           <section
             id="swish-tipset"
-            className="scroll-mt-14 space-y-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+            className="scroll-mt-16 space-y-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
           >
             <div className="space-y-1">
               <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
@@ -668,8 +746,9 @@ function App() {
               </h2>
               <p className="text-xs text-slate-600">
                 Tre genomarbetade V85-förslag inför lördagens omgång. Du får
-                raderna via SMS senast en timme innan spelstopp och spelar alltid själv hos ATG – Omgångskollen
-                är fristående utan koppling till ATG.
+                raderna via SMS senast en timme innan spelstopp och spelar
+                alltid själv hos ATG – Omgångskollen är fristående utan koppling
+                till ATG.
               </p>
             </div>
 
@@ -688,7 +767,8 @@ function App() {
               </p>
               <p>
                 Du spelar alltid systemen själv hos ATG. Omgångskollen säljer
-                endast spelförslag och är ett fristående bolag utan koppling till ATG.
+                endast spelförslag och är ett fristående bolag utan koppling
+                till ATG.
               </p>
             </div>
 
@@ -749,7 +829,7 @@ function App() {
                     className="h-40 w-40 object-contain"
                   />
                 </div>
-                <p className="text-[11px] text-slate-500 text-center">
+                <p className="text-center text-[11px] text-slate-500">
                   Skanna QR-koden med Swish-appen för att betala 19 kr och få
                   speltipsen via SMS.
                 </p>
@@ -761,7 +841,7 @@ function App() {
         {/* Länkar – uppdelat gratis / betal */}
         <section
           id="gratis-tips"
-          className="mt-6 scroll-mt-14 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+          className="mt-6 scroll-mt-16 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
         >
           <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
             <div>
@@ -857,10 +937,11 @@ function App() {
           </div>
         </section>
 
+        {/* Senaste nytt */}
         {nyheter.length > 0 && (
           <section
             id="senaste-nytt"
-            className="mt-6 scroll-mt-14 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+            className="mt-6 scroll-mt-16 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
           >
             <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
               <div>
@@ -902,10 +983,10 @@ function App() {
           </section>
         )}
 
-        {/* Nycklar efter Senaste nytt */}
+        {/* Nycklar */}
         <section
           id="nycklar"
-          className="mt-6 scroll-mt-14 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+          className="mt-6 scroll-mt-16 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
         >
           <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
             <div>
@@ -918,7 +999,7 @@ function App() {
             </div>
           </div>
 
-          <div className="mt-3 grid gap-3 sm:grid-cols-3 text-sm">
+          <div className="mt-3 grid gap-3 text-sm sm:grid-cols-3">
             {Object.entries(nycklar).map(([key, item]) => {
               const label =
                 key === "spik" ? "Spik" : key === "skrall" ? "Skräll" : "Varning";
@@ -955,9 +1036,10 @@ function App() {
           </div>
         </section>
 
+        {/* Guide */}
         <section
           id="v85-guide"
-          className="mt-6 scroll-mt-14 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+          className="mt-6 scroll-mt-16 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
         >
           <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
             <div>
@@ -1022,10 +1104,11 @@ function App() {
           </div>
         </section>
 
+        {/* Historik */}
         {historik && historik.length > 0 && (
           <section
             id="historik"
-            className="mt-6 scroll-mt-14 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+            className="mt-6 scroll-mt-16 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
           >
             <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
               <div>
@@ -1072,7 +1155,7 @@ function App() {
         {/* FAQ */}
         <section
           id="faq"
-          className="mt-6 scroll-mt-14 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+          className="mt-6 scroll-mt-16 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
         >
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
@@ -1118,9 +1201,9 @@ function App() {
                 Garanti på vinst eller “säkra” system?
               </p>
               <p className="mt-1 text-xs">
-                Nej. Trav är ett spel med risk och slump. Tipsen är endast
-                idéer och inspiration – spela alltid ansvarsfullt och bara för
-                pengar du har råd att förlora.
+                Nej. Trav är ett spel med risk och slump. Tipsen är endast idéer
+                och inspiration – spela alltid ansvarsfullt och bara för pengar
+                du har råd att förlora.
               </p>
             </div>
           </div>
@@ -1129,7 +1212,7 @@ function App() {
         {/* OM */}
         <section
           id="om-omgangskollen"
-          className="mt-6 scroll-mt-14 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+          className="mt-6 scroll-mt-16 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
         >
           <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
             <div>
